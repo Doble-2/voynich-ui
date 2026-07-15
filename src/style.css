@@ -1,0 +1,281 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@keyframes voynich-cinder-drift {
+	0% {
+		opacity: 0;
+		transform: translate(-50%, -50%) translate3d(0, 0, 0) scale(0.82);
+	}
+
+	20% {
+		opacity: 1;
+	}
+
+	100% {
+		opacity: var(--voynich-fade-to, 0);
+		transform: translate(-50%, -50%) translate3d(var(--voynich-drift-x, 0px), var(--voynich-drift-y, -24px), 0) scale(1.15);
+	}
+}
+
+@keyframes voynich-cinder-flicker {
+	0% {
+		opacity: 0.55;
+	}
+
+	50% {
+		opacity: 0.92;
+	}
+
+	100% {
+		opacity: 0.62;
+	}
+}
+
+@keyframes voynich-cinder-flame {
+	0% {
+		opacity: 0;
+		transform: translate(-50%, -50%) translate3d(0, 10px, 0) scale(0.72);
+	}
+
+	20% {
+		opacity: 1;
+	}
+
+	100% {
+		opacity: 0;
+		transform: translate(-50%, -50%) translate3d(calc(var(--voynich-flame-drift-x, 0px) + var(--voynich-flame-sway, 8px)), var(--voynich-flame-drift-y, -42px), 0) scale(1.08);
+	}
+}
+
+@keyframes voynich-cinder-smoke {
+	0% {
+		opacity: 0;
+		transform: translate(-50%, -50%) translate3d(0, 0, 0) scale(0.82);
+	}
+
+	18% {
+		opacity: 1;
+	}
+
+	100% {
+		opacity: 0;
+		transform: translate(-50%, -50%) translate3d(var(--voynich-smoke-drift-x, 0px), var(--voynich-smoke-drift-y, -60px), 0) scale(1.2);
+	}
+}
+
+@keyframes voynich-cinder-front-flow {
+	0% {
+		background-position: 0% 100%, 0% 100%, 0% 100%, 0% 100%;
+		transform: translate3d(0, 8px, 0) scaleY(0.95);
+	}
+
+	50% {
+		background-position: 24% 70%, 16% 62%, 0% 100%, 12% 88%;
+		transform: translate3d(0, -4px, 0) scaleY(1.04);
+	}
+
+	100% {
+		background-position: 52% 44%, 36% 38%, 0% 100%, 24% 72%;
+		transform: translate3d(0, -12px, 0) scaleY(1.1);
+	}
+}
+
+@keyframes voynich-paper-flame {
+	0% {
+		opacity: 0.78;
+		stroke-dashoffset: 0;
+	}
+
+	50% {
+		opacity: 1;
+		stroke-dashoffset: -28;
+	}
+
+	100% {
+		opacity: 0.82;
+		stroke-dashoffset: -56;
+	}
+}
+
+@keyframes voynich-paper-smoke {
+	0% {
+		opacity: 0;
+		transform: translate(-50%, -50%) translate3d(0, 0, 0) scale(0.82);
+	}
+
+	20% {
+		opacity: 1;
+	}
+
+	100% {
+		opacity: 0;
+		transform: translate(-50%, -50%) translate3d(var(--voynich-smoke-drift-x, 0px), var(--voynich-smoke-drift-y, -48px), 0) scale(1.18);
+	}
+}
+
+@keyframes voynich-paper-ash {
+	0% {
+		opacity: 0;
+		transform: translate(-50%, -50%) translate3d(0, 0, 0) scale(0.74);
+	}
+
+	18% {
+		opacity: 0.9;
+	}
+
+	100% {
+		opacity: 0;
+		transform: translate(-50%, -50%) translate3d(var(--voynich-ash-drift-x, 0px), var(--voynich-ash-drift-y, -30px), 0) scale(1.1);
+	}
+}
+
+@keyframes voynich-cinder-ash {
+	0% {
+		opacity: 0;
+		transform: translate(-50%, -50%) translate3d(0, 0, 0) scale(0.7);
+	}
+
+	20% {
+		opacity: 0.8;
+	}
+
+	100% {
+		opacity: 0;
+		transform: translate(-50%, -50%) translate3d(var(--voynich-ash-drift-x, 0px), var(--voynich-ash-drift-y, -30px), 0) scale(1.08);
+	}
+}
+
+.voynich-cinder-particle {
+	animation-name: voynich-cinder-drift;
+	animation-iteration-count: infinite;
+	animation-timing-function: ease-out;
+	will-change: transform, opacity;
+}
+
+.voynich-cinder-flame {
+	animation-name: voynich-cinder-flame;
+	animation-iteration-count: infinite;
+	animation-timing-function: cubic-bezier(0.2, 0.55, 0.2, 1);
+	transform-origin: 50% 85%;
+	will-change: transform, opacity, filter;
+	mix-blend-mode: screen;
+    overflow: visible;
+    border-radius: 50% 50% 55% 45% / 60% 60% 40% 40% ;
+    display: flex;
+}
+
+.voynich-cinder-front {
+	animation: voynich-cinder-front-flow 1.35s ease-in-out infinite;
+	background-repeat: repeat-x, repeat-x, no-repeat, repeat-x;
+	background-size: 78px 100%, 52px 100%, 100% 100%, 28px 100%;
+	border-radius: 999px;
+	filter: saturate(1.15);
+	mix-blend-mode: screen;
+	transform-origin: 50% 100%;
+	will-change: transform, background-position, opacity;
+}
+
+.voynich-cinder-front-outer {
+	background-image:
+		repeating-radial-gradient(ellipse at 50% 100%, rgba(255,232,167,0.92) 0 7%, rgba(255,166,58,0.86) 8% 17%, rgba(218,72,11,0.52) 18% 28%, rgba(218,72,11,0) 30% 100%),
+		repeating-radial-gradient(ellipse at 34% 100%, rgba(255,206,118,0.82) 0 6%, rgba(255,123,39,0.65) 7% 15%, rgba(96,23,6,0) 18% 100%),
+		linear-gradient(180deg, rgba(255,248,219,0.24) 0%, rgba(255,194,92,0.84) 22%, rgba(238,96,19,0.72) 44%, rgba(120,29,6,0.28) 66%, rgba(0,0,0,0) 100%),
+		repeating-linear-gradient(90deg, rgba(255,225,145,0.25) 0 14px, rgba(255,125,35,0.18) 15px 28px);
+	filter: blur(7px) saturate(1.2);
+}
+
+.voynich-cinder-front-inner {
+	background-image:
+		repeating-radial-gradient(ellipse at 50% 100%, rgba(255,252,236,0.96) 0 6%, rgba(255,216,122,0.92) 7% 13%, rgba(255,131,37,0.55) 14% 22%, rgba(255,131,37,0) 24% 100%),
+		repeating-radial-gradient(ellipse at 70% 100%, rgba(255,236,168,0.9) 0 5%, rgba(255,170,54,0.68) 6% 12%, rgba(255,170,54,0) 14% 100%),
+		linear-gradient(180deg, rgba(255,255,238,0.82) 0%, rgba(255,236,182,0.88) 18%, rgba(255,156,50,0.54) 42%, rgba(255,156,50,0.06) 74%, rgba(255,156,50,0) 100%),
+		repeating-linear-gradient(90deg, rgba(255,245,214,0.34) 0 12px, rgba(255,183,74,0.22) 13px 25px);
+	filter: blur(3px) saturate(1.28);
+}
+
+.voynich-cinder-front-core {
+	background-image:
+		repeating-radial-gradient(ellipse at 50% 100%, rgba(255,255,240,0.96) 0 4%, rgba(255,232,156,0.86) 5% 9%, rgba(255,176,72,0.2) 10% 14%, rgba(255,176,72,0) 16% 100%),
+		linear-gradient(180deg, rgba(255,255,246,0.82) 0%, rgba(255,246,214,0.44) 24%, rgba(255,246,214,0) 100%),
+		repeating-linear-gradient(90deg, rgba(255,255,228,0.3) 0 9px, rgba(255,235,164,0.14) 10px 19px),
+		linear-gradient(180deg, rgba(255,255,245,0.75) 0%, rgba(255,255,245,0) 100%);
+	filter: blur(2px) saturate(1.2);
+}
+
+.voynich-cinder-smoke {
+	animation-name: voynich-cinder-smoke;
+	animation-iteration-count: infinite;
+	animation-timing-function: ease-out;
+	will-change: transform, opacity, filter;
+	mix-blend-mode: screen;
+}
+
+.voynich-cinder-smoke-veil {
+	animation-name: voynich-cinder-smoke;
+	animation-iteration-count: infinite;
+	animation-timing-function: ease-out;
+	border-radius: 999px;
+	mix-blend-mode: screen;
+	will-change: transform, opacity, filter;
+}
+
+.voynich-cinder-soot {
+	mix-blend-mode: multiply;
+	filter: blur(1.5px) contrast(1.06);
+	will-change: opacity, filter;
+}
+
+.voynich-cinder-ash {
+	background: linear-gradient(145deg, rgba(27,20,17,0.96), rgba(70,60,56,0.54));
+	border-radius: 35% 50% 45% 60%;
+	animation-name: voynich-cinder-ash;
+	animation-iteration-count: infinite;
+	animation-timing-function: ease-out;
+	mix-blend-mode: lighten;
+	will-change: transform, opacity;
+}
+
+.voynich-cinder-glow {
+	animation: voynich-cinder-flicker 1.65s ease-in-out infinite;
+	will-change: opacity, filter;
+}
+
+.voynich-cinder-glowstroke {
+	filter: blur(4px) saturate(1.22);
+	mix-blend-mode: screen;
+}
+
+.voynich-paper-flame {
+	animation: voynich-paper-flame 1.1s linear infinite;
+	stroke-dasharray: 12 10 20 8;
+	will-change: opacity, stroke-dashoffset, filter;
+	mix-blend-mode: screen;
+}
+
+.voynich-paper-smoke {
+	position: absolute;
+	border-radius: 999px;
+	background: radial-gradient(ellipse at 50% 50%, rgba(244,236,228,0.18) 0%, rgba(166,151,142,0.24) 26%, rgba(87,80,76,0.28) 52%, rgba(38,36,39,0.18) 72%, rgba(20,20,22,0) 100%);
+	animation-name: voynich-paper-smoke;
+	animation-iteration-count: infinite;
+	animation-timing-function: ease-out;
+	will-change: transform, opacity;
+	mix-blend-mode: screen;
+}
+
+.voynich-paper-ash {
+	position: absolute;
+	background: linear-gradient(145deg, rgba(20,15,13,0.95), rgba(84,74,68,0.52));
+	border-radius: 42% 58% 36% 64%;
+	animation-name: voynich-paper-ash;
+	animation-iteration-count: infinite;
+	animation-timing-function: ease-out;
+	will-change: transform, opacity;
+	mix-blend-mode: lighten;
+}
+
+.voynich-cinder-frozen,
+.voynich-cinder-frozen * {
+	animation-play-state: paused !important;
+}
