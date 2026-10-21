@@ -9,6 +9,14 @@ const meta = {
     layout: "centered",
   },
   tags: ["autodocs"],
+  argTypes: {
+    width: { control: { type: 'range', min: 100, max: 600, step: 10 }, description: 'Ancho (px)' },
+    height: { control: { type: 'range', min: 100, max: 400, step: 10 }, description: 'Alto (px)' },
+    brushSize: { control: { type: 'range', min: 5, max: 60, step: 1 }, description: 'Tamaño del pincel (px)' },
+    brushHardness: { control: { type: 'range', min: 0, max: 1, step: 0.1 }, description: 'Dureza del pincel (0=suave, 1=duro)' },
+    clearThreshold: { control: { type: 'range', min: 0.1, max: 1, step: 0.05 }, description: 'Umbral de auto-revelación (0–1)' },
+    coverImage: { control: 'color', description: 'Color/imagen de cobertura' },
+  },
 } satisfies Meta<typeof ScratchCard>;
 
 export default meta;

@@ -8,6 +8,14 @@ const meta = {
     layout: 'padded',
   },
   tags: ['autodocs'],
+  argTypes: {
+    ancientText: { control: 'text', description: 'Texto antiguo (capa inferior)' },
+    translatedText: { control: 'text', description: 'Texto traducido (capa superior)' },
+    ancientColor: { control: 'color', description: 'Color del texto antiguo' },
+    translatedColor: { control: 'color', description: 'Color del texto traducido' },
+    transitionSpeed: { control: { type: 'range', min: 0.3, max: 5, step: 0.1 }, description: 'Velocidad de transición (s)' },
+    interaction: { control: 'select', options: ['click', 'hover'], description: 'Modo de interacción' },
+  },
   decorators: [
     (Story) => (
       <div className="bg-[#1b120c] p-24 rounded-lg shadow-inner max-w-2xl mx-auto mt-10">

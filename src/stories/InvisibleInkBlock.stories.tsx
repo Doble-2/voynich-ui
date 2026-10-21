@@ -8,6 +8,15 @@ const meta = {
     layout: 'padded',
   },
   tags: ['autodocs'],
+  argTypes: {
+    text: { control: 'text', description: 'Texto oculto' },
+    revealColor: { control: 'color', description: 'Color de la tinta revelada' },
+    interaction: { control: 'select', options: ['hover', 'click'], description: 'Modo de interacción' },
+    revealed: { control: 'boolean', description: 'Control externo del estado revelado' },
+    revealDuration: { control: { type: 'range', min: 0.1, max: 5, step: 0.1 }, description: 'Duración de revelación (s)' },
+    hideDuration: { control: { type: 'range', min: 0.1, max: 5, step: 0.1 }, description: 'Duración de ocultamiento (s)' },
+    blurAmount: { control: { type: 'range', min: 0, max: 20, step: 1 }, description: 'Intensidad del blur oculto (px)' },
+  },
   decorators: [
     (Story) => (
       <div className="bg-[#1b120c] p-20 flex text-center justify-center font-serif text-[#eadbb6] text-xl">

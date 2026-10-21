@@ -8,6 +8,12 @@ const meta = {
     layout: 'fullscreen',
   },
   tags: ['autodocs'],
+  argTypes: {
+    layers: {
+      description: 'Array de capas parallax. Cada capa tiene: content (ReactNode), speed (multiplicador Y), scale?, blur?, opacity?',
+      control: false,
+    },
+  },
   decorators: [
     (Story) => (
       <div className="bg-[#050302] text-[#eadbb6]">

@@ -4,12 +4,26 @@ import { useGSAP } from "@gsap/react";
 import { cn } from "../../lib/utils";
 
 export interface PalimpsestTextProps extends React.HTMLAttributes<HTMLDivElement> {
+  /** Texto o nodo antiguo/original. */
   ancientText: string | React.ReactNode;
+  /** Texto o nodo traducido/moderno. */
   translatedText: string | React.ReactNode;
+  /** Color del texto antiguo. @default "#5c331d" */
+  ancientColor?: string;
+  /** Color del texto traducido. @default "#eadbb6" */
+  translatedColor?: string;
+  /** Duración de la transición (seg). @default 1.5 */
+  transitionSpeed?: number;
+  /** Modo de interacción. @default "click" */
+  interaction?: "click" | "hover";
+  /** Callback al traducir. */
+  onTranslate?: () => void;
+  /** Callback al revertir. */
+  onRevert?: () => void;
 }
 
 export const PalimpsestText = React.forwardRef<HTMLDivElement, PalimpsestTextProps>(
-  ({ className, ancientText, translatedText, ...props }, ref) => {
+  ({ className, ancientText, translatedText, ancientColor = "#5c331d", translatedColor = "#eadbb6", transitionSpeed = 1.5, interaction = "click", onTranslate, onRevert, ...props }, ref) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const ancientRef = useRef<HTMLDivElement>(null);
     const modernRef = useRef<HTMLDivElement>(null);

@@ -23,6 +23,19 @@ Un botón en el ecosistema Voynich no es un simple rectángulo digital, es un tr
       description:
         "El arquetipo visual del botón. Primary simula vitela gruesa, Secondary es tinta densa.",
     },
+    size: {
+      control: "select",
+      options: ["sm", "md", "lg"],
+      description: "Tamaño predefinido del botón.",
+    },
+    noAnimation: {
+      control: "boolean",
+      description: "Desactivar micro-animaciones GSAP (útil para contextos estáticos).",
+    },
+    borderRadius: {
+      control: "text",
+      description: 'Override del border-radius orgánico. Usa "none" para esquinas rectas.',
+    },
     disabled: {
       control: "boolean",
     },

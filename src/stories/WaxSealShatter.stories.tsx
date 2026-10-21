@@ -8,6 +8,15 @@ const meta = {
     layout: 'centered',
   },
   tags: ['autodocs'],
+  argTypes: {
+    revealText: { control: 'text', description: 'Texto bajo el sello' },
+    sealColor: { control: 'color', description: 'Color del sello de cera' },
+    sealSize: { control: { type: 'range', min: 48, max: 200, step: 4 }, description: 'Tamaño del sello (px)' },
+    emblem: { control: 'text', description: 'Carácter del emblema central' },
+    holdDuration: { control: { type: 'range', min: 0.3, max: 5, step: 0.1 }, description: 'Duración de presión para romper (s)' },
+    particleCount: { control: { type: 'range', min: 5, max: 50, step: 1 }, description: 'Número de partículas' },
+    shatterIntensity: { control: { type: 'range', min: 50, max: 400, step: 10 }, description: 'Intensidad de la explosión (px)' },
+  },
   decorators: [
     (Story) => (
       <div className="w-[500px] h-[500px] flex items-center justify-center bg-[#1b120c] p-12 rounded-xl">

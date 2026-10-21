@@ -12,6 +12,15 @@ const meta = {
     layout: "centered",
   },
   tags: ["autodocs"],
+  argTypes: {
+    zoomLevel: { control: { type: 'range', min: 1, max: 6, step: 0.5 }, description: 'Nivel de zoom' },
+    lensSize: { control: { type: 'range', min: 50, max: 400, step: 10 }, description: 'Tamaño de la lente (px)' },
+    lensBorder: { control: { type: 'range', min: 0, max: 12, step: 1 }, description: 'Grosor del borde' },
+    lensShape: { control: 'select', options: ['circle', 'square', 'rounded-square'], description: 'Forma de la lente' },
+    filter: { control: 'select', options: ['none', 'sepia', 'grayscale', 'invert', 'vintage', 'x-ray'], description: 'Filtro visual' },
+    showHandle: { control: 'boolean', description: 'Mostrar mango de lupa' },
+    smoothFollowing: { control: 'boolean', description: 'Seguimiento suave del cursor' },
+  },
 } satisfies Meta<typeof LensMagnifier>;
 
 export default meta;
@@ -78,6 +87,9 @@ export const DeepMicroscope: Story = {
 };
 
 export const ManualResetMode: Story = {
+  args: {
+    src: "https://images.unsplash.com/photo-1524169358666-79f22534bc6e?q=80&w=1000&auto=format&fit=crop",
+  },
   render: () => {
     const lensRef = useRef<LensMagnifierRef>(null);
 

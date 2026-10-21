@@ -29,9 +29,11 @@ export const AbyssParallax = React.forwardRef<HTMLDivElement, AbyssParallaxProps
 
       if (!container || !DOMlayers.length) return;
 
+      const triggers: ScrollTrigger[] = [];
+
       // Map speeds from props directly into ScrollTrigger
       DOMlayers.forEach((layer, i) => {
-        const speed = layers[i].speed;
+        const speed = layers[i]?.speed ?? 1;
         
         // Use gsap.to to animate y from -offset to +offset while container scrolls
         gsap.fromTo(layer, 
@@ -47,10 +49,14 @@ export const AbyssParallax = React.forwardRef<HTMLDivElement, AbyssParallaxProps
             }
           }
         );
+
+        // Capture the ScrollTrigger instance we just created
+        const lastTrigger = ScrollTrigger.getAll().pop();
+        if (lastTrigger) triggers.push(lastTrigger);
       });
 
       return () => {
-        ScrollTrigger.getAll().forEach(t => t.kill());
+        triggers.forEach(t => t.kill());
       };
     }, { scope: containerRef });
 

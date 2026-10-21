@@ -153,16 +153,18 @@ export const RingPuzzle = forwardRef<RingPuzzleRef, RingPuzzleProps>(
     }, { scope: containerRef, dependencies: [rings] });
 
     const checkSolutionAndSnap = (ringId: string) => {
-      const currentRot = rotationsProxy.current[ringId];
       const ringConfig = rings.find((r) => r.id === ringId);
       if (!ringConfig || ringConfig.targetRotation === undefined) return;
+      const currentRot = rotationsProxy.current[ringId] ?? 0;
 
       if (isCloseToTarget(currentRot, ringConfig.targetRotation, snapTolerance)) {
         // Ejecutamos snap mecánico con GSAP Back out
         const targetRot = ringConfig.targetRotation;
         rotationsProxy.current[ringId] = targetRot;
-        
-        gsap.to(ringNodesRef.current[ringId], {
+        const ringNode = ringNodesRef.current[ringId];
+        if (!ringNode) return;
+
+        gsap.to(ringNode, {
           rotation: targetRot,
           duration: 0.6,
           ease: "back.out(2.2)", // "Clanc" vibratorio mecánico pesado
@@ -197,24 +199,30 @@ export const RingPuzzle = forwardRef<RingPuzzleRef, RingPuzzleProps>(
         rings.forEach((r) => {
           const deg = r.initialRotation || 0;
           rotationsProxy.current[r.id] = deg;
-          gsap.to(ringNodesRef.current[r.id], {
-             rotation: deg,
-             duration: 1.2,
-             ease: "power3.inOut" // Regreso armónico
-          });
+          const node = ringNodesRef.current[r.id];
+          if (node) {
+            gsap.to(node, {
+               rotation: deg,
+               duration: 1.2,
+               ease: "power3.inOut" // Regreso armónico
+            });
+          }
         });
       },
       solve: () => {
         const solvedLocks = { ...lockedRings };
         rings.forEach((r) => {
           if (r.targetRotation !== undefined) {
-             rotationsProxy.current[r.id] = r.targetRotation;
-             solvedLocks[r.id] = true;
-             gsap.to(ringNodesRef.current[r.id], {
-               rotation: r.targetRotation,
-               duration: 2.5,
-               ease: "back.out(1.2)"
-             });
+              rotationsProxy.current[r.id] = r.targetRotation;
+              solvedLocks[r.id] = true;
+              const node = ringNodesRef.current[r.id];
+              if (node) {
+                gsap.to(node, {
+                  rotation: r.targetRotation,
+                  duration: 2.5,
+                  ease: "back.out(1.2)"
+                });
+              }
           }
         });
         setLockedRings(solvedLocks);
@@ -267,7 +275,8 @@ export const RingPuzzle = forwardRef<RingPuzzleRef, RingPuzzleProps>(
       };
 
       // Si había una animación corriendo en este nodo, matarla
-      gsap.killTweensOf(ringNodesRef.current[ringId]);
+      const ringNode = ringNodesRef.current[ringId];
+      if (ringNode) gsap.killTweensOf(ringNode);
     };
 
     useGSAP(() => {
@@ -302,18 +311,22 @@ export const RingPuzzle = forwardRef<RingPuzzleRef, RingPuzzleProps>(
           const ringConfig = rings.find(r => r.id === draggingId);
           // Inercia virtual sintética al soltar
           if (Math.abs(velocity) > 2) {
-             const finalRotation = rotationsProxy.current[draggingId] + (velocity * 4);
-             gsap.to(ringNodesRef.current[draggingId], {
-               rotation: ringConfig?.step ? Math.round(finalRotation / ringConfig.step) * ringConfig.step : finalRotation,
-               duration: 0.8,
-               ease: "power2.out",
-               onUpdate: () => {
-                 rotationsProxy.current[draggingId] = gsap.getProperty(ringNodesRef.current[draggingId], "rotation") as number;
-               },
-               onComplete: () => {
-                 checkSolutionAndSnap(draggingId);
-               }
-             })
+             const currentRot = rotationsProxy.current[draggingId] ?? 0;
+             const finalRotation = currentRot + (velocity * 4);
+             const ringNode = ringNodesRef.current[draggingId];
+             if (ringNode) {
+               gsap.to(ringNode, {
+                 rotation: ringConfig?.step ? Math.round(finalRotation / ringConfig.step) * ringConfig.step : finalRotation,
+                 duration: 0.8,
+                 ease: "power2.out",
+                 onUpdate: () => {
+                   rotationsProxy.current[draggingId] = gsap.getProperty(ringNode, "rotation") as number;
+                 },
+                 onComplete: () => {
+                   checkSolutionAndSnap(draggingId);
+                 }
+               });
+             }
           } else {
              checkSolutionAndSnap(draggingId);
           }
@@ -344,15 +357,18 @@ export const RingPuzzle = forwardRef<RingPuzzleRef, RingPuzzleProps>(
       if (delta !== 0) {
         e.preventDefault();
         const currentRot = rotationsProxy.current[ringId] || 0;
-        gsap.to(ringNodesRef.current[ringId], {
-           rotation: currentRot + delta,
-           duration: 0.3,
-           ease: "power1.out",
-           onUpdate: () => {
-             rotationsProxy.current[ringId] = gsap.getProperty(ringNodesRef.current[ringId], "rotation") as number;
-           },
-           onComplete: () => checkSolutionAndSnap(ringId)
-        });
+        const ringNode = ringNodesRef.current[ringId];
+        if (ringNode) {
+          gsap.to(ringNode, {
+             rotation: currentRot + delta,
+             duration: 0.3,
+             ease: "power1.out",
+             onUpdate: () => {
+               rotationsProxy.current[ringId] = gsap.getProperty(ringNode, "rotation") as number;
+             },
+             onComplete: () => checkSolutionAndSnap(ringId)
+          });
+        }
       }
     };
 

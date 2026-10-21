@@ -10,6 +10,12 @@ const meta = {
     layout: 'centered',
   },
   tags: ['autodocs'],
+  argTypes: {
+    isOpen: { control: 'boolean', description: '¿Está abierto el círculo?' },
+    title: { control: 'text', description: 'Título del diálogo' },
+    dismissLabel: { control: 'text', description: 'Texto del botón de rechazo' },
+    confirmLabel: { control: 'text', description: 'Texto del botón de confirmación' },
+  },
   decorators: [
     (Story) => (
       <div className="bg-[#1b120c] p-20 rounded-xl w-[600px] h-[500px] flex items-center justify-center">

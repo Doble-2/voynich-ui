@@ -8,6 +8,9 @@ const meta = {
     layout: 'fullscreen',
   },
   tags: ['autodocs'],
+  argTypes: {
+    spreadType: { control: 'select', options: ['fan', 'cross', 'grid'], description: 'Tipo de distribución' },
+  },
   decorators: [
     (Story) => (
       <div className="bg-[#0a0604] min-h-screen py-20 flex items-center justify-center">

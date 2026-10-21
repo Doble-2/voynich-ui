@@ -1,22 +1,31 @@
-import React, { useRef } from "react";
+import React, { useId, useRef } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { cn } from "../../lib/utils";
 
 export interface VellumTornSectionProps extends React.HTMLAttributes<HTMLDivElement> {
   children?: React.ReactNode;
-  color?: string; // Hex color for the paper, default #eaddc5
+  /** Color del pergamino. @default "#eaddc5" */
+  color?: string;
+  /** Mostrar borde rasgado superior. @default true */
   topTorn?: boolean;
+  /** Mostrar borde rasgado inferior. @default true */
   bottomTorn?: boolean;
+  /** Intensidad de la distorsión del rasgado. @default 15 */
+  tearIntensity?: number;
+  /** Color del texto interior. @default "#30180d" */
+  textColor?: string;
+  /** Opacidad del ruido de textura (0–1). @default 0.15 */
+  noiseOpacity?: number;
+  /** Velocidad de la animación orgánica del borde (seg). @default 8 */
+  animationSpeed?: number;
 }
 
-// Generate unique ID for filters to avoid collision
-let instanceCount = 0;
-
 export const VellumTornSection = React.forwardRef<HTMLDivElement, VellumTornSectionProps>(
-  ({ className, children, color = "#eaddc5", topTorn = true, bottomTorn = true, ...props }, ref) => {
+  ({ className, children, color = "#eaddc5", topTorn = true, bottomTorn = true, tearIntensity = 15, textColor = "#30180d", noiseOpacity = 0.15, animationSpeed = 8, ...props }, ref) => {
     const containerRef = useRef<HTMLDivElement>(null);
-    const filterId = `tornEdgeFilter_${instanceCount++}`;
+    const uniqueId = useId();
+    const filterId = `tornEdgeFilter_${uniqueId.replace(/:/g, "")}`;
 
     // Optional animation: very slow, subtle organic shifting of the torn edge
     useGSAP(() => {

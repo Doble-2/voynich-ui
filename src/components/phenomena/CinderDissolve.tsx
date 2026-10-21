@@ -194,7 +194,7 @@ const buildBurnPoints = (
   return points;
 };
 
-export interface CinderDissolveProps extends React.HTMLAttributes<HTMLElement> {
+export interface CinderDissolveProps extends Omit<React.HTMLAttributes<HTMLElement>, 'onProgress'> {
   /**
    * Elemento base para el contenedor. Funciona al igual que el prop 'as' de Framer Motion o Styled Components.
    */
@@ -275,6 +275,14 @@ export interface CinderDissolveProps extends React.HTMLAttributes<HTMLElement> {
    * Semilla ruidosa usada para el aleatorizado orgánico pero consistente (evita saltos al cambiar pausas).
    */
   burnSeed?: number;
+  /**
+   * Callback durante la animación, recibe el progreso actual (0–1).
+   */
+  onProgress?: (progress: number) => void;
+  /**
+   * Callback cuando la destrucción/animación se completa (progreso = 1).
+   */
+  onComplete?: () => void;
 }
 
 export const CinderDissolve = React.forwardRef<

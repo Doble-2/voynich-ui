@@ -28,6 +28,27 @@ En los registros perdidos del Códice, los alquimistas debían destruir pruebas 
     loop: true,
   },
   tags: ["autodocs"],
+  argTypes: {
+    progress: { control: { type: 'range', min: 0, max: 1, step: 0.01 }, description: 'Progreso de combustión (0–1)' },
+    animate: { control: 'boolean', description: 'Activar animación automática' },
+    paused: { control: 'boolean', description: 'Pausar la animación' },
+    pauseAt: { control: { type: 'range', min: 0, max: 1, step: 0.01 }, description: 'Detener en progreso específico' },
+    duration: { control: { type: 'range', min: 1, max: 20, step: 0.5 }, description: 'Duración del ciclo (s)' },
+    loop: { control: 'boolean', description: 'Repetir en bucle' },
+    origin: { control: 'select', options: ['top', 'right', 'bottom', 'left'], description: 'Dirección del efecto' },
+    mode: { control: 'select', options: ['burn', 'evaporate'], description: 'Modo visual' },
+    edgeWidth: { control: { type: 'range', min: 0.05, max: 0.35, step: 0.01 }, description: 'Ancho del borde' },
+    distortion: { control: { type: 'range', min: 0, max: 60, step: 1 }, description: 'Distorsión orgánica' },
+    turbulence: { control: { type: 'range', min: 0.005, max: 0.05, step: 0.001 }, description: 'Turbulencia del ruido' },
+    particleCount: { control: { type: 'range', min: 0, max: 30, step: 1 }, description: 'Cantidad de partículas' },
+    flameVariant: { control: 'select', options: ['front', 'particles'], description: 'Variante de llama' },
+    burnPattern: { control: 'select', options: ['center', 'edge'], description: 'Patrón de quemado' },
+    glowColor: { control: 'color', description: 'Color del resplandor' },
+    emberColor: { control: 'color', description: 'Color de las brasas' },
+    smokeColor: { control: 'color', description: 'Color del humo' },
+    pointAmount: { control: { type: 'range', min: 8, max: 60, step: 1 }, description: 'Puntos de perforación' },
+    burnSeed: { control: { type: 'range', min: 0, max: 100, step: 1 }, description: 'Semilla aleatoria' },
+  },
   decorators: [
     (Story) => (
       <div className="relative p-12 overflow-hidden flex items-center justify-center min-h-[400px]">

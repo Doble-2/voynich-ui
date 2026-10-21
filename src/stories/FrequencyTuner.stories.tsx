@@ -8,6 +8,12 @@ const meta = {
     layout: 'centered',
   },
   tags: ['autodocs'],
+  argTypes: {
+    min: { control: { type: 'number' }, description: 'Valor mínimo' },
+    max: { control: { type: 'number' }, description: 'Valor máximo' },
+    step: { control: { type: 'number' }, description: 'Incremento' },
+    value: { control: { type: 'range', min: 0, max: 100, step: 1 }, description: 'Valor actual' },
+  },
   decorators: [
     (Story) => (
       <div className="w-[300px] mt-10">

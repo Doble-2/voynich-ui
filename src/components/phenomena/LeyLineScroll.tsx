@@ -36,7 +36,7 @@ export const LeyLineScroll = React.forwardRef<HTMLDivElement, LeyLineScrollProps
       });
 
       // ScrollTrigger animation
-      gsap.to(path, {
+      const tween = gsap.to(path, {
         strokeDashoffset: 0,
         opacity: 1,
         ease: "none",
@@ -67,8 +67,12 @@ export const LeyLineScroll = React.forwardRef<HTMLDivElement, LeyLineScrollProps
         },
       });
 
+      // Capture the specific ScrollTrigger for scoped cleanup
+      const trigger = tween.scrollTrigger;
+
       return () => {
-        ScrollTrigger.getAll().forEach(t => t.kill());
+        trigger?.kill();
+        tween.kill();
       };
     }, { scope: containerRef });
 

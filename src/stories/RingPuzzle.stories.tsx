@@ -9,6 +9,12 @@ const meta = {
     layout: "centered",
   },
   tags: ["autodocs"],
+  argTypes: {
+    snapTolerance: { control: { type: 'range', min: 1, max: 30, step: 1 }, description: 'Tolerancia de encaje (grados)' },
+    showCenterPivot: { control: 'boolean', description: 'Mostrar pivote central' },
+    size: { control: { type: 'range', min: 200, max: 600, step: 10 }, description: 'Tamaño del puzzle (px)' },
+    disabled: { control: 'boolean', description: 'Desactivar interacción' },
+  },
 } satisfies Meta<typeof RingPuzzle>;
 
 export default meta;
@@ -21,23 +27,31 @@ export const Default: Story = {
         id: "outer",
         radius: 180,
         thickness: 60,
-        items: ["A", "B", "C", "D", "E", "F", "G", "H"],
+        items: ["☿", "♀", "♁", "♂", "♃", "♄", "♅", "♆"],
         initialRotation: 0,
         targetRotation: 0,
+        ringClassName: "bg-[#1a120b] text-[#eadbb6] border-[#5c331d] text-2xl",
+        itemOrientation: "upright" as const,
       },
       {
         id: "inner",
         radius: 120,
         thickness: 60,
-        items: ["1", "2", "3", "4", "5", "6"],
+        items: ["Ⅰ", "Ⅱ", "Ⅲ", "Ⅳ", "Ⅴ", "Ⅵ"],
         initialRotation: 45,
         targetRotation: 0,
+        ringClassName: "bg-[#21120a] text-[#5eead4] border-[#8b4a2a] text-xl font-serif",
       },
     ],
+    className: "bg-[#0d0905] border-2 border-[#5c331d]/50 shadow-[0_0_40px_rgba(94,234,212,0.05)]",
   },
   render: (args) => (
-    <div className="p-12 w-full flex justify-center bg-background rounded-lg border border-border">
+    <div className="p-12 w-full flex flex-col items-center gap-6">
+      <h3 className="text-sm font-serif text-[#eadbb6]/40 uppercase tracking-[0.3em]">Alineamiento Planetario</h3>
       <RingPuzzle {...args} />
+      <p className="text-xs text-[#5c331d] font-serif italic max-w-sm text-center">
+        Gira los anillos para alinear los símbolos alquímicos con sus numerales romanos correspondientes.
+      </p>
     </div>
   ),
 };
@@ -623,9 +637,9 @@ export const TimePicker: Story = {
       const pIndex = Math.round((360 - pRot) / 180) % 2;
 
       setTime({
-        h: hours[hIndex],
-        m: minutes[mIndex],
-        p: ampm[pIndex],
+        h: hours[hIndex] ?? "12",
+        m: minutes[mIndex] ?? "00",
+        p: ampm[pIndex] ?? "AM",
       });
     };
 

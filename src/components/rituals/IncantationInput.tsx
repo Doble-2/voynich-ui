@@ -4,11 +4,24 @@ import { useGSAP } from "@gsap/react";
 import { cn } from "../../lib/utils";
 
 export interface IncantationInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  /** Mostrar estado de error. @default false */
   error?: boolean;
+  /** Color del resplandor al focus. @default "#eadbb6" */
+  glowColor?: string;
+  /** Color del borde de error. @default "#991b1b" */
+  errorColor?: string;
+  /** Color de las chispas. @default "rgba(255, 215, 0, 0.4)" */
+  sparkColor?: string;
+  /** Color del texto. @default "#dfcda2" */
+  textColor?: string;
+  /** Color de fondo. @default "#18110b" */
+  bgColor?: string;
+  /** Etiqueta superior. */
+  label?: string;
 }
 
 export const IncantationInput = React.forwardRef<HTMLInputElement, IncantationInputProps>(
-  ({ className, error, onChange, ...props }, ref) => {
+  ({ className, error, onChange, glowColor = "#eadbb6", errorColor = "#991b1b", sparkColor = "rgba(255, 215, 0, 0.4)", textColor = "#dfcda2", bgColor = "#18110b", label, ...props }, ref) => {
     const inputRef = useRef<HTMLInputElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
     const [value, setValue] = useState("");

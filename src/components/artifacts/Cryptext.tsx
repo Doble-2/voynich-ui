@@ -46,6 +46,15 @@ export interface CryptextProps extends React.HTMLAttributes<HTMLSpanElement> {
    * @default "span"
    */
   as?: React.ElementType;
+  /**
+   * Iniciar la animación automáticamente al montar.
+   * @default true
+   */
+  autoStart?: boolean;
+  /**
+   * Callback cuando la revelación está completa.
+   */
+  onComplete?: () => void;
 }
 
 const DEFAULT_DICT =
@@ -66,6 +75,8 @@ export const Cryptext = forwardRef<CryptextRef, CryptextProps>(
       delay = 800,
       resolvePerFrame = 1,
       as: Tag = "span",
+      autoStart = true,
+      onComplete: onCompleteCb,
       className,
       ...props
     },
@@ -116,6 +127,7 @@ export const Cryptext = forwardRef<CryptextRef, CryptextProps>(
               duration: 0.8,
               ease: "sine.out",
             });
+            onCompleteCb?.();
           },
         });
 
@@ -143,14 +155,14 @@ export const Cryptext = forwardRef<CryptextRef, CryptextProps>(
       };
 
       // Disparador inicial
-      triggerScramble.current();
+      if (autoStart) triggerScramble.current();
 
       return () => {
         gsap.killTweensOf(state);
         gsap.killTweensOf(node);
         if (tickListener) gsap.ticker.remove(tickListener);
       };
-    }, { dependencies: [text, dictionary, speed, delay, resolvePerFrame] });
+    }, { dependencies: [text, dictionary, speed, delay, resolvePerFrame, autoStart, onCompleteCb] });
 
     useImperativeHandle(ref, () => ({
       scramble: () => triggerScramble.current(),

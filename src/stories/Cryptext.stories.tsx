@@ -18,6 +18,14 @@ El texto manuscrito de Voynich requiere transliteración. Cryptext interviene es
     },
   },
   tags: ["autodocs"],
+  argTypes: {
+    text: { control: 'text', description: 'Texto final a revelar' },
+    dictionary: { control: 'text', description: 'Glifos de encriptación' },
+    speed: { control: { type: 'range', min: 10, max: 200, step: 5 }, description: 'Velocidad de mutación (ms)' },
+    delay: { control: { type: 'range', min: 0, max: 3000, step: 100 }, description: 'Retraso antes de revelar (ms)' },
+    resolvePerFrame: { control: { type: 'range', min: 1, max: 5, step: 1 }, description: 'Glifos resueltos por frame' },
+    autoStart: { control: 'boolean', description: 'Iniciar automáticamente la animación' },
+  },
   decorators: [
     (Story) => (
       <div className="relative p-12 overflow-hidden flex items-center justify-center min-h-[300px] bg-[#f4e8d3]">

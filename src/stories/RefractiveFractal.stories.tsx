@@ -10,6 +10,15 @@ const meta = {
     layout: "centered",
   },
   tags: ["autodocs"],
+  argTypes: {
+    complexity: { control: { type: 'range', min: 1, max: 10, step: 1 }, description: 'Octavas del ruido Perlin (1=suave, 10=rugoso)' },
+    refractionFactor: { control: { type: 'range', min: 0, max: 300, step: 5 }, description: 'Fuerza de distorsión' },
+    frequency: { control: { type: 'range', min: 0.001, max: 0.2, step: 0.001 }, description: 'Escala del ruido fractal' },
+    seed: { control: { type: 'range', min: 0, max: 100, step: 1 }, description: 'Semilla del patrón' },
+    animate: { control: 'boolean', description: 'Activar respiración orgánica' },
+    speed: { control: { type: 'range', min: 1, max: 30, step: 1 }, description: 'Duración del ciclo (s)' },
+    isDisturbed: { control: 'boolean', description: 'Forzar estado de caos' },
+  },
 } satisfies Meta<typeof RefractiveFractal>;
 
 export default meta;

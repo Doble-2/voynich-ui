@@ -8,6 +8,11 @@ const meta = {
     layout: 'fullscreen',
   },
   tags: ['autodocs'],
+  argTypes: {
+    color: { control: 'color', description: 'Color de la línea base' },
+    glowColor: { control: 'color', description: 'Color del resplandor activo' },
+    strokeWidth: { control: { type: 'range', min: 1, max: 8, step: 0.5 }, description: 'Grosor del trazo (px)' },
+  },
   decorators: [
     (Story) => (
       <div className="bg-[#050302] flex relative min-h-screen text-[#eadbb6] p-10 font-serif">

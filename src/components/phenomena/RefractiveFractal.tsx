@@ -106,7 +106,6 @@ export const RefractiveFractal = React.forwardRef<
     // Merge directo entre el `forwardedRef` y nuestra `containerRef` interna
     const setRefs = React.useCallback(
       (node: HTMLElement | null) => {
-        // @ts-expect-error Types mismatch but it's safe 
         containerRef.current = node;
         if (typeof forwardedRef === "function") {
           forwardedRef(node);
@@ -121,7 +120,8 @@ export const RefractiveFractal = React.forwardRef<
     const [parsedFreqX, parsedFreqY] = typeof frequency === "string"
       ? frequency.split(" ").map(Number).concat(Number(frequency.split(" ")[0]))
       : [Number(frequency), Number(frequency)];
-    const actFreqY = isNaN(parsedFreqY) ? parsedFreqX : parsedFreqY;
+    const safeFreqX = parsedFreqX ?? Number(frequency);
+    const actFreqY = isNaN(parsedFreqY ?? NaN) ? safeFreqX : (parsedFreqY ?? safeFreqX);
 
     // Configuración intensiva de GSAP
     useGSAP(() => {
@@ -133,7 +133,7 @@ export const RefractiveFractal = React.forwardRef<
 
       // Objeto proxy para cambiar numéricamente evitando renders en React
       const proxy = {
-        freqX: parsedFreqX,
+        freqX: safeFreqX,
         freqY: actFreqY,
         scale: refractionFactor,
       };
@@ -150,7 +150,7 @@ export const RefractiveFractal = React.forwardRef<
       let breatheAnimation: gsap.core.Tween | null = null;
       if (animate) {
         breatheAnimation = gsap.to(proxy, {
-          freqX: parsedFreqX * 1.5,
+          freqX: safeFreqX * 1.5,
           freqY: actFreqY * 1.5,
           duration: speed / 2, // mitad debido al yoyo
           ease: "sine.inOut",
@@ -166,7 +166,7 @@ export const RefractiveFractal = React.forwardRef<
         
         gsap.killTweensOf(proxy);
         gsap.to(proxy, {
-          freqX: parsedFreqX * 2.5,
+          freqX: safeFreqX * 2.5,
           freqY: actFreqY * 0.8, // asimetría de ruido rasgado para verse místico
           scale: refractionFactor * 2.5, // "romperá" la tinta o contenedor fuertemente
           duration: 0.4,
@@ -178,7 +178,7 @@ export const RefractiveFractal = React.forwardRef<
       const calmDown = () => {
         gsap.killTweensOf(proxy);
         gsap.to(proxy, {
-          freqX: parsedFreqX,
+          freqX: safeFreqX,
           freqY: actFreqY,
           scale: refractionFactor,
           duration: 1.2,
@@ -214,7 +214,7 @@ export const RefractiveFractal = React.forwardRef<
       };
 
     }, {
-      dependencies: [animate, speed, parsedFreqX, actFreqY, refractionFactor, isDisturbed],
+      dependencies: [animate, speed, safeFreqX, actFreqY, refractionFactor, isDisturbed],
       scope: containerRef,
     });
 

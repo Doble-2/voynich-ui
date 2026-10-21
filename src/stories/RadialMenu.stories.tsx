@@ -8,6 +8,9 @@ const meta = {
     layout: "centered",
   },
   tags: ["autodocs"],
+  argTypes: {
+    radius: { control: { type: 'range', min: 20, max: 120, step: 5 }, description: 'Radio de dispersión (px)' },
+  },
 } satisfies Meta<typeof RadialMenu>;
 
 export default meta;

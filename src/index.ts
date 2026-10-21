@@ -1,6 +1,7 @@
 import './style.css';
 
 // Re-export of all components inside Voynich UI
+export { Button } from './components/rituals/Button';
 export { RingPuzzle } from './components/rituals/RingPuzzle';
 export { RadialMenu } from './components/rituals/RadialMenu';
 export { SacrificialButton } from './components/rituals/SacrificialButton';
@@ -29,6 +30,7 @@ export { IlluminatedDropcap } from './components/artifacts/IlluminatedDropcap';
 export { MarginaliaNotes } from './components/artifacts/MarginaliaNotes';
 
 // Types and Interfaces
+export type { ButtonProps } from './components/rituals/Button';
 export type { RingPuzzleProps, Ring, Ring as RingConfig } from './components/rituals/RingPuzzle';
 export type { RefractiveFractalProps } from './components/phenomena/RefractiveFractal';
 export type { CinderDissolveProps } from './components/phenomena/CinderDissolve';
@@ -51,3 +53,6 @@ export type { PalimpsestTextProps } from './components/artifacts/PalimpsestText'
 export type { TarotSpreadGridProps, TarotCard } from './components/artifacts/TarotSpreadGrid';
 export type { InvisibleInkBlockProps } from './components/artifacts/InvisibleInkBlock';
 export type { TypewriterStutterProps } from './components/artifacts/TypewriterStutter';
+export type { IlluminatedDropcapProps } from './components/artifacts/IlluminatedDropcap';
+export type { MarginaliaNotesProps } from './components/artifacts/MarginaliaNotes';
+
