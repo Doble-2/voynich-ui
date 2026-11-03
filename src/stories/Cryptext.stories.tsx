@@ -1,142 +1,76 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Cryptext, type CryptextRef } from "../components/artifacts/Cryptext";
+import { Button } from "../components/rituals/Button";
 import { useRef } from "react";
-import React from "react";
 
 const meta = {
-  title: "Components/Cryptext",
+  title: "Descifrar/Cryptext",
   component: Cryptext,
   parameters: {
     layout: "centered",
     docs: {
       description: {
-        component: `
-**Lore: Traducción Oculta - "Decodificador Alquímico"**
-El texto manuscrito de Voynich requiere transliteración. Cryptext interviene este proceso aplicando símbolos alquímicos/astrológicos ciclándolos rápidamente antes de su traducción real. Su apariencia y contrastes se alinean al soporte de \`vitela\`, evitando el aspecto hacker genérico.
-        `.trim(),
+        component:
+          "El texto aparece cifrado y se resuelve letra a letra, como un copista que transcribe un folio que aún no entiende. " +
+          "Los lectores de pantalla leen siempre el texto claro.",
       },
     },
   },
   tags: ["autodocs"],
   argTypes: {
-    text: { control: 'text', description: 'Texto final a revelar' },
-    dictionary: { control: 'text', description: 'Glifos de encriptación' },
-    speed: { control: { type: 'range', min: 10, max: 200, step: 5 }, description: 'Velocidad de mutación (ms)' },
-    delay: { control: { type: 'range', min: 0, max: 3000, step: 100 }, description: 'Retraso antes de revelar (ms)' },
-    resolvePerFrame: { control: { type: 'range', min: 1, max: 5, step: 1 }, description: 'Glifos resueltos por frame' },
-    autoStart: { control: 'boolean', description: 'Iniciar automáticamente la animación' },
+    text: { control: "text", description: "Texto final a revelar" },
+    dictionary: { control: "text", description: "Glifos que se alternan antes de resolver" },
+    speed: { control: { type: "range", min: 10, max: 200, step: 5 }, description: "Velocidad de mutación (ms)" },
+    delay: { control: { type: "range", min: 0, max: 3000, step: 100 }, description: "Retraso antes de revelar (ms)" },
+    resolvePerFrame: { control: { type: "range", min: 1, max: 5, step: 1 }, description: "Glifos resueltos por ciclo" },
+    autoStart: { control: "boolean", description: "Iniciar al montar" },
   },
-  decorators: [
-    (Story) => (
-      <div className="relative p-12 overflow-hidden flex items-center justify-center min-h-[300px] voy-paper">
-        <div className="pointer-events-none absolute inset-0 opacity-20 bg-[radial-gradient(#e0cda7_1px,transparent_1px)] [background-size:16px_16px] blur-[1px]"></div>
-        <Story />
-      </div>
-    ),
-  ],
 } satisfies Meta<typeof Cryptext>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const DefaultHackerTerminal: Story = {
-  args: {
-    text: "MANUSCRIPT.DECRYPTED",
-    speed: 55,
-    delay: 600,
-  },
-  parameters: {
-    docs: {
-      description: {
-        story: "Decodifica usando glifos astrológicos y runas (default).",
-      },
-    },
-  },
+export const Default: Story = {
+  args: { text: "Beinecke MS 408 · folio 1r", speed: 55, delay: 600 },
   render: (args) => (
-    <div className="p-8 voy-panel border border-voynich-inkMedium/30 rounded-[40%_10%_80%_20%/20%_60%_40%_90%] lg:w-[400px] max-w-full shadow-[inset_0_0_10px_rgba(97,52,24,0.1),0_4px_12px_rgba(0,0,0,0.2)]">
-      <div className="text-voynich-vellum text-opacity-90 font-manuscript text-lg tracking-widest uppercase flex flex-col gap-2 filter contrast-[1.1] brightness-[0.95] sepia-[0.3]">
-        <span>&gt; Aplicando solventes...</span>
-        <span>&gt; Revelando tintas simpáticas...</span>
-        <span className="text-[#8f5835] font-bold mt-4 font-smallcaps">
-          <Cryptext {...args} />
-        </span>
-      </div>
-    </div>
-  ),
-};
-
-export const RunasAlienigena: Story = {
-  args: {
-    text: "THE TRUTH IS IN THE ROOT",
-    dictionary: "⍙⍣⍜⍨⍓⍝⍢⍟⍱⍲⍭⍡⍐⍗⍌⍚⍯ᚠᚢᚦᚩᚱᚳᚷᚹᚻᚾᛁᛄ",
-    speed: 60,
-    delay: 1500,
-    resolvePerFrame: 1,
-  },
-  parameters: {
-    docs: {
-      description: {
-        story:
-          "Personalizando los glifos con un diccionario de símbolos paganos prolongando el retraso antes de la legibilidad.",
-      },
-    },
-  },
-  render: (args) => (
-    <div className="p-16 voy-panel flex flex-col items-center justify-center rounded-[2rem] border border-voynich-inkMedium/20 shadow-2xl relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-radial from-transparent to-[#0a0503] opacity-80" />
-      <span className="relative z-10 text-4xl text-[#dfcda2] font-smallcaps tracking-[0.3em] font-light max-w-xl text-center drop-shadow-[0_0_4px_rgba(223,205,162,0.4)] filter contrast-[1.2] brightness-[0.9] sepia-[0.3]">
+    <div className="voy-paper px-10 py-8 text-center">
+      <p className="voy-label text-[11px] opacity-60 mb-3">Signatura</p>
+      <span className="text-2xl text-voynich-inkDark">
         <Cryptext {...args} />
       </span>
     </div>
   ),
 };
 
-export const DecodificarHover: Story = {
-  args: { text: "VOYNICH CODEX" },
-  parameters: {
-    docs: {
-      description: {
-        story:
-          "Interactuando con Cryptext programáticamente mediante el uso de refs para disparar su animación onHover.",
-      },
-    },
+/** El alfabeto EVA es el que usan los investigadores para transcribir los glifos del Voynich a letras latinas. */
+export const TranscripcionEVA: Story = {
+  args: {
+    text: "fachys ykal ar ataiin shol shory",
+    dictionary: "acdefhiklmnopqrsty",
+    speed: 70,
+    delay: 1200,
   },
-  render: () => {
-    const cryptexRef = useRef<CryptextRef>(null);
+  render: (args) => (
+    <div className="voy-paper px-10 py-8 max-w-xl">
+      <p className="voy-label text-[11px] opacity-60 mb-3">Primer renglón del folio 1r, en EVA</p>
+      <span className="text-2xl italic text-voynich-inkDark">
+        <Cryptext {...args} className="normal-case" />
+      </span>
+    </div>
+  ),
+};
 
+/** `scramble()` vuelve a cifrar y resolver el texto: aquí, al pasar el cursor por el botón. */
+export const AlPasarLaPluma: Story = {
+  args: { text: "Rodolfo II · 600 ducados" },
+  render: (args) => {
+    const ref = useRef<CryptextRef>(null);
     return (
-      <div className="p-12 text-center flex flex-col items-center justify-center gap-6">
-        <p className="text-sm font-manuscript text-[#8f5835]">
-          Pasa la vela (hover) para revelar
-        </p>
-
-        <button
-          onMouseEnter={() => cryptexRef.current?.scramble()}
-          className="px-8 py-4 voy-paper text-voynich-inkDark border border-voynich-inkMedium/40 rounded-[40%_10%_80%_20%/20%_60%_40%_90%] shadow-[0_4px_12px_rgba(0,0,0,0.1),inset_0_0_15px_rgba(97,52,24,0.1)] hover:rotate-[0.5deg] active:scale-95 transition-all flex items-center gap-3 filter contrast-[1.1] brightness-[0.95] sepia-[0.3]"
-        >
-          <svg
-            className="w-5 h-5 text-[#8f5835]"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="1.5"
-              d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-            ></path>
-          </svg>
-          <Cryptext
-            ref={cryptexRef}
-            text="EXPEDIENTE 404"
-            delay={0}
-            speed={40}
-            resolvePerFrame={2}
-            className="font-bold tracking-widest font-smallcaps"
-            dictionary="☿♀♁♂♃♄♅♆♇"
-          />
-        </button>
+      <div className="flex flex-col items-center gap-4">
+        <p className="voy-label text-[11px] opacity-60">Pasa el cursor para volver a descifrar</p>
+        <Button variant="outline" onMouseEnter={() => ref.current?.scramble()} onFocus={() => ref.current?.scramble()}>
+          <Cryptext ref={ref} {...args} delay={0} speed={40} resolvePerFrame={2} dictionary="☿♀♁♂♃♄☉☽" />
+        </Button>
       </div>
     );
   },

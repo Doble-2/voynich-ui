@@ -3,7 +3,7 @@ import { Button } from "../components/rituals/Button";
 import React from "react";
 
 const meta = {
-  title: "Voynich UI/Button",
+  title: "Actuar/Button",
   component: Button,
   tags: ["autodocs"],
   parameters: {

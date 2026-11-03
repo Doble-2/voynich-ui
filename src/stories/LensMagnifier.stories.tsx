@@ -1,202 +1,86 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import {
-  LensMagnifier,
-  type LensMagnifierRef,
-} from "../components/phenomena/LensMagnifier";
+import { LensMagnifier, type LensMagnifierRef } from "../components/phenomena/LensMagnifier";
+import { Button } from "../components/rituals/Button";
+import { FOLIO_SRC } from "./assets/folio";
 import { useRef } from "react";
 
 const meta = {
-  title: "Components/LensMagnifier",
+  title: "Revelar/LensMagnifier",
   component: LensMagnifier,
   parameters: {
     layout: "centered",
+    docs: {
+      description: {
+        component:
+          "Una lente de cristal que amplía lo que hay debajo del cursor. Las «piedras de lectura» de cristal pulido " +
+          "ya se usaban en el siglo XIII para leer letra pequeña.",
+      },
+    },
   },
   tags: ["autodocs"],
+  args: { src: FOLIO_SRC, alt: "Folio de herbario con una planta y renglones en EVA" },
   argTypes: {
-    zoomLevel: { control: { type: 'range', min: 1, max: 6, step: 0.5 }, description: 'Nivel de zoom' },
-    lensSize: { control: { type: 'range', min: 50, max: 400, step: 10 }, description: 'Tamaño de la lente (px)' },
-    lensBorder: { control: { type: 'range', min: 0, max: 12, step: 1 }, description: 'Grosor del borde' },
-    lensShape: { control: 'select', options: ['circle', 'square', 'rounded-square'], description: 'Forma de la lente' },
-    filter: { control: 'select', options: ['none', 'sepia', 'grayscale', 'invert', 'vintage', 'x-ray'], description: 'Filtro visual' },
-    showHandle: { control: 'boolean', description: 'Mostrar mango de lupa' },
-    smoothFollowing: { control: 'boolean', description: 'Seguimiento suave del cursor' },
+    zoomLevel: { control: { type: "range", min: 1, max: 6, step: 0.5 }, description: "Nivel de zoom" },
+    lensSize: { control: { type: "range", min: 50, max: 400, step: 10 }, description: "Tamaño de la lente (px)" },
+    lensBorder: { control: { type: "range", min: 0, max: 12, step: 1 }, description: "Grosor del aro" },
+    lensShape: { control: "select", options: ["circle", "square", "rounded-square"], description: "Forma de la lente" },
+    filter: { control: "select", options: ["none", "sepia", "vintage"], description: "Tinte del cristal" },
+    showHandle: { control: "boolean", description: "Mostrar mango" },
+    smoothFollowing: { control: "boolean", description: "Seguimiento suave del cursor" },
   },
 } satisfies Meta<typeof LensMagnifier>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-// Usando una imagen confiable e impactante de Unsplash sobre manuscritos/libros antiguos.
-// Evitamos Wikimedia/Wikipedia para no sufrir de hotlinking o CORS rotos en localhost.
-const MANUSCRIPT_URL =
-  "https://images.unsplash.com/photo-1544816155-12df9643f363?q=80&w=1000&auto=format&fit=crop";
+const Frame = ({ title, hint, children }: { title: string; hint: string; children: React.ReactNode }) => (
+  <div className="voy-paper p-6 sm:p-8 flex flex-col gap-3">
+    <h3 className="text-2xl text-voynich-inkDark" style={{ fontFamily: "var(--voynich-font-display)" }}>{title}</h3>
+    <p className="italic text-voynich-inkMedium">{hint}</p>
+    {children}
+  </div>
+);
 
-export const InspectionMode: Story = {
-  args: {
-    src: MANUSCRIPT_URL,
-    zoomLevel: 2,
-    lensSize: 180,
-    lensBorder: 2,
-    smoothFollowing: true,
-  },
+export const Default: Story = {
+  args: { zoomLevel: 2, lensSize: 180, lensBorder: 2, smoothFollowing: true },
   render: (args) => (
-    <div className="flex flex-col gap-4 max-w-3xl">
-      <h3 className="text-xl font-bold font-manuscript">
-        Inspecciona el manuscrito
-      </h3>
-      <p className="text-voynich-vellum/60">
-        Pasa el ratón sobre la imagen para revelar los detalles ocultos.
-      </p>
-
-      <div className="p-2 voy-paper rounded shadow-xl inline-block border border-voynich-inkMedium/40">
-        <LensMagnifier {...args} className="w-[600px] max-w-full h-[400px] rounded-sm" />
-      </div>
-    </div>
+    <Frame title="Folio 1r" hint="Pasa el cursor sobre el folio para ampliar los glifos.">
+      <LensMagnifier {...args} className="w-[600px] max-w-full h-[420px]" />
+    </Frame>
   ),
 };
 
-export const DeepMicroscope: Story = {
-  args: {
-    src: MANUSCRIPT_URL,
-    zoomLevel: 5, // Enorme
-    lensSize: 120, // Pequeño y concentrado
-    smoothFollowing: false, // Inmediato sin spring (sentimiento de máquina/hardware)
-  },
+/** Lente con aro de latón y mango, con el cristal algo amarillento. */
+export const PiedraDeLectura: Story = {
+  args: { zoomLevel: 2.2, lensSize: 180, lensBorder: 8, lensShape: "circle", filter: "vintage", showHandle: true, smoothFollowing: true },
   render: (args) => (
-    <div className="flex flex-col gap-4 p-8 voy-panel text-voynich-vellum rounded relative">
-      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-600 via-rose-500 to-voynich-vermilion" />
-      <h3 className="text-sm font-smallcaps text-voynich-vermilion tracking-widest uppercase">
-        &gt;&gt;&gt; MICRO_SCAN_LENS_ACTVO
-      </h3>
-
-      <div className="border-4 border-voynich-inkMedium/40 p-1 relative group">
-        {/* Reticulo simulado */}
-        <div className="absolute inset-0 pointer-events-none z-20 flex items-center justify-center opacity-0 group-hover:opacity-30 transition-opacity">
-          <div className="w-full h-[1px] bg-voynich-vermilion/20 absolute" />
-          <div className="h-full w-[1px] bg-voynich-vermilion/20 absolute" />
-          <div className="w-16 h-16 border border-voynich-brass/40 rounded-full" />
-        </div>
-
-        <LensMagnifier
-          {...args}
-          className="w-[400px] max-w-full h-[400px] bg-black filter contrast-125 "
-        />
-      </div>
-    </div>
+    <Frame title="Piedra de lectura" hint="Una lupa de mano: aro de latón, mango y cristal envejecido.">
+      <LensMagnifier {...args} className="w-[600px] max-w-full h-[420px]" />
+    </Frame>
   ),
 };
 
-export const ManualResetMode: Story = {
-  args: {
-    src: "https://images.unsplash.com/photo-1524169358666-79f22534bc6e?q=80&w=1000&auto=format&fit=crop",
-  },
-  render: () => {
-    const lensRef = useRef<LensMagnifierRef>(null);
+/** Mucho aumento en una lente pequeña: para leer un solo glifo. */
+export const DetalleDelGlifo: Story = {
+  args: { zoomLevel: 5, lensSize: 120, smoothFollowing: false },
+  render: (args) => (
+    <Frame title="Detalle del glifo" hint="Aumento ×5 para distinguir trazos de pluma.">
+      <LensMagnifier {...args} className="w-[600px] max-w-full h-[420px]" />
+    </Frame>
+  ),
+};
 
+/** `resetZoom()` aparta la lente desde fuera del componente. */
+export const ControlImperativo: Story = {
+  render: (args) => {
+    const ref = useRef<LensMagnifierRef>(null);
     return (
-      <div className="flex flex-col gap-6 items-center">
-        <button
-          onClick={() => lensRef.current?.resetZoom()}
-          className="px-4 py-2 bg-emerald-600 text-voynich-vellum rounded shadow hover:bg-emerald-700"
-        >
-          Esconder Lente Temporalmente
-        </button>
-
-        <LensMagnifier
-          ref={lensRef}
-          src="https://images.unsplash.com/photo-1524169358666-79f22534bc6e?q=80&w=1000&auto=format&fit=crop"
-          zoomLevel={2.5}
-          lensSize={200}
-          className="w-[500px] max-w-full h-[300px] rounded-lg shadow-2xl"
-        />
-      </div>
+      <Frame title="Control desde fuera" hint="El botón aparta la lente del folio.">
+        <LensMagnifier ref={ref} {...args} zoomLevel={2.5} lensSize={200} className="w-[600px] max-w-full h-[420px]" />
+        <Button variant="outline" size="sm" onClick={() => ref.current?.resetZoom()} className="self-start">
+          Apartar la lente
+        </Button>
+      </Frame>
     );
   },
-};
-
-export const ClassicDetective: Story = {
-  args: {
-    src: MANUSCRIPT_URL,
-    zoomLevel: 2.2,
-    lensSize: 180,
-    lensBorder: 8,
-    lensShape: "circle",
-    filter: "vintage",
-    showHandle: true,
-    lensColor: "border-[#5c3a21]", // Color madera pura para el contorno
-    smoothFollowing: true,
-  },
-  render: (args) => (
-    <div
-      className="p-8 voy-paper rounded-xl shadow-inner border border-voynich-brass/40"
-      style={{
-        backgroundImage: "radial-gradient(#d4c4b7 1px, transparent 0)",
-        backgroundSize: "20px 20px",
-      }}
-    >
-      <h3 className="text-2xl font-manuscript text-[#5c3a21] mb-6 border-b-2 border-voynich-brass/40 pb-2 inline-block">
-        El Lente de Holmes
-      </h3>
-      <p className="text-voynich-vermilion mb-4 font-manuscript italic text-sm">
-        Una vista sepia cálida con marco circular clásico y mango integrado,
-        revelando escritos del pasado.
-      </p>
-      <div className="p-3 voy-paper rounded shadow-xl border border-voynich-brass/40">
-        <LensMagnifier {...args} className="w-[600px] max-w-full h-[400px] rounded-sm" />
-      </div>
-    </div>
-  ),
-};
-
-export const SciFiScanner: Story = {
-  args: {
-    src: "https://images.unsplash.com/photo-1524169358666-79f22534bc6e?q=80&w=1000&auto=format&fit=crop",
-    zoomLevel: 4,
-    lensSize: 220,
-    lensBorder: 3,
-    lensShape: "rounded-square",
-    filter: "x-ray",
-    showHandle: false,
-    lensColor: "border-voynich-glow shadow-[0_0_20px_rgba(34,211,238,0.5)]",
-    smoothFollowing: false, // Sin spring (sentimiento de hardware digital directo)
-  },
-  render: (args) => (
-    <div className="p-8 voy-panel rounded-3xl relative overflow-hidden border border-voynich-inkMedium/40 shadow-2xl">
-      <h3 className="text-voynich-glow font-smallcaps text-sm mb-4 tracking-[0.25em] animate-pulse flex items-center gap-3">
-        <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
-        [X-RAY_SCANNER_ONLINE]
-      </h3>
-      <div className="relative">
-        <LensMagnifier
-          {...args}
-          className="w-[600px] max-w-full h-[350px] rounded opacity-80"
-        />
-        <div className="absolute inset-0 pointer-events-none mix-blend-overlay opacity-20 bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,#000_2px,#000_4px)]"></div>
-      </div>
-    </div>
-  ),
-};
-
-export const TruthRevealer: Story = {
-  args: {
-    src: MANUSCRIPT_URL,
-    zoomLevel: 1.5,
-    lensSize: 300,
-    lensBorder: 10,
-    lensShape: "square",
-    filter: "invert",
-    showHandle: false,
-    lensColor: "border-white",
-  },
-  render: (args) => (
-    <div className="flex flex-col gap-3 items-center bg-black p-8 rounded-lg outline outline-1 outline-white/10">
-      <p className="text-voynich-vellum/30 tracking-[0.5em] text-xs font-smallcaps">
-        REVELACIÓN NEGATIVA CON LENTE CUADRADO
-      </p>
-      <LensMagnifier
-        {...args}
-        className="w-[600px] max-w-full h-[350px] rounded-md saturate-0"
-      />
-    </div>
-  ),
 };

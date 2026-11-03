@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { WaxSealShatter } from '../components/artifacts/WaxSealShatter';
 
 const meta = {
-  title: 'Artifacts/WaxSealShatter',
+  title: 'Revelar/WaxSealShatter',
   component: WaxSealShatter,
   parameters: {
     layout: 'centered',
@@ -29,32 +29,31 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const RoyalRed: Story = {
+export const LacreRojo: Story = {
   args: {
     revealText: 'Mantén presionado para romper el sello',
     sealColor: '#8b0000',
     children: (
       <div className="font-manuscript">
-        <h3 className="text-xl font-bold border-b border-voynich-inkDark/20 pb-2 mb-4">Decreto de Merge</h3>
+        <h3 className="text-xl font-bold border-b border-voynich-inkDark/20 pb-2 mb-4">Carta de Marci a Kircher</h3>
         <p className="opacity-80">
-          Por el presente documento se certifica que los conflictos de git han sido resueltos mediante
-          intervención manual. Cualquier divagación en la rama principal tras este acto será castigada 
-          con la desmantelación del servidor.
+          «Reverendo y distinguido señor, padre en Cristo: este libro, que me legó un amigo íntimo, lo destiné a vos
+          en cuanto llegó a mis manos, convencido de que solo vos podríais leerlo.»
         </p>
       </div>
     ),
   },
 };
 
-export const InquisitorBlack: Story = {
+export const LacreNegro: Story = {
   args: {
-    revealText: 'Romper para confesar secretos',
+    revealText: 'Romper el sello del boticario',
     sealColor: '#1a1a1a',
     children: (
-      <div className="font-smallcaps text-sm opacity-80">
-        <p>API_KEY_EXPOSED=true</p>
-        <p>DB_PASSWORD=0p3nS3sam3</p>
-        <p className="mt-4 text-xs italic opacity-50">Rotar estas claves hoy tarde.</p>
+      <div className="font-manuscript text-sm opacity-80">
+        <p>Tres partes de ruda, una de salvia.</p>
+        <p>Macérese nueve días en vino blanco.</p>
+        <p className="mt-4 text-xs italic opacity-60">No se dé a mujer encinta.</p>
       </div>
     ),
   },

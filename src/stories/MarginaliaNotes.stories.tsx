@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { MarginaliaNotes } from '../components/artifacts/MarginaliaNotes';
 
 const meta = {
-  title: 'Artifacts/MarginaliaNotes',
+  title: 'Leer/MarginaliaNotes',
   component: MarginaliaNotes,
   parameters: {
     layout: 'padded',

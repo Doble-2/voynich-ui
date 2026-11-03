@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { InvisibleInkBlock } from '../components/artifacts/InvisibleInkBlock';
 
 const meta = {
-  title: 'Artifacts/InvisibleInkBlock',
+  title: 'Revelar/InvisibleInkBlock',
   component: InvisibleInkBlock,
   parameters: {
     layout: 'padded',
@@ -31,14 +31,14 @@ type Story = StoryObj<typeof meta>;
 
 export const HoverReveal: Story = {
   args: {
-    text: "La sangre del servidor fue derramada en Producción.",
-    revealColor: "#ff4444",
+    text: "el libro pasó a manos del emperador Rodolfo",
+    revealColor: "#8b4a2a",
     interaction: "hover",
   },
   decorators: [
     (Story) => (
       <p>
-        Los registros antiguos dicen que aquel día, <Story /> Pero nadie quiso escuchar hasta que el caché estuvo lleno.
+        Según la carta de Marci, <Story />, que pagó por él una suma considerable.
       </p>
     )
   ]
@@ -46,14 +46,14 @@ export const HoverReveal: Story = {
 
 export const ClickReveal: Story = {
   args: {
-    text: "Pasa el token por la función de hash.",
+    text: "busca la tercera planta del folio 9.",
     revealColor: "#a34a33",
     interaction: "click",
   },
   decorators: [
     (Story) => (
       <p>
-        Para entrar a la sala secreta debes: <Story /> (Haz click para revelar)
+        La tinta de limón solo aparece con calor. La nota dice: <Story /> (haz clic para calentarla)
       </p>
     )
   ]

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { AbyssParallax } from '../components/phenomena/AbyssParallax';
 
 const meta = {
-  title: 'Phenomena/AbyssParallax',
+  title: 'Ambiente/AbyssParallax',
   component: AbyssParallax,
   parameters: {
     layout: 'fullscreen',
@@ -18,12 +18,11 @@ const meta = {
     (Story) => (
       <div className="voy-leather text-voynich-vellum">
         <div className="h-screen flex items-center justify-center border-b border-voynich-inkMedium font-manuscript text-3xl opacity-50">
-          Haz scroll hacia el abismo (↓)
+          Desplázate hacia abajo
         </div>
         <Story />
         <div className="h-screen flex flex-col items-center justify-center border-t border-voynich-inkMedium font-smallcaps opacity-50">
-          <h3>EOF</h3>
-          <p>Has escapado de las profundidades del Kernel.</p>
+          <p>Fin del folio.</p>
         </div>
       </div>
     ),
@@ -33,7 +32,8 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const DeepKernel: Story = {
+/** Capas a distinta velocidad: los folios de fondo se mueven despacio y el de delante, rápido. */
+export const FoliosSuperpuestos: Story = {
   args: {
     layers: [
       {
@@ -41,14 +41,14 @@ export const DeepKernel: Story = {
         scale: 0.5,
         blur: 10,
         opacity: 0.1,
-        content: <h1 className="text-[150px] font-bold text-[#402010]">ASSEMBLY</h1>,
+        content: <h1 className="text-[150px] font-display text-voynich-alchBrown">MCDIV</h1>,
       },
       {
         speed: 0.5,
         scale: 0.7,
         blur: 4,
         opacity: 0.3,
-        content: <h1 className="text-[120px] font-bold text-[#603020]">C</h1>,
+        content: <h1 className="text-[120px] font-display text-voynich-vermilion">ƒ 1r</h1>,
       },
       {
         speed: 1, // Base speed
@@ -56,10 +56,10 @@ export const DeepKernel: Story = {
         opacity: 0.8,
         content: (
           <div className="voy-panel p-12 border border-voynich-inkMedium rounded-xl shadow-2xl backdrop-blur-sm">
-            <h2 className="text-4xl font-manuscript mb-4">La Capa Observable: RUST</h2>
-            <p className="font-smallcaps text-sm max-w-md">
-              Cientos de abstracciones nos separan del silicio en combustión.
-              El Frontend solo es la pintura en la corteza de la Tierra.
+            <h2 className="text-4xl font-manuscript mb-4">Un códice, muchas manos</h2>
+            <p className="text-lg max-w-md">
+              Bajo el texto que lees hay otros: el del copista, el de quien lo corrigió y el de quien lo raspó para
+              escribir encima.
             </p>
           </div>
         ),
@@ -68,7 +68,7 @@ export const DeepKernel: Story = {
         speed: 2, // Moves much faster
         scale: 1.2,
         opacity: 1,
-        content: <div className="text-8xl p-5 backdrop-blur-sm font-black text-voynich-glow mix-blend-screen opacity-50 mt-96 blur-[1px]">REACT</div>,
+        content: <div className="text-8xl p-5 font-display text-voynich-gold opacity-60 mt-96">✦</div>,
       },
     ],
   },

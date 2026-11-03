@@ -194,7 +194,7 @@ export const Cryptext = forwardRef<CryptextRef, CryptextProps>(
         style={{ fontSize: "1em", letterSpacing: "0.12em", ...style }}
       >
         {/* Capa visual animada: los glifos aleatorios no deben leerse en voz alta. */}
-        <span ref={textRef} data-part="glyphs" aria-hidden="true" style={{ display: "inline-block", minWidth: `${text.length * 0.62}em` }}>
+        <span ref={textRef} data-part="glyphs" aria-hidden="true" style={{ display: "inline-block", minWidth: `min(${text.length * 0.62}em, 100%)` }}>
           {text}
         </span>
         {/* Texto real, siempre disponible para tecnologías de apoyo. */}

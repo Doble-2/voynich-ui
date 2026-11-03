@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { VoynichWelcome } from "./VoynichWelcome";
 
 const meta = {
-  title: "Welcome",
+  title: "Introducción/Bienvenida",
   component: VoynichWelcome,
   parameters: {
     layout: "fullscreen",

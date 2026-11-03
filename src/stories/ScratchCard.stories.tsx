@@ -1,120 +1,82 @@
-import { Button } from "../components/rituals/Button";
 import type { Meta, StoryObj } from "@storybook/react";
 import { ScratchCard, type ScratchCardRef } from "../components/artifacts/ScratchCard";
+import { Button } from "../components/rituals/Button";
+import { FOLIO_SRC } from "./assets/folio";
 import { useRef, useState } from "react";
 
 const meta = {
-  title: "Components/ScratchCard",
+  title: "Revelar/ScratchCard",
   component: ScratchCard,
   parameters: {
     layout: "centered",
+    docs: {
+      description: {
+        component:
+          "Una capa que se raspa con el cursor o el dedo para descubrir lo de debajo. Por defecto la capa es pan de oro. " +
+          "Con teclado, el botón «Revelar contenido» (visible al enfocar) la retira de una vez.",
+      },
+    },
   },
   tags: ["autodocs"],
   argTypes: {
-    width: { control: { type: 'range', min: 100, max: 600, step: 10 }, description: 'Ancho (px)' },
-    height: { control: { type: 'range', min: 100, max: 400, step: 10 }, description: 'Alto (px)' },
-    brushSize: { control: { type: 'range', min: 5, max: 60, step: 1 }, description: 'Tamaño del pincel (px)' },
-    brushHardness: { control: { type: 'range', min: 0, max: 1, step: 0.1 }, description: 'Dureza del pincel (0=suave, 1=duro)' },
-    clearThreshold: { control: { type: 'range', min: 0.1, max: 1, step: 0.05 }, description: 'Umbral de auto-revelación (0–1)' },
-    coverImage: { control: 'color', description: 'Color/imagen de cobertura' },
+    width: { control: { type: "range", min: 100, max: 600, step: 10 }, description: "Ancho máximo (px)" },
+    height: { control: { type: "range", min: 100, max: 400, step: 10 }, description: "Alto a ese ancho (px)" },
+    brushSize: { control: { type: "range", min: 5, max: 60, step: 1 }, description: "Tamaño del raspador (px)" },
+    brushHardness: { control: { type: "range", min: 0, max: 1, step: 0.1 }, description: "Dureza del borde (0 = suave)" },
+    clearThreshold: { control: { type: "range", min: 0.1, max: 1, step: 0.05 }, description: "Cuánto raspar antes de revelar todo" },
+    coverImage: { control: "color", description: "Color o imagen de la capa" },
   },
 } satisfies Meta<typeof ScratchCard>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-// Basic winning ticket
-export const WinningTicket: Story = {
+const Inscription = ({ children }: { children: React.ReactNode }) => (
+  <div className="w-full h-full voy-paper flex items-center justify-center p-6 text-center">
+    <p className="text-2xl italic text-voynich-inkDark">{children}</p>
+  </div>
+);
+
+/** Bajo el pan de oro de una capital había una nota del iluminador. */
+export const PanDeOro: Story = {
   render: () => {
-    const [won, setWon] = useState(false);
-
+    const [done, setDone] = useState(false);
     return (
-      <div className="flex flex-col items-center gap-4 p-8 voy-paper rounded-xl relative">
-        <h2 className="text-2xl font-bold text-voynich-inkDark">Raspa para ganar</h2>
-        <ScratchCard
-          width={400}
-          height={200}
-          coverImage="#9ca3af" // Tailwind gray-400 equivalent
-          brushSize={25}
-          clearThreshold={0.5}
-          onComplete={() => setWon(true)}
-          className="rounded-xl shadow-inner border border-voynich-inkMedium/40"
-        >
-          <div className="w-full h-full bg-gradient-to-br from-voynich-brass to-voynich-brass flex items-center justify-center relative overflow-hidden">
-            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20 mix-blend-overlay"></div>
-            <div className="text-center relative z-10">
-              <span className="text-6xl filter drop-shadow-md">💰</span>
-              <h3 className="text-3xl font-black text-voynich-vellum mt-2 drop-shadow-md">
-                ¡$1,000,000!
-              </h3>
-            </div>
-          </div>
+      <div className="voy-paper p-6 sm:p-8 flex flex-col items-center gap-4">
+        <p className="voy-label text-[11px] opacity-70">Raspa el oro</p>
+        <ScratchCard width={400} height={200} brushSize={25} clearThreshold={0.5} onComplete={() => setDone(true)}>
+          <Inscription>«Aquí va una A azul, no roja.»</Inscription>
         </ScratchCard>
-
-        {won && (
-          <p className="text-xl font-bold text-voynich-vermilion">
-            ¡Felicidades!
-          </p>
-        )}
+        <p className="italic text-voynich-inkMedium min-h-[1.5em]">{done ? "Una instrucción del copista al iluminador." : ""}</p>
       </div>
     );
   },
 };
 
-// Revealing an archaic map
-export const ArchaicMapReveal: Story = {
-  render: () => {
-    return (
-      <div className="p-12 voy-panel flex flex-col items-center justify-center rounded-2xl border border-voynich-inkMedium/40 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-30" />
-        <h2 className="text-voynich-vermilion/80 font-manuscript text-xl mb-6 tracking-widest uppercase relative z-10">
-          Despeja la ceniza
-        </h2>
-
-        <ScratchCard
-          width={500}
-          height={500}
-          // Usamos un gris oscuro como 'ceniza'
-          coverImage="#171717"
-          brushSize={30}
-          brushHardness={0.5} // Bordes suaves
-          clearThreshold={0.7} // Requiere más esfuerzo para limpiar
-          className="rounded-full shadow-2xl overflow-hidden ring-4 ring-rose-900/30"
-        >
-          {/* Un mapa viejo o un fractal debajo */}
-          <img
-            src="https://images.unsplash.com/photo-1584346893776-3b2d1c68e1ab?q=80&w=1000&auto=format&fit=crop"
-            alt="Ancient Map"
-            className="w-full h-full object-cover"
-          />
-        </ScratchCard>
-      </div>
-    );
-  },
+/** Una capa de hollín sobre el folio: hay que limpiar bastante (`clearThreshold` alto) y el borde es suave. */
+export const Hollin: Story = {
+  render: () => (
+    <div className="voy-panel p-6 sm:p-10 flex flex-col items-center gap-5">
+      <p className="voy-label text-[11px] text-voynich-vellum/70">Despeja el hollín</p>
+      <ScratchCard width={450} height={315} coverImage="rgb(28, 23, 16)" brushSize={30} brushHardness={0.5} clearThreshold={0.7}>
+        <img src={FOLIO_SRC} alt="Folio de herbario" className="w-full h-full object-cover" />
+      </ScratchCard>
+    </div>
+  ),
 };
 
+/** `clear()` y `reset()` permiten revelar u ocultar desde fuera. */
 export const ControlExterno: Story = {
   render: () => {
-    const cardRef = useRef<ScratchCardRef>(null);
-
+    const ref = useRef<ScratchCardRef>(null);
     return (
-      <div className="flex flex-col items-center gap-6 p-8 voy-paper rounded-xl border border-voynich-inkMedium/40 shadow-sm">
-        <ScratchCard
-          ref={cardRef}
-          width={300}
-          height={300}
-          
-          brushSize={20}
-          className="rounded-lg shadow-inner"
-        >
-          <div className="w-full h-full voy-paper flex items-center justify-center">
-            <span className="text-4xl">😎</span>
-          </div>
+      <div className="voy-paper p-6 sm:p-8 flex flex-col items-center gap-6">
+        <ScratchCard ref={ref} width={300} height={300} brushSize={20}>
+          <Inscription>Folio 116v: la última página, con unas líneas escritas por otra mano.</Inscription>
         </ScratchCard>
-
         <div className="flex gap-4">
-          <Button variant="outline" size="sm" onClick={() => cardRef.current?.reset()}>Resetear / Ocultar</Button>
-          <Button size="sm" onClick={() => cardRef.current?.clear()}>Revelar todo</Button>
+          <Button variant="outline" size="sm" onClick={() => ref.current?.reset()}>Volver a cubrir</Button>
+          <Button size="sm" onClick={() => ref.current?.clear()}>Revelar todo</Button>
         </div>
       </div>
     );

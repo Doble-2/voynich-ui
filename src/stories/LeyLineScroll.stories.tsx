@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { LeyLineScroll } from '../components/phenomena/LeyLineScroll';
 
 const meta = {
-  title: 'Phenomena/LeyLineScroll',
+  title: 'Ambiente/LeyLineScroll',
   component: LeyLineScroll,
   parameters: {
     layout: 'fullscreen',
@@ -19,20 +19,19 @@ const meta = {
         <div className="flex-1 space-y-96 pl-24 pt-48 pb-[100vh]">
           <h1 className="text-6xl font-bold">Capítulo I: El Origen</h1>
           <p className="text-xl max-w-xl opacity-70">
-            Nuestros ancestros no escribían código, escribían constelaciones de silicio.
-            Sigue la línea dorada hacia abajo para iniciar el compilador estelar.
+            En 1912, el librero Wilfrid Voynich compró el manuscrito en una villa jesuita cerca de Roma.
+            Sigue la línea hacia abajo.
           </p>
           <div className="h-96" />
-          <h2 className="text-4xl font-bold text-voynich-glow">Nodo 2: Recursividad</h2>
+          <h2 className="text-4xl font-bold text-voynich-gold">Capítulo II: Las manos</h2>
           <p className="text-xl max-w-xl opacity-70">
-            Todo aquello que desciende debe volver a llamarse a sí mismo hasta que
-            los recursos de memoria quiebren o la lógica encuentre su salvación en
-            la condición base.
+            Antes pasó por Praga: por el alquimista Georg Baresch, por Marci y, según la carta de este, por la
+            corte del emperador Rodolfo II.
           </p>
           <div className="h-96" />
-          <h2 className="text-4xl font-bold text-[#a02020]">El Final del Stack</h2>
+          <h2 className="text-4xl font-bold text-voynich-vermilion">Capítulo III: Beinecke MS 408</h2>
           <p className="text-xl max-w-xl opacity-70">
-            Has vaciado el buffer.
+            Desde 1969 está en la Biblioteca Beinecke de Yale. Sigue sin leerse.
           </p>
         </div>
         <div className="w-1/3 pt-10 sticky top-0 h-screen overflow-hidden">

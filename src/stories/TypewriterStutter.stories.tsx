@@ -1,23 +1,31 @@
-import React, { useState } from 'react';
-import type { Meta, StoryObj } from '@storybook/react';
-import { TypewriterStutter } from '../components/artifacts/TypewriterStutter';
+import { useState } from "react";
+import type { Meta, StoryObj } from "@storybook/react";
+import { TypewriterStutter } from "../components/artifacts/TypewriterStutter";
+import { Button } from "../components/rituals/Button";
 
 const meta = {
-  title: 'Artifacts/TypewriterStutter',
+  title: "Leer/TypewriterStutter",
   component: TypewriterStutter,
   parameters: {
-    layout: 'padded',
+    layout: "padded",
+    docs: {
+      description: {
+        component:
+          "Un escriba copiando: el texto aparece letra a letra, con algún error que se corrige al momento y algún " +
+          "retroceso. El texto completo está siempre disponible para lectores de pantalla.",
+      },
+    },
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
-    text: { control: 'text', description: 'Texto a escribir' },
-    speed: { control: { type: 'range', min: 20, max: 300, step: 10 }, description: 'Velocidad de escritura (ms)' },
-    startDelay: { control: { type: 'range', min: 0, max: 3000, step: 100 }, description: 'Retraso inicial (ms)' },
-    textColor: { control: 'color', description: 'Color del texto' },
-    cursorColor: { control: 'color', description: 'Color del cursor (por defecto = textColor)' },
-    showCursor: { control: 'boolean', description: 'Mostrar cursor parpadeante' },
-    loop: { control: 'boolean', description: 'Repetir escritura en bucle' },
-    glitchRate: { control: { type: 'range', min: 0, max: 0.5, step: 0.01 }, description: 'Probabilidad de glitch (0-1)' },
+    text: { control: "text", description: "Texto a copiar" },
+    speed: { control: { type: "range", min: 20, max: 300, step: 10 }, description: "Velocidad (ms por letra)" },
+    startDelay: { control: { type: "range", min: 0, max: 3000, step: 100 }, description: "Retraso inicial (ms)" },
+    textColor: { control: "color", description: "Color de la tinta" },
+    cursorColor: { control: "color", description: "Color de la pluma (por defecto, el de la tinta)" },
+    showCursor: { control: "boolean", description: "Mostrar la pluma" },
+    loop: { control: "boolean", description: "Repetir" },
+    glitchRate: { control: { type: "range", min: 0, max: 0.5, step: 0.01 }, description: "Probabilidad de error por letra" },
   },
 } satisfies Meta<typeof TypewriterStutter>;
 
@@ -26,98 +34,50 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    text: "INICIANDO INSERCIÓN... MÚLTIPLES VULNERABILIDADES DETECTADAS... REESCRIBIENDO HISTORIAL...",
+    text: "Este libro fue datado por radiocarbono entre 1404 y 1438. Nadie ha sabido leerlo.",
     speed: 60,
-    textColor: "#eadbb6"
   },
   render: (args) => (
-    <div className="relative p-8 max-w-2xl mx-auto rounded border border-voynich-inkMedium/20"
-      style={{ background: 'linear-gradient(170deg, #0d0905 0%, #1a120b 50%, #0d0905 100%)' }}
-    >
-      {/* Terminal scan line effect */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden rounded opacity-10"
-        style={{ background: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(94,234,212,0.03) 2px, rgba(94,234,212,0.03) 4px)' }}
-      />
-      {/* Top status bar */}
-      <div className="flex items-center gap-2 mb-4 pb-3 border-b border-voynich-inkMedium/20">
-        <div className="w-2 h-2 rounded-full bg-voynich-glow animate-pulse shadow-[0_0_6px_rgba(94,234,212,0.5)]" />
-        <span className="text-[10px] font-smallcaps text-voynich-inkMedium uppercase tracking-wider">terminal voynich — sesión activa</span>
-      </div>
-      <div className="pl-4 border-l-2 border-voynich-glow/20">
-        <span className="text-[10px] font-smallcaps text-voynich-glow/30 mr-2">{'>>'}</span>
-        <TypewriterStutter {...args} />
-      </div>
+    <div className="voy-paper max-w-xl mx-auto p-8 sm:p-10 text-xl text-voynich-inkDark">
+      <TypewriterStutter {...args} />
     </div>
   ),
 };
 
-export const CursedMessage: Story = {
+export const Transcripcion: Story = {
   args: {
-    text: "He leído tu código fuente. Está lleno de promesas que jamás se cumplirán.",
-    speed: 100,
-    textColor: "#dc2626"
-  },
-  render: (args) => (
-    <div className="relative p-10 max-w-xl mx-auto text-center"
-      style={{ background: 'radial-gradient(ellipse at center, rgba(139,0,0,0.08) 0%, transparent 70%)' }}
-    >
-      <div className="absolute top-4 left-1/2 -translate-x-1/2 text-voynich-vermilion text-6xl select-none pointer-events-none">⚠</div>
-      <div className="mt-12 font-manuscript text-lg leading-loose">
-        <TypewriterStutter {...args} />
-      </div>
-      <div className="mt-8 h-px w-32 mx-auto bg-gradient-to-r from-transparent via-red-900/30 to-transparent" />
-    </div>
-  ),
-};
-
-export const ManuscriptTranscription: Story = {
-  args: {
-    text: "...y el copista anotó en el margen: las hojas de la planta borrosa no corresponden a ninguna especie conocida. El pigmento utilizado emite un resplandor tenue bajo la luz lunar. Los glifos del folio 68 permanecen sin descifrar...",
+    text: "…y el copista anotó en el margen: las hojas de la planta no corresponden a ninguna especie conocida. Los glifos del folio 68 permanecen sin descifrar.",
     speed: 80,
-    textColor: "#c4a97d"
   },
   render: (args) => (
-    <div className="relative max-w-lg mx-auto p-10 border border-voynich-inkMedium/15"
-      style={{ 
-        background: 'linear-gradient(135deg, #1a140e 0%, #211a10 50%, #1a140e 100%)',
-        borderRadius: '2px 12px 4px 8px',
-      }}
-    >
-      <div className="absolute top-3 right-4 text-[8px] font-smallcaps text-voynich-inkMedium/30 italic">folio XLVII r</div>
-      <div className="font-manuscript text-base leading-loose italic"
-        style={{ filter: 'sepia(0.3) contrast(1.1) brightness(0.95)' }}
-      >
+    <div className="voy-paper relative max-w-lg mx-auto p-8 sm:p-10">
+      <div className="absolute top-3 right-4 text-xs italic text-voynich-inkMedium">folio 68r</div>
+      <div className="text-lg leading-loose italic text-voynich-inkDark">
         <TypewriterStutter {...args} />
-      </div>
-      <div className="mt-6 flex justify-between items-center">
-        <div className="h-px flex-1 bg-gradient-to-r from-[#5c331d]/30 to-transparent" />
-        <span className="px-3 text-[10px] text-voynich-inkMedium/40 font-manuscript">☽ Anno Domini MCDIV ☽</span>
-        <div className="h-px flex-1 bg-gradient-to-l from-[#5c331d]/30 to-transparent" />
       </div>
     </div>
   ),
 };
 
-export const InteractiveTrigger = () => {
-    const [msgs, setMsgs] = useState<string[]>([]);
-    
-    return (
-      <div className="flex flex-col gap-6 max-w-lg mx-auto">
-        <button 
-          onClick={() => setMsgs([...msgs, "Comunicativo desde el Abismo (Petición HTTP completada) \n"])}
-          className="self-start text-xs voy-panel border border-voynich-inkMedium px-5 py-2.5 text-voynich-vellum font-manuscript uppercase tracking-wider hover:bg-[#30180d] hover:border-voynich-alchBrown transition-all duration-300"
-          style={{ borderRadius: '40% 10% 80% 20% / 20% 60% 40% 90%' }}
-        >
-          ✦ Canalizar Mensaje
-        </button>
-        <div className="border-l-2 border-voynich-inkMedium/30 pl-5 flex flex-col gap-3 min-h-[60px]">
-          {msgs.length === 0 && (
-            <p className="text-xs text-voynich-inkMedium/30 italic font-manuscript">Esperando transmisión...</p>
-          )}
-          {msgs.map((m, i) => (
-            <TypewriterStutter key={i} text={m} speed={40} textColor="rgb(var(--voynich-vellum))" />
-          ))}
-        </div>
+/** Cada pulsación añade una línea dictada al escriba. */
+export const AlDictado = () => {
+  const LINEAS = [
+    "Ítem: una raíz como de nabo, con hojas anchas.",
+    "Ítem: una flor azul de ocho pétalos.",
+    "Ítem: no se halla en ningún herbario conocido.",
+  ];
+  const [n, setN] = useState(0);
+  return (
+    <div className="voy-paper max-w-lg mx-auto p-8 flex flex-col gap-5">
+      <Button size="sm" className="self-start" disabled={n >= LINEAS.length} onClick={() => setN(n + 1)}>
+        Dictar la siguiente
+      </Button>
+      <div className="flex flex-col gap-2 min-h-[6rem] text-voynich-inkDark">
+        {n === 0 && <p className="italic text-voynich-inkMedium">El escriba espera.</p>}
+        {LINEAS.slice(0, n).map((l) => (
+          <TypewriterStutter key={l} text={l} speed={45} />
+        ))}
       </div>
-    );
-  };
+    </div>
+  );
+};

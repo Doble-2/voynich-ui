@@ -5,7 +5,7 @@ import { RingPuzzle } from "../components/rituals/RingPuzzle";
 import { AstrolabeRete } from "../components/phenomena/AstrolabeRete";
 
 const meta = {
-  title: "Escenas/Scriptorium",
+  title: "Introducción/Scriptorium",
   parameters: {
     layout: "fullscreen",
     bare: true,

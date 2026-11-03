@@ -5,7 +5,7 @@ import { Surface, type SurfaceMaterial } from "../components/primitives/Surface"
 import { RingPuzzle, useRingPuzzle, type Ring } from "../components/rituals/RingPuzzle";
 
 const meta = {
-  title: "Personalización/Partes y materiales",
+  title: "Introducción/Personalización",
   parameters: {
     layout: "fullscreen",
     bare: true,

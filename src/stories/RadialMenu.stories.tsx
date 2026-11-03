@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { RadialMenu, type RadialMenuItem } from "../components/rituals/RadialMenu";
 
 const meta = {
-  title: "Components/RadialMenu",
+  title: "Actuar/RadialMenu",
   component: RadialMenu,
   parameters: {
     layout: "centered",

@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { IlluminatedDropcap } from '../components/artifacts/IlluminatedDropcap';
 
 const meta = {
-  title: 'Artifacts/IlluminatedDropcap',
+  title: 'Leer/IlluminatedDropcap',
   component: IlluminatedDropcap,
   parameters: {
     layout: 'padded',

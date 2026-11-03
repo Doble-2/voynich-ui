@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { IncantationInput } from '../components/rituals/IncantationInput';
 
 const meta = {
-  title: 'Rituals/IncantationInput',
+  title: 'Descifrar/IncantationInput',
   component: IncantationInput,
   parameters: {
     layout: 'centered',
@@ -32,13 +32,13 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    placeholder: 'Escribe el conjuro de búsqueda...',
+    placeholder: 'Busca una palabra en EVA…',
   },
 };
 
 export const ErrorState: Story = {
   args: {
-    placeholder: 'Sintaxis inválida...',
+    placeholder: 'Esa palabra no aparece en el folio',
     error: true,
   },
 };

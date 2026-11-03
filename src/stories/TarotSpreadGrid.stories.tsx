@@ -1,15 +1,22 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { TarotSpreadGrid } from '../components/artifacts/TarotSpreadGrid';
+import type { Meta, StoryObj } from "@storybook/react";
+import { TarotSpreadGrid } from "../components/artifacts/TarotSpreadGrid";
 
 const meta = {
-  title: 'Artifacts/TarotSpreadGrid',
+  title: "Revelar/TarotSpreadGrid",
   component: TarotSpreadGrid,
   parameters: {
-    layout: 'fullscreen',
+    layout: "fullscreen",
+    docs: {
+      description: {
+        component:
+          "Cartas que se reparten boca abajo y se voltean. El tarot nace en el norte de Italia hacia 1440, " +
+          "la misma época del manuscrito. Aquí, cada carta es una de las secciones del Voynich.",
+      },
+    },
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
-    spreadType: { control: 'select', options: ['fan', 'cross', 'grid'], description: 'Tipo de distribución' },
+    spreadType: { control: "select", options: ["fan", "cross", "grid"], description: "Tipo de distribución" },
   },
   decorators: [
     (Story) => (
@@ -23,30 +30,23 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const DEMO_CARDS = [
-  { id: '1', title: 'The Docker', description: 'El contenedor aísla tus pecados del mundo.', frontImage: <div className="absolute inset-4 border-2 border-dashed border-voynich-inkMedium flex items-center justify-center font-bold text-4xl opacity-50">🐳</div> },
-  { id: '2', title: 'The Typescript', description: 'Ataduras y contratos fuertes que aseguran tu camino al Cielo compilar.', frontImage: <div className="absolute inset-4 border-2 border-dotted border-voynich-inkMedium flex items-center justify-center font-bold text-4xl opacity-50">TS</div> },
-  { id: '3', title: 'The CI/CD', description: 'La rueda eterna de integración rompe toda inmutabilidad.', frontImage: <div className="absolute inset-4 border-4 rounded-full border-voynich-inkMedium flex items-center justify-center font-bold text-4xl opacity-50">⚙️</div> },
-  { id: '4', title: 'The Legacy Code', description: 'Espíritus del pasado que aún acechan y tiran abajo el performance.', frontImage: <div className="absolute inset-4 border-2 bg-[#30180d] border-voynich-inkMedium flex items-center justify-center font-bold text-4xl">👻</div> },
+const Numeral = ({ n }: { n: string }) => (
+  <div className="absolute inset-4 border border-voynich-inkMedium/50 flex items-center justify-center">
+    <span style={{ fontFamily: "var(--voynich-font-display)" }} className="text-5xl text-voynich-vermilion">
+      {n}
+    </span>
+  </div>
+);
+
+const SECCIONES = [
+  { id: "herbario", title: "El Herbario", description: "Plantas que ningún botánico ha sabido identificar.", frontImage: <Numeral n="I" /> },
+  { id: "astros", title: "Los Astros", description: "Círculos de estrellas y signos del zodiaco.", frontImage: <Numeral n="II" /> },
+  { id: "banos", title: "Los Baños", description: "Figuras en piscinas unidas por tubos.", frontImage: <Numeral n="III" /> },
+  { id: "recetas", title: "Las Recetas", description: "Párrafos breves, cada uno marcado con una estrella.", frontImage: <Numeral n="IV" /> },
 ];
 
-export const FanSpread: Story = {
-  args: {
-    cards: DEMO_CARDS,
-    spreadType: 'fan',
-  },
-};
+export const Abanico: Story = { args: { cards: SECCIONES, spreadType: "fan" } };
 
-export const CelticCross: Story = {
-  args: {
-    cards: DEMO_CARDS,
-    spreadType: 'cross',
-  },
-};
+export const Cruz: Story = { args: { cards: SECCIONES, spreadType: "cross" } };
 
-export const GridInventory: Story = {
-  args: {
-    cards: DEMO_CARDS,
-    spreadType: 'grid',
-  },
-};
+export const Rejilla: Story = { args: { cards: SECCIONES, spreadType: "grid" } };

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { FrequencyTuner } from '../components/rituals/FrequencyTuner';
 
 const meta = {
-  title: 'Rituals/FrequencyTuner',
+  title: 'Descifrar/FrequencyTuner',
   component: FrequencyTuner,
   parameters: {
     layout: 'centered',
@@ -26,20 +26,27 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+/** La alidada de un astrolabio: gira hasta la altura de la estrella (52°) y queda sintonizada. */
 export const Default: Story = {
   args: {
     min: 0,
-    max: 100,
+    max: 90,
     value: 30,
     step: 0.5,
+    tunedValue: 52,
+    unit: "°",
+    "aria-label": "Altura de la estrella",
   },
 };
 
-export const GhostFrequency: Story = {
+/** Escala estrecha con paso fino: hay que buscar la marca con cuidado. */
+export const AjusteFino: Story = {
   args: {
     min: 80,
     max: 120,
-    value: 100, // Pre-tuned to default middle
+    value: 96,
     step: 0.1,
+    tunedValue: 100.4,
+    unit: "°",
   },
 };

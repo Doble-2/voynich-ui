@@ -4,7 +4,7 @@ import { AstrolabeRete } from "../components/phenomena/AstrolabeRete";
 import { useState, useRef, useEffect } from "react";
 
 const meta = {
-  title: "Components/RingPuzzle",
+  title: "Descifrar/RingPuzzle",
   component: RingPuzzle,
   parameters: {
     layout: "centered",
@@ -142,7 +142,7 @@ const SunFaceGraphic = () => (
   </svg>
 );
 
-export const AdvancedDynamicRings: Story = {
+export const AstrolabioPlanetario: Story = {
   args: {
     rings: [],
   },
@@ -285,7 +285,7 @@ export const AdvancedDynamicRings: Story = {
 
         {message && (
           <div
-            className={`absolute bottom-[-60px] text-2xl font-manuscript text-center w-[600px] max-w-full z-10 transition-all duration-700 ${solved ? "text-[#ffefa0] drop-shadow-[0_0_15px_rgba(255,200,100,1)]" : "text-[#a27e53]"}`}
+            className={`absolute bottom-[-60px] text-2xl font-manuscript text-center w-[600px] max-w-full z-10 transition-all duration-700 ${solved ? "text-voynich-gold" : "text-[#a27e53]"}`}
           >
             {message}
           </div>
@@ -295,7 +295,7 @@ export const AdvancedDynamicRings: Story = {
   },
 };
 
-export const TextInputVariant: Story = {
+export const CofreConPalabra: Story = {
   args: {
     rings: [],
   },
@@ -357,15 +357,15 @@ export const TextInputVariant: Story = {
     }, [inputValue, isUnlocked, isAnimating]);
 
     return (
-      <div className="flex flex-col items-center gap-8 p-12 w-full max-w-2xl bg-background rounded-xl border border-border shadow-lg font-manuscript">
+      <div className="flex flex-col items-center gap-8 p-6 sm:p-12 w-full max-w-2xl voy-paper font-manuscript">
         <div className="text-center space-y-2">
-          <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-emerald-400">
-            {isUnlocked ? "¡Módulo Desbloqueado!" : "Portal de Seguridad"}
+          <h2 className="text-3xl font-display text-voynich-inkDark">
+            {isUnlocked ? "El cofre se abre" : "Cofre del boticario"}
           </h2>
-          <p className="text-muted-foreground text-sm max-w-sm mx-auto">
+          <p className="text-voynich-inkMedium italic max-w-sm mx-auto">
             {isUnlocked
-              ? "Acceso concedido al sanctum interior."
-              : "Introduce la contraseña o alinea los anillos manualmente para acceder."}
+              ? "Dentro hay un folio doblado en cuatro."
+              : "Escribe la palabra o alinea los anillos a mano."}
           </p>
         </div>
 
@@ -375,17 +375,17 @@ export const TextInputVariant: Story = {
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             disabled={isUnlocked || isAnimating}
-            placeholder="Contraseña..."
-            className="w-full px-4 py-3 rounded-md border-2 border-voynich-inkMedium/40 voy-panel text-voynich-vellum text-center font-smallcaps text-xl uppercase tracking-widest focus:outline-none focus:border-blue-500 disabled:opacity-50 transition-colors"
+            placeholder="Palabra…"
+            className="w-full px-4 py-3 rounded-md border-2 border-voynich-inkMedium/40 voy-panel text-voynich-vellum text-center font-smallcaps text-xl uppercase tracking-widest focus:outline-none focus:border-voynich-gold disabled:opacity-50 transition-colors"
           />
-          <span className="absolute -bottom-6 left-0 right-0 text-center text-xs text-muted-foreground opacity-50 font-smallcaps">
+          <span className="absolute -bottom-6 left-0 right-0 text-center text-xs text-voynich-inkMedium font-smallcaps">
             Pista: VOYNICH
           </span>
         </div>
 
         <div className="relative mt-6 w-full transition-all duration-1000 ease-in-out">
           <div
-            className={`transition-all duration-1000 ${isUnlocked ? "scale-110 drop-shadow-[0_0_40px_rgba(56,189,248,0.4)]" : "scale-100"}`}
+            className={`transition-all duration-1000 ${isUnlocked ? "scale-105" : "scale-100"}`}
           >
             <RingPuzzle
               ref={puzzleRef}
@@ -408,9 +408,9 @@ export const TextInputVariant: Story = {
           <div
             className={`absolute inset-0 flex items-center justify-center voy-panel backdrop-blur-md rounded-full transition-all duration-1000 pointer-events-none custom-transition ${isUnlocked ? "opacity-100 scale-100" : "opacity-0 scale-50"}`}
           >
-            <div className="text-center p-8 bg-voynich-leather text-voynich-vellum rounded-full h-80 w-80 flex flex-col items-center justify-center border-4 border-voynich-glow shadow-2xl transform transition-transform duration-700 delay-300">
+            <div className="text-center p-8 bg-voynich-leather text-voynich-vellum rounded-full h-80 w-80 flex flex-col items-center justify-center border-4 border-voynich-gold shadow-2xl transform transition-transform duration-700 delay-300">
               <svg
-                className="w-20 h-20 mb-4 text-voynich-glow drop-shadow-[0_0_10px_rgba(52,211,153,0.8)]"
+                className="w-20 h-20 mb-4 text-voynich-gold"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -422,12 +422,7 @@ export const TextInputVariant: Story = {
                   d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
-              <h3 className="font-bold text-2xl tracking-wider mb-2 text-voynich-glow">
-                ACCESO
-                <br />
-                CONCEDIDO
-              </h3>
-              <div className="h-1 w-16 bg-emerald-500/50 rounded animate-pulse mt-2"></div>
+              <h3 className="font-smallcaps text-2xl tracking-wider mb-2 text-voynich-gold">Abierto</h3>
             </div>
           </div>
         </div>
@@ -436,7 +431,7 @@ export const TextInputVariant: Story = {
   },
 };
 
-export const CaesarCipher: Story = {
+export const DiscoDeCifrado: Story = {
   args: { rings: [] },
   render: () => {
     // Generar alfabeto A-Z
@@ -444,7 +439,7 @@ export const CaesarCipher: Story = {
       String.fromCharCode(65 + i),
     );
     const [shift, setShift] = useState(0);
-    const [message, setMessage] = useState("HOLA MUNDO");
+    const [message, setMessage] = useState("ALEA IACTA EST");
 
     const handleChange = (
       _: Record<string, boolean>,
@@ -536,7 +531,7 @@ export const CaesarCipher: Story = {
   },
 };
 
-export const SafeLock: Story = {
+export const CerraduraDeCombinacion: Story = {
   args: { rings: [] },
   render: () => {
     const [unlocked, setUnlocked] = useState(false);
@@ -545,14 +540,10 @@ export const SafeLock: Story = {
 
     return (
       <div className="flex flex-col items-center gap-6 p-12 bg-voynich-leather rounded-3xl border-8 border-voynich-inkMedium/40 shadow-[inset_0_20px_50px_rgba(0,0,0,0.5)] relative overflow-hidden">
-        {/* Luces led */}
+        {/* Pestillo: lacre (cerrado) o verdigrís (abierto). Cambia el material, no se enciende una luz. */}
         <div className="flex gap-4 voy-panel px-6 py-3 rounded-t-xl border-t border-x border-voynich-inkMedium/40 shadow-inner">
-          <div
-            className={`w-4 h-4 rounded-full ${!unlocked ? "bg-red-500 shadow-[0_0_10px_red]" : "bg-red-950"} transition-colors`}
-          />
-          <div
-            className={`w-4 h-4 rounded-full ${unlocked ? "bg-green-500 shadow-[0_0_10px_green]" : "bg-green-950"} transition-colors`}
-          />
+          <div className={`w-4 h-4 rounded-full ${!unlocked ? "bg-voynich-vermilion" : "bg-voynich-vermilion/20"} transition-colors`} />
+          <div className={`w-4 h-4 rounded-full ${unlocked ? "bg-voynich-verdigris" : "bg-voynich-verdigris/20"} transition-colors`} />
         </div>
 
         <RingPuzzle
@@ -571,7 +562,7 @@ export const SafeLock: Story = {
               targetRotation: 36 * 7, // Código: 7
               initialRotation: 36 * 2,
               ringClassName:
-                "bg-zinc-300 text-voynich-inkDark font-bold text-2xl border-4 border-voynich-inkMedium/40 shadow-2xl",
+                "bg-voynich-vellumAged text-voynich-inkDark font-bold text-2xl border-4 border-voynich-inkMedium/40 shadow-2xl",
             },
             {
               id: "safe-2",
@@ -583,7 +574,7 @@ export const SafeLock: Story = {
               targetRotation: 36 * 3, // Código: 3
               initialRotation: 36 * 8,
               ringClassName:
-                "bg-zinc-400 text-zinc-950 font-bold text-2xl border-4 border-voynich-inkMedium/40",
+                "bg-voynich-vellumShade text-voynich-inkDark font-bold text-2xl border-4 border-voynich-inkMedium/40",
             },
             {
               id: "safe-3",
@@ -595,152 +586,18 @@ export const SafeLock: Story = {
               targetRotation: 36 * 9, // Código: 9
               initialRotation: 36 * 1,
               ringClassName:
-                "bg-zinc-500 text-voynich-inkDark font-bold text-2xl border-4 border-voynich-inkMedium/40",
+                "bg-voynich-vellumDark text-voynich-inkDark font-bold text-2xl border-4 border-voynich-inkMedium/40",
             },
           ]}
         />
 
         {unlocked && (
           <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-in fade-in zoom-in duration-500">
-            <div className="text-green-400 text-3xl font-smallcaps font-bold uppercase drop-shadow-[0_0_8px_rgba(34,197,94,0.8)] border-2 border-green-500 p-6 rounded-lg bg-green-950/50">
+            <div className="text-voynich-gold text-3xl font-smallcaps border-2 border-voynich-gold p-6 rounded-sm voy-leather">
               Abierto
             </div>
           </div>
         )}
-      </div>
-    );
-  },
-};
-
-export const TimePicker: Story = {
-  args: { rings: [] },
-  render: () => {
-    const hours = Array.from({ length: 12 }, (_, i) =>
-      (i === 0 ? 12 : i).toString(),
-    );
-    const minutes = Array.from({ length: 12 }, (_, i) =>
-      (i * 5).toString().padStart(2, "0"),
-    );
-    const ampm = ["AM", "PM"];
-
-    const [time, setTime] = useState({ h: "12", m: "00", p: "AM" });
-
-    const handleChange = (
-      _: Record<string, boolean>,
-      rotations: Record<string, number>,
-    ) => {
-      // Calcular índices basado en rotación actual (cada hora es 30 grados)
-      const hRot = (((rotations["hours"] || 0) % 360) + 360) % 360;
-      const mRot = (((rotations["minutes"] || 0) % 360) + 360) % 360;
-      const pRot = (((rotations["ampm"] || 0) % 360) + 360) % 360;
-
-      const hIndex = Math.round((360 - hRot) / 30) % 12;
-      const mIndex = Math.round((360 - mRot) / 30) % 12;
-      const pIndex = Math.round((360 - pRot) / 180) % 2;
-
-      setTime({
-        h: hours[hIndex] ?? "12",
-        m: minutes[mIndex] ?? "00",
-        p: ampm[pIndex] ?? "AM",
-      });
-    };
-
-    return (
-      <div className="flex flex-col items-center gap-6 p-8 voy-paper text-voynich-inkDark rounded-3xl shadow-xl w-full max-w-96">
-        <div className="text-5xl font-light tabular-nums tracking-tighter">
-          {time.h}:{time.m}{" "}
-          <span className="text-xl text-voynich-vellum/60 ml-1">{time.p}</span>
-        </div>
-
-        <RingPuzzle
-          size={320}
-          onChange={handleChange}
-          showCenterPivot={false}
-          rings={[
-            {
-              id: "hours",
-              radius: 140,
-              thickness: 45,
-              items: hours,
-              itemOrientation: "upright",
-              step: 30, // 360 / 12
-              ringClassName:
-                "bg-voynich-leather text-voynich-lapis font-medium border-white/50",
-            },
-            {
-              id: "minutes",
-              radius: 95,
-              thickness: 45,
-              items: minutes,
-              itemOrientation: "upright",
-              step: 30,
-              ringClassName:
-                "bg-voynich-leather text-voynich-lapis font-medium text-sm border-white/50",
-            },
-            {
-              id: "ampm",
-              radius: 50,
-              thickness: 50,
-              items: ampm,
-              itemOrientation: "upright",
-              step: 180, // Solo dos lados AM/PM
-              ringClassName: "bg-voynich-leather text-voynich-vellum font-bold text-xs",
-            },
-          ]}
-        />
-      </div>
-    );
-  },
-};
-
-export const ColorMixer: Story = {
-  args: { rings: [] },
-  render: () => {
-    return (
-      <div className="flex flex-col items-center gap-6 p-12 voy-paper rounded-3xl border border-voynich-inkMedium/40 shadow-xl overflow-hidden relative">
-        <h2 className="text-xl font-medium text-voynich-vellum/60">
-          Alinea los colores
-        </h2>
-        {/* Aquí usaremos bgContent y mix-blend-mode */}
-        <RingPuzzle
-          size={400}
-          showCenterPivot={false}
-          rings={[
-            {
-              id: "cyan",
-              radius: 180,
-              thickness: 60,
-              // Un bloque de cyan que cubre la mitad del anillo
-              bgContent: (
-                <div className="absolute top-0 right-0 w-1/2 h-full bg-cyan-400 opacity-80 mix-blend-multiply rounded-r-full" />
-              ),
-              hideDividers: true,
-              ringClassName: "border-transparent bg-transparent",
-            },
-            {
-              id: "magenta",
-              radius: 120,
-              thickness: 60,
-              bgContent: (
-                <div className="absolute bottom-0 left-0 w-full h-1/2 bg-fuchsia-500 opacity-80 mix-blend-multiply rounded-b-full" />
-              ),
-              hideDividers: true,
-              ringClassName: "border-transparent bg-transparent",
-              initialRotation: 120,
-            },
-            {
-              id: "yellow",
-              radius: 60,
-              thickness: 60,
-              bgContent: (
-                <div className="absolute top-0 left-0 w-1/2 h-full bg-voynich-brass opacity-80 mix-blend-multiply rounded-l-full" />
-              ),
-              hideDividers: true,
-              ringClassName: "border-transparent bg-transparent",
-              initialRotation: -120,
-            },
-          ]}
-        />
       </div>
     );
   },

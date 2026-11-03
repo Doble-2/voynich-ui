@@ -322,49 +322,16 @@ function Scene() {
    COMPONENT DATA — Sourced from actual project
    ═══════════════════════════════════════════════════ */
 const CATEGORIES = [
+  { title: "Leer", subtitle: "El códice", items: ["IlluminatedDropcap", "MarginaliaNotes", "TypewriterStutter", "VellumTornSection"] },
+  { title: "Descifrar", subtitle: "Puzzles y cifras", items: ["Cryptext", "FrequencyTuner", "IncantationInput", "RingPuzzle"] },
   {
-    title: "Phenomena",
-    subtitle: "Visual Effects & Environmental Layers",
-    items: [
-      "AbyssParallax",
-      "AuraLantern",
-      "CinderDissolve",
-      "HomunculusVessel",
-      "LensMagnifier",
-      "LeyLineScroll",
-      "OuroborosSpinner",
-      "RefractiveFractal",
-      "VellumTornSection",
-    ],
+    title: "Revelar",
+    subtitle: "Lo que está oculto",
+    items: ["AuraLantern", "CinderDissolve", "InvisibleInkBlock", "LensMagnifier", "PalimpsestText", "ScratchCard", "TarotSpreadGrid", "WaxSealShatter"],
   },
-  {
-    title: "Rituals",
-    subtitle: "Interactive Controls & Input Mechanisms",
-    items: [
-      "Button",
-      "ConfinementCircle",
-      "FrequencyTuner",
-      "IncantationInput",
-      "RadialMenu",
-      "RingPuzzle",
-      "SacrificialButton",
-    ],
-  },
-  {
-    title: "Artifacts",
-    subtitle: "Content Displays & Data Revelation",
-    items: [
-      "Cryptext",
-      "IlluminatedDropcap",
-      "InvisibleInkBlock",
-      "MarginaliaNotes",
-      "PalimpsestText",
-      "ScratchCard",
-      "TarotSpreadGrid",
-      "TypewriterStutter",
-      "WaxSealShatter",
-    ],
-  },
+  { title: "Actuar", subtitle: "Botones y diálogos", items: ["Button", "ConfinementCircle", "RadialMenu", "SacrificialButton"] },
+  { title: "Esperar", subtitle: "Carga y progreso", items: ["HomunculusVessel", "OuroborosSpinner"] },
+  { title: "Ambiente", subtitle: "Desgaste y movimiento", items: ["AbyssParallax", "LeyLineScroll", "RefractiveFractal"] },
 ];
 
 /* ═══════════════════════════════════════════════════
@@ -427,8 +394,9 @@ function CategoryCard({
           backdropFilter: "blur(16px)",
           WebkitBackdropFilter: "blur(16px)",
           border: `1px solid rgba(139,106,62,${hovered ? 0.3 : 0.08})`,
-          minWidth: "200px",
-          maxWidth: "240px",
+          minWidth: "170px",
+          maxWidth: "190px",
+          scrollSnapAlign: "start",
           transition:
             "border-color 0.5s ease, background 0.5s ease, box-shadow 0.5s ease",
           cursor: "default",
@@ -583,7 +551,7 @@ function Overlay() {
               fontWeight: 400,
             }}
           >
-            Component Library
+            Librería de componentes
           </div>
         </FadeIn>
 
@@ -659,9 +627,9 @@ function Overlay() {
               fontStyle: "italic",
             }}
           >
-            A design system drawn from aged vellum,
+            La tecnología de hoy,
             <br />
-            alchemical inks, and arcane geometries.
+            como si hubiera aparecido en 1450.
           </p>
         </FadeIn>
 
@@ -705,7 +673,7 @@ function Overlay() {
               textTransform: "uppercase",
             }}
           >
-            React 19 · Tailwind · GSAP · Three.js
+            React · Tailwind · GSAP
           </span>
           <span
             style={{
@@ -715,7 +683,7 @@ function Overlay() {
               letterSpacing: "0.15em",
             }}
           >
-            v0.0.1 · 25 Components
+            v0.1.0 · 27 componentes
           </span>
         </div>
       </FadeIn>

@@ -2,12 +2,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { HomunculusVessel } from '../components/phenomena/HomunculusVessel';
 import type { HomunculusVesselRef } from '../components/phenomena/HomunculusVessel';
+import { Button } from '../components/rituals/Button';
 
 const meta = {
-  title: 'Phenomena/HomunculusVessel',
+  title: 'Esperar/HomunculusVessel',
   component: HomunculusVessel,
   parameters: {
     layout: 'centered',
+    docs: { description: { component: 'Indicador de progreso: un matraz de alquimista que se llena. Es una barra de progreso accesible (`role="progressbar"`).' } },
   },
   tags: ['autodocs'],
   argTypes: {
@@ -25,7 +27,6 @@ const meta = {
     showLabel: { control: 'boolean', description: 'Mostrar etiqueta' },
     showPercent: { control: 'boolean', description: 'Mostrar porcentaje' },
     bubbleRate: { control: { type: 'range', min: 50, max: 500, step: 10 }, description: 'Frecuencia de burbujas (ms)' },
-    glowIntensity: { control: { type: 'range', min: 0, max: 1, step: 0.05 }, description: 'Intensidad del resplandor' },
   },
   decorators: [
     (Story) => (
@@ -42,21 +43,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     progress: 45,
-    label: 'Compilando...',
-    loadingColor: '#6fa58d',
-  },
-};
-
-export const BloodAlchemy: Story = {
-  args: {
-    progress: 70,
-    label: 'Destilando esencia...',
-    loadingColor: '#dc2626',
-    glassColor: '#8b0000',
-    corkColor: '#2a1010',
-    showBubbles: true,
-    waveAmplitude: 4,
-    glowIntensity: 0.5,
+    label: 'Destilando…',
   },
 };
 
@@ -76,31 +63,13 @@ export const InteractiveProgress = () => {
       <HomunculusVessel
         ref={vesselRef}
         progress={progress}
-        label="Transmutando..."
-        loadingColor="#6fa58d"
+        label="Destilando…"
         size="lg"
-        onComplete={() => console.log('✦ Transmutación completa')}
-        onEmpty={() => console.log('⊘ Recipiente vacío')}
       />
       <div className="flex gap-3">
-        <button
-          onClick={() => vesselRef.current?.pulse()}
-          className="px-4 py-1.5 text-xs border border-voynich-inkMedium text-voynich-vellum font-manuscript rounded"
-        >
-          ✦ Pulso
-        </button>
-        <button
-          onClick={() => vesselRef.current?.reset()}
-          className="px-4 py-1.5 text-xs border border-voynich-inkMedium text-voynich-vellum font-manuscript rounded"
-        >
-          ⊘ Vaciar
-        </button>
-        <button
-          onClick={() => vesselRef.current?.fill(100, 2)}
-          className="px-4 py-1.5 text-xs border border-voynich-inkMedium text-voynich-vellum font-manuscript rounded"
-        >
-          ▲ Llenar
-        </button>
+        <Button size="sm" variant="outline" onClick={() => vesselRef.current?.pulse()}>Agitar</Button>
+        <Button size="sm" variant="outline" onClick={() => vesselRef.current?.reset()}>Vaciar</Button>
+        <Button size="sm" variant="outline" onClick={() => vesselRef.current?.fill(100, 2)}>Llenar</Button>
       </div>
     </div>
   );

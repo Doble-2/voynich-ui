@@ -27,11 +27,15 @@ const preview: Preview = {
       test: 'todo'
     },
     layout: 'centered',
+    // Ordenado por la función de cada pieza en la historia, no por tipo técnico.
+    options: {
+      storySort: { order: ['Introducción', ['Bienvenida', 'Scriptorium', 'Personalización'], 'Leer', 'Descifrar', 'Revelar', 'Actuar', 'Esperar', 'Ambiente'] },
+    },
   },
   decorators: [
     (Story, context) => {
       // Skip decorator for Welcome page (it manages its own layout)
-      const isWelcome = context?.title === 'Welcome' || context?.parameters?.bare === true;
+      const isWelcome = context?.title === 'Introducción/Bienvenida' || context?.parameters?.bare === true;
       if (isWelcome) {
         return React.createElement(Story);
       }

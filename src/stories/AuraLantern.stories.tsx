@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { AuraLantern } from '../components/phenomena/AuraLantern';
 
 const meta = {
-  title: 'Phenomena/AuraLantern',
+  title: 'Revelar/AuraLantern',
   component: AuraLantern,
   parameters: {
     layout: 'padded',

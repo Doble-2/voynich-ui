@@ -1,10 +1,11 @@
 import React, { useRef } from 'react';
+import { Button } from '../components/rituals/Button';
 import type { Meta, StoryObj } from '@storybook/react';
 import { SacrificialButton } from '../components/rituals/SacrificialButton';
 import type { SacrificialButtonRef } from '../components/rituals/SacrificialButton';
 
 const meta = {
-  title: 'Rituals/SacrificialButton',
+  title: 'Actuar/SacrificialButton',
   component: SacrificialButton,
   parameters: {
     layout: 'centered',
@@ -26,15 +27,16 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    label: 'Commit Changes',
-    sacrificedLabel: 'Committed',
+    label: 'Firmar el folio',
+    sacrificedLabel: 'Firmado',
   },
 };
 
-export const DangerousAction: Story = {
+/** Una acción que no se deshace: la rúbrica sangra en el pergamino y el botón queda inutilizado. */
+export const Irreversible: Story = {
   args: {
-    label: 'Drop Database',
-    sacrificedLabel: 'Obliterated',
+    label: 'Raspar el folio',
+    sacrificedLabel: 'Raspado',
     bloodColor: 'rgba(163, 74, 51, 0.7)',
     duration: 2,
   },
@@ -42,8 +44,8 @@ export const DangerousAction: Story = {
 
 export const Resetable: Story = {
   args: {
-    label: 'Deploy to Prod',
-    sacrificedLabel: 'Deployed ✦',
+    label: 'Sellar la carta',
+    sacrificedLabel: 'Sellada',
     resetable: true,
     bloodColor: 'rgba(90, 138, 118, 0.6)',
   },
@@ -56,23 +58,13 @@ export const ImperativeControl = () => {
     <div className="flex flex-col items-center gap-6">
       <SacrificialButton
         ref={buttonRef}
-        label="Sacrifice Programmatically"
-        sacrificedLabel="Done ☠"
+        label="Tachar el renglón"
+        sacrificedLabel="Tachado"
         bloodColor="rgba(47, 74, 122, 0.6)"
       />
       <div className="flex gap-3">
-        <button
-          onClick={() => buttonRef.current?.sacrifice()}
-          className="px-4 py-1.5 text-xs border border-voynich-inkMedium text-voynich-vellum font-manuscript rounded voy-panel"
-        >
-          ☠ Sacrificar
-        </button>
-        <button
-          onClick={() => buttonRef.current?.reset()}
-          className="px-4 py-1.5 text-xs border border-voynich-inkMedium text-voynich-vellum font-manuscript rounded voy-panel"
-        >
-          ↺ Restaurar
-        </button>
+        <Button size="sm" variant="outline" onClick={() => buttonRef.current?.sacrifice()}>Tachar</Button>
+        <Button size="sm" variant="outline" onClick={() => buttonRef.current?.reset()}>Restaurar</Button>
       </div>
     </div>
   );

@@ -4,7 +4,7 @@ import { ConfinementCircle } from '../components/rituals/ConfinementCircle';
 import { Button } from '../components/rituals/Button';
 
 const meta = {
-  title: 'Rituals/ConfinementCircle',
+  title: 'Actuar/ConfinementCircle',
   component: ConfinementCircle,
   parameters: {
     layout: 'centered',
@@ -28,29 +28,24 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const DefaultInteractive = () => {
+export const Default = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
     <>
-      <Button onClick={() => setIsOpen(true)}>Invocar Entidad (Modal)</Button>
+      <Button onClick={() => setIsOpen(true)}>Abrir el aviso</Button>
       <ConfinementCircle 
         isOpen={isOpen} 
         onClose={() => setIsOpen(false)}
-        onConfirm={() => {
-          console.log("Asimilado");
-          setIsOpen(false);
-        }}
-        title="Contrato Vinculante"
+        onConfirm={() => setIsOpen(false)}
+        title="Antes de pasar la hoja"
+        confirmLabel="Pasar la hoja"
+        dismissLabel="Volver"
       >
         <p className="mb-4">
-          Al aceptar este pacto, ofreces los recursos de tu navegador para mantener 
-          esta ilusión. Cualquier caída de frames resultará en la corrupción de 
-          tus variables de entorno.
+          El folio siguiente está muy dañado: al abrirlo, parte del pigmento puede desprenderse.
         </p>
-        <p className="opacity-50 text-xs">
-          ¿Deseas romper el sello de seguridad de esta API?
-        </p>
+        <p className="opacity-60 text-xs">¿Quieres continuar?</p>
       </ConfinementCircle>
     </>
   );

@@ -2,9 +2,10 @@ import React, { useState, useRef } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { OuroborosSpinner } from '../components/phenomena/OuroborosSpinner';
 import type { OuroborosSpinnerRef } from '../components/phenomena/OuroborosSpinner';
+import { Button } from '../components/rituals/Button';
 
 const meta = {
-  title: 'Phenomena/OuroborosSpinner',
+  title: 'Esperar/OuroborosSpinner',
   component: OuroborosSpinner,
   parameters: {
     layout: 'centered',
@@ -15,7 +16,6 @@ const meta = {
     loadingColor: { control: 'color', description: 'Color de la serpiente' },
     isProcessing: { control: 'boolean', description: 'Activa/desactiva la rotación' },
     trackColor: { control: 'color', description: 'Color de la pista base' },
-    glowIntensity: { control: { type: 'range', min: 0, max: 1, step: 0.05 }, description: 'Intensidad del resplandor' },
     speed: { control: { type: 'range', min: 0.5, max: 10, step: 0.5 }, description: 'Duración de una rotación (s)' },
     showScales: { control: 'boolean', description: 'Mostrar escamas' },
     showEye: { control: 'boolean', description: 'Mostrar ojo' },
@@ -30,37 +30,13 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     size: 80,
-    loadingColor: '#c8a55a',
     isProcessing: true,
+    label: 'Cotejando folios…',
   },
   render: (args) => (
     <div className="flex flex-col items-center gap-6">
-      <p className="text-xs font-manuscript text-voynich-vellum/40 uppercase tracking-[0.3em]">Procesando Ritual...</p>
       <OuroborosSpinner {...args} />
-      <p className="text-[10px] text-voynich-inkMedium font-smallcaps animate-pulse">
-        ⟲ INVOCANDO ENTIDADES REMOTAS
-      </p>
-    </div>
-  ),
-};
-
-export const BloodRitual: Story = {
-  args: {
-    size: 120,
-    loadingColor: '#dc2626',
-    isProcessing: true,
-    trackColor: '#1a0505',
-    glowIntensity: 0.8,
-    speed: 4,
-  },
-  render: (args) => (
-    <div className="flex flex-col items-center gap-8 p-8 border border-voynich-brass/40 rounded-full w-64 h-64 justify-center"
-      style={{ background: 'radial-gradient(circle, #1a0505 0%, #0d0905 100%)' }}
-    >
-      <OuroborosSpinner {...args} />
-      <p className="text-xs font-manuscript text-voynich-vermilion text-center italic">
-        «El ouroboros devora su propia cola, <br/>consumando el ciclo eterno»
-      </p>
+      <p className="text-sm italic text-voynich-vellum/70">Cotejando folios…</p>
     </div>
   ),
 };
@@ -73,7 +49,7 @@ export const ScaleVariations: Story = {
     <div className="flex flex-wrap items-end justify-center gap-12">
       {[32, 48, 64, 96, 128].map((size) => (
         <div key={size} className="flex flex-col items-center gap-3">
-          <OuroborosSpinner size={size} isProcessing loadingColor="#c8a55a" />
+          <OuroborosSpinner size={size} isProcessing />
           <span className="text-[10px] text-voynich-inkMedium font-smallcaps">{size}px</span>
         </div>
       ))}
@@ -91,29 +67,13 @@ export const ImperativeControl = () => {
         ref={spinnerRef}
         size={100}
         isProcessing
-        loadingColor="#c8a55a"
         onCycleComplete={() => setCycles((c) => c + 1)}
       />
-      <p className="text-xs text-voynich-vellum/50 font-smallcaps">Ciclos completados: {cycles}</p>
+      <p className="text-xs text-voynich-vellum/50 font-smallcaps">Vueltas completas: {cycles}</p>
       <div className="flex gap-3">
-        <button
-          onClick={() => spinnerRef.current?.start()}
-          className="px-4 py-1.5 text-xs border border-voynich-inkMedium text-voynich-vellum font-manuscript rounded"
-        >
-          ▶ Start
-        </button>
-        <button
-          onClick={() => spinnerRef.current?.stop()}
-          className="px-4 py-1.5 text-xs border border-voynich-inkMedium text-voynich-vellum font-manuscript rounded"
-        >
-          ⏸ Stop
-        </button>
-        <button
-          onClick={() => spinnerRef.current?.toggle()}
-          className="px-4 py-1.5 text-xs border border-voynich-inkMedium text-voynich-vellum font-manuscript rounded"
-        >
-          ⟲ Toggle
-        </button>
+        <Button size="sm" variant="outline" onClick={() => spinnerRef.current?.start()}>Girar</Button>
+        <Button size="sm" variant="outline" onClick={() => spinnerRef.current?.stop()}>Detener</Button>
+        <Button size="sm" variant="outline" onClick={() => spinnerRef.current?.toggle()}>Alternar</Button>
       </div>
     </div>
   );
