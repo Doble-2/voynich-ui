@@ -4,7 +4,7 @@ import { PalimpsestText } from "./PalimpsestText";
 import { InvisibleInkBlock } from "./InvisibleInkBlock";
 import { MarginaliaNotes } from "./MarginaliaNotes";
 import { WaxSealShatter } from "./WaxSealShatter";
-import { TypewriterStutter } from "./TypewriterStutter";
+import { ScribeText } from "./ScribeText";
 import { IlluminatedDropcap } from "./IlluminatedDropcap";
 import { ScratchCard } from "./ScratchCard";
 import { VellumTornSection } from "../phenomena/VellumTornSection";
@@ -87,9 +87,9 @@ describe("WaxSealShatter", () => {
   });
 });
 
-describe("TypewriterStutter", () => {
+describe("ScribeText", () => {
   it("el texto completo está siempre disponible para lectores de pantalla", () => {
-    const host = mount(<TypewriterStutter text="Liber Secundus" speed={5} />);
+    const host = mount(<ScribeText text="Liber Secundus" speed={5} />);
     expect(host.querySelector(".sr-only")?.textContent).toBe("Liber Secundus");
     expect(host.querySelector("[aria-hidden='true']")).not.toBeNull();
   });

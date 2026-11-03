@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { IncantationInput } from '../components/rituals/IncantationInput';
+import { ScribeInput } from '../components/rituals/ScribeInput';
 
 const meta = {
-  title: 'Descifrar/IncantationInput',
-  component: IncantationInput,
+  title: 'Descifrar/ScribeInput',
+  component: ScribeInput,
   parameters: {
     layout: 'centered',
   },
@@ -25,7 +25,7 @@ const meta = {
       </div>
     ),
   ],
-} satisfies Meta<typeof IncantationInput>;
+} satisfies Meta<typeof ScribeInput>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;

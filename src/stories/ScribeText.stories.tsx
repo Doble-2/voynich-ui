@@ -1,11 +1,11 @@
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react";
-import { TypewriterStutter } from "../components/artifacts/TypewriterStutter";
+import { ScribeText } from "../components/artifacts/ScribeText";
 import { Button } from "../components/rituals/Button";
 
 const meta = {
-  title: "Leer/TypewriterStutter",
-  component: TypewriterStutter,
+  title: "Leer/ScribeText",
+  component: ScribeText,
   parameters: {
     layout: "padded",
     docs: {
@@ -27,7 +27,7 @@ const meta = {
     loop: { control: "boolean", description: "Repetir" },
     glitchRate: { control: { type: "range", min: 0, max: 0.5, step: 0.01 }, description: "Probabilidad de error por letra" },
   },
-} satisfies Meta<typeof TypewriterStutter>;
+} satisfies Meta<typeof ScribeText>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -39,7 +39,7 @@ export const Default: Story = {
   },
   render: (args) => (
     <div className="voy-paper max-w-xl mx-auto p-8 sm:p-10 text-xl text-voynich-inkDark">
-      <TypewriterStutter {...args} />
+      <ScribeText {...args} />
     </div>
   ),
 };
@@ -53,7 +53,7 @@ export const Transcripcion: Story = {
     <div className="voy-paper relative max-w-lg mx-auto p-8 sm:p-10">
       <div className="absolute top-3 right-4 text-xs italic text-voynich-inkMedium">folio 68r</div>
       <div className="text-lg leading-loose italic text-voynich-inkDark">
-        <TypewriterStutter {...args} />
+        <ScribeText {...args} />
       </div>
     </div>
   ),
@@ -75,7 +75,7 @@ export const AlDictado = () => {
       <div className="flex flex-col gap-2 min-h-[6rem] text-voynich-inkDark">
         {n === 0 && <p className="italic text-voynich-inkMedium">El escriba espera.</p>}
         {LINEAS.slice(0, n).map((l) => (
-          <TypewriterStutter key={l} text={l} speed={45} />
+          <ScribeText key={l} text={l} speed={45} />
         ))}
       </div>
     </div>

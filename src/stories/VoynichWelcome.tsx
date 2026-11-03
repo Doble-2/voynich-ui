@@ -322,15 +322,15 @@ function Scene() {
    COMPONENT DATA — Sourced from actual project
    ═══════════════════════════════════════════════════ */
 const CATEGORIES = [
-  { title: "Leer", subtitle: "El códice", items: ["IlluminatedDropcap", "MarginaliaNotes", "TypewriterStutter", "VellumTornSection"] },
-  { title: "Descifrar", subtitle: "Puzzles y cifras", items: ["Cryptext", "FrequencyTuner", "IncantationInput", "RingPuzzle"] },
+  { title: "Leer", subtitle: "El códice", items: ["IlluminatedDropcap", "MarginaliaNotes", "ScribeText", "VellumTornSection"] },
+  { title: "Descifrar", subtitle: "Puzzles y cifras", items: ["Cryptext", "GraduatedScale", "ScribeInput", "RingPuzzle"] },
   {
     title: "Revelar",
     subtitle: "Lo que está oculto",
     items: ["AuraLantern", "CinderDissolve", "InvisibleInkBlock", "LensMagnifier", "PalimpsestText", "ScratchCard", "TarotSpreadGrid", "WaxSealShatter"],
   },
-  { title: "Actuar", subtitle: "Botones y diálogos", items: ["Button", "ConfinementCircle", "RadialMenu", "SacrificialButton"] },
-  { title: "Esperar", subtitle: "Carga y progreso", items: ["HomunculusVessel", "OuroborosSpinner"] },
+  { title: "Actuar", subtitle: "Botones y diálogos", items: ["Button", "ConfinementCircle", "RadialMenu", "StrikeButton"] },
+  { title: "Esperar", subtitle: "Carga y progreso", items: ["Alembic", "OuroborosSpinner"] },
   { title: "Ambiente", subtitle: "Desgaste y movimiento", items: ["AbyssParallax", "LeyLineScroll", "RefractiveFractal"] },
 ];
 

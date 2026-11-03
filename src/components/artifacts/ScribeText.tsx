@@ -4,7 +4,7 @@ import { useGSAP } from "@gsap/react";
 import { cn } from "../../lib/utils";
 import { useReducedMotion } from "../../lib/useReducedMotion";
 
-export interface TypewriterStutterRef {
+export interface ScribeTextRef {
   /** Reinicia la animación desde el principio. */
   restart: () => void;
   /** Pausa la animación. */
@@ -13,7 +13,7 @@ export interface TypewriterStutterRef {
   resume: () => void;
 }
 
-export interface TypewriterStutterProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface ScribeTextProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Texto a escribir. */
   text: string;
   /** Velocidad base de escritura (ms por carácter). @default 50 */
@@ -34,7 +34,7 @@ export interface TypewriterStutterProps extends React.HTMLAttributes<HTMLDivElem
   onComplete?: () => void;
 }
 
-export const TypewriterStutter = React.forwardRef<TypewriterStutterRef, TypewriterStutterProps>(
+export const ScribeText = React.forwardRef<ScribeTextRef, ScribeTextProps>(
   (
     {
       className,
@@ -198,4 +198,4 @@ export const TypewriterStutter = React.forwardRef<TypewriterStutterRef, Typewrit
     );
   },
 );
-TypewriterStutter.displayName = "TypewriterStutter";
+ScribeText.displayName = "ScribeText";

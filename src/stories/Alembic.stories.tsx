@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { HomunculusVessel } from '../components/phenomena/HomunculusVessel';
-import type { HomunculusVesselRef } from '../components/phenomena/HomunculusVessel';
+import { Alembic } from '../components/phenomena/Alembic';
+import type { AlembicRef } from '../components/phenomena/Alembic';
 import { Button } from '../components/rituals/Button';
 
 const meta = {
-  title: 'Esperar/HomunculusVessel',
-  component: HomunculusVessel,
+  title: 'Esperar/Alembic',
+  component: Alembic,
   parameters: {
     layout: 'centered',
     docs: { description: { component: 'Indicador de progreso: un matraz de alquimista que se llena. Es una barra de progreso accesible (`role="progressbar"`).' } },
@@ -35,7 +35,7 @@ const meta = {
       </div>
     ),
   ],
-} satisfies Meta<typeof HomunculusVessel>;
+} satisfies Meta<typeof Alembic>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -49,7 +49,7 @@ export const Default: Story = {
 
 export const InteractiveProgress = () => {
   const [progress, setProgress] = useState(0);
-  const vesselRef = useRef<HomunculusVesselRef>(null);
+  const vesselRef = useRef<AlembicRef>(null);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -60,7 +60,7 @@ export const InteractiveProgress = () => {
 
   return (
     <div className="flex flex-col items-center gap-6">
-      <HomunculusVessel
+      <Alembic
         ref={vesselRef}
         progress={progress}
         label="Destilando…"

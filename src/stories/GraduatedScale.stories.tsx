@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { FrequencyTuner } from '../components/rituals/FrequencyTuner';
+import { GraduatedScale } from '../components/rituals/GraduatedScale';
 
 const meta = {
-  title: 'Descifrar/FrequencyTuner',
-  component: FrequencyTuner,
+  title: 'Descifrar/GraduatedScale',
+  component: GraduatedScale,
   parameters: {
     layout: 'centered',
   },
@@ -21,7 +21,7 @@ const meta = {
       </div>
     ),
   ],
-} satisfies Meta<typeof FrequencyTuner>;
+} satisfies Meta<typeof GraduatedScale>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;

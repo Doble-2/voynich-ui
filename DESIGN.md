@@ -39,10 +39,10 @@ Cada componente tiene **un material principal**. Es lo primero que se decide.
 | Material | Se siente como | Ejemplos |
 |---|---|---|
 | **Pergamino** | Mate, con grano, absorbe la tinta, se rasga | `VellumTornSection`, `PalimpsestText`, `MarginaliaNotes` |
-| **Tinta ferrogálica** | Negro-marrón que se oxida con el tiempo | `Cryptext`, `TypewriterStutter`, `InvisibleInkBlock` |
-| **Latón / bronce** | Pesado, con holgura mecánica, brillo cálido | `RingPuzzle`, `RadialMenu`, `FrequencyTuner` |
+| **Tinta ferrogálica** | Negro-marrón que se oxida con el tiempo | `Cryptext`, `ScribeText`, `InvisibleInkBlock` |
+| **Latón / bronce** | Pesado, con holgura mecánica, brillo cálido | `RingPuzzle`, `RadialMenu`, `GraduatedScale` |
 | **Cuero y oro estampado** | Tapa de libro con filete de oro; grano que atrapa luz | `Button` |
-| **Cera / lacre** | Opaco, se quiebra y se derrite | `WaxSealShatter`, `SacrificialButton` |
+| **Cera / lacre** | Opaco, se quiebra y se derrite | `WaxSealShatter`, `StrikeButton` |
 | **Pan de oro** | Reflectante, fino, se desprende | `IlluminatedDropcap` |
 | **Cobre grabado** | Línea fina, hatching, densidad | `LeyLineScroll`, `RefractiveFractal` |
 | **Vidrio / cristal** | Refracta, distorsiona | `LensMagnifier`, `AuraLantern` |
@@ -224,7 +224,7 @@ Todo componente cumple estas cinco capas, de menos a más control:
 | `CinderDissolve` | `layers`, `unstyled`, `data-part`, `--dissolve-progress` | `useDissolveProgress` | Hecho (no se divide en partes: es un efecto, no una composición) |
 | Los otros 18 | — | — | **Pendiente**: siguen siendo cajas cerradas |
 
-Pendientes por orden de utilidad para la narrativa: `Cryptext`, `TypewriterStutter`, `PalimpsestText`, `InvisibleInkBlock`, `HomunculusVessel`, `IlluminatedDropcap`, `ScratchCard`, `LeyLineScroll`.
+Pendientes por orden de utilidad para la narrativa: `Cryptext`, `ScribeText`, `PalimpsestText`, `InvisibleInkBlock`, `Alembic`, `IlluminatedDropcap`, `ScratchCard`, `LeyLineScroll`.
 
 ---
 

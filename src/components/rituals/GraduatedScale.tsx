@@ -1,7 +1,7 @@
 import React, { useEffect, useId, useRef, useState } from "react";
 import { cn } from "../../lib/utils";
 
-export interface FrequencyTunerProps extends React.InputHTMLAttributes<HTMLInputElement> {
+export interface GraduatedScaleProps extends React.InputHTMLAttributes<HTMLInputElement> {
   /** Valor mínimo de la escala. @default 0 */
   min?: number;
   /** Valor máximo de la escala. @default 100 */
@@ -24,14 +24,14 @@ export interface FrequencyTunerProps extends React.InputHTMLAttributes<HTMLInput
 }
 
 /**
- * `FrequencyTuner`
+ * `GraduatedScale`
  *
  * Una escala graduada de latón con una ventanilla deslizante: el sintonizador de un instrumento,
  * no un slider de interfaz. Bajo el latón hay un `<input type="range">` real, de modo que el teclado,
  * los lectores de pantalla y las props nativas (`aria-label`, `id`, `name`…) funcionan.
  * Al llegar al valor de sintonía, la lectura se tiñe de rúbrica.
  */
-export const FrequencyTuner = React.forwardRef<HTMLInputElement, FrequencyTunerProps>(
+export const GraduatedScale = React.forwardRef<HTMLInputElement, GraduatedScaleProps>(
   (
     { className, min = 0, max = 100, step = 1, value = 50, tunedValue, unit = "°", onChange, onTuned, ...props },
     ref,
@@ -88,4 +88,4 @@ export const FrequencyTuner = React.forwardRef<HTMLInputElement, FrequencyTunerP
     );
   },
 );
-FrequencyTuner.displayName = "FrequencyTuner";
+GraduatedScale.displayName = "GraduatedScale";

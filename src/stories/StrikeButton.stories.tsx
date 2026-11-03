@@ -1,12 +1,12 @@
 import React, { useRef } from 'react';
 import { Button } from '../components/rituals/Button';
 import type { Meta, StoryObj } from '@storybook/react';
-import { SacrificialButton } from '../components/rituals/SacrificialButton';
-import type { SacrificialButtonRef } from '../components/rituals/SacrificialButton';
+import { StrikeButton } from '../components/rituals/StrikeButton';
+import type { StrikeButtonRef } from '../components/rituals/StrikeButton';
 
 const meta = {
-  title: 'Actuar/SacrificialButton',
-  component: SacrificialButton,
+  title: 'Actuar/StrikeButton',
+  component: StrikeButton,
   parameters: {
     layout: 'centered',
   },
@@ -20,7 +20,7 @@ const meta = {
     scrambleDictionary: { control: 'text', description: 'Glifos custom para scramble' },
     resetable: { control: 'boolean', description: 'Permitir restaurar tras sacrificio' },
   },
-} satisfies Meta<typeof SacrificialButton>;
+} satisfies Meta<typeof StrikeButton>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -52,11 +52,11 @@ export const Resetable: Story = {
 };
 
 export const ImperativeControl = () => {
-  const buttonRef = useRef<SacrificialButtonRef>(null);
+  const buttonRef = useRef<StrikeButtonRef>(null);
 
   return (
     <div className="flex flex-col items-center gap-6">
-      <SacrificialButton
+      <StrikeButton
         ref={buttonRef}
         label="Tachar el renglón"
         sacrificedLabel="Tachado"

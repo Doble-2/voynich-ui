@@ -1,13 +1,13 @@
 import { describe, it, expect, afterEach } from "vitest";
-import { HomunculusVessel } from "./HomunculusVessel";
+import { Alembic } from "./Alembic";
 import { OuroborosSpinner } from "./OuroborosSpinner";
 import { mount, unmount } from "../../test-utils";
 
 afterEach(unmount);
 
-describe("HomunculusVessel", () => {
+describe("Alembic", () => {
   it("es una barra de progreso accesible", () => {
-    const host = mount(<HomunculusVessel progress={42.4} label="Destilando" />);
+    const host = mount(<Alembic progress={42.4} label="Destilando" />);
     const bar = host.querySelector('[role="progressbar"]')!;
     expect(bar.getAttribute("aria-label")).toBe("Destilando");
     expect(bar.getAttribute("aria-valuenow")).toBe("42");
@@ -18,8 +18,8 @@ describe("HomunculusVessel", () => {
   it("dos frascos no comparten ids de SVG (antes uno pintaba con el gradiente del otro)", () => {
     const host = mount(
       <>
-        <HomunculusVessel progress={10} />
-        <HomunculusVessel progress={90} />
+        <Alembic progress={10} />
+        <Alembic progress={90} />
       </>,
     );
     const ids = [...host.querySelectorAll("[id]")].map((el) => el.id);
@@ -28,14 +28,14 @@ describe("HomunculusVessel", () => {
   });
 
   it('motion="none" deja la superficie quieta', () => {
-    const host = mount(<HomunculusVessel progress={50} motion="none" />);
+    const host = mount(<Alembic progress={50} motion="none" />);
     expect(host.querySelector('[role="progressbar"]')!.getAttribute("data-motion")).toBe("none");
   });
 });
 
 describe("colores por variable CSS", () => {
   it("sin props usa los tokens de la paleta", () => {
-    const host = mount(<HomunculusVessel progress={50} />);
+    const host = mount(<Alembic progress={50} />);
     const outline = host.querySelectorAll("path")[4]!; // contorno del frasco
     expect(getComputedStyle(outline).stroke).toBe("rgb(191, 156, 80)"); // --voynich-brass-light
   });

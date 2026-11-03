@@ -1,25 +1,25 @@
 import { describe, it, expect, afterEach, vi } from "vitest";
 import { useState } from "react";
-import { FrequencyTuner } from "./FrequencyTuner";
-import { IncantationInput } from "./IncantationInput";
+import { GraduatedScale } from "./GraduatedScale";
+import { ScribeInput } from "./ScribeInput";
 import { ConfinementCircle } from "./ConfinementCircle";
 import { RadialMenu } from "./RadialMenu";
-import { SacrificialButton } from "./SacrificialButton";
+import { StrikeButton } from "./StrikeButton";
 import { mount, unmount, wait, waitFor, press } from "../../test-utils";
 
 afterEach(unmount);
 
-describe("FrequencyTuner", () => {
+describe("GraduatedScale", () => {
   it("se sintoniza en el punto medio real aunque min no sea 0", () => {
     // Antes comparaba con (max - min) / 2 = 50, que no es el centro de 100..200.
-    const host = mount(<FrequencyTuner min={100} max={200} value={150} />);
+    const host = mount(<GraduatedScale min={100} max={200} value={150} />);
     expect(host.querySelector(".voy-tuner")?.getAttribute("data-tuned")).toBe("true");
-    const off = mount(<FrequencyTuner min={100} max={200} value={50 + 100} step={1} tunedValue={180} />);
+    const off = mount(<GraduatedScale min={100} max={200} value={50 + 100} step={1} tunedValue={180} />);
     expect(off.querySelector(".voy-tuner")?.getAttribute("data-tuned")).toBe("false");
   });
 
   it("pasa las props nativas al input (antes se perdían)", () => {
-    const host = mount(<FrequencyTuner aria-label="Frecuencia del astrolabio" name="freq" />);
+    const host = mount(<GraduatedScale aria-label="Frecuencia del astrolabio" name="freq" />);
     const input = host.querySelector("input")!;
     expect(input.getAttribute("aria-label")).toBe("Frecuencia del astrolabio");
     expect(input.getAttribute("name")).toBe("freq");
@@ -32,7 +32,7 @@ describe("FrequencyTuner", () => {
     const Wrapper = () => {
       const [v, setV] = useState(50);
       setExternal = setV;
-      return <FrequencyTuner value={v} tunedValue={50} onTuned={onTuned} />;
+      return <GraduatedScale value={v} tunedValue={50} onTuned={onTuned} />;
     };
     mount(<Wrapper />);
     await wait(20);
@@ -50,7 +50,7 @@ describe("FrequencyTuner", () => {
     const Wrapper = () => {
       const [v, setV] = useState(10);
       setExternal = setV;
-      return <FrequencyTuner value={v} />;
+      return <GraduatedScale value={v} />;
     };
     const host = mount(<Wrapper />);
     expect(host.querySelector("input")!.value).toBe("10");
@@ -60,9 +60,9 @@ describe("FrequencyTuner", () => {
   });
 });
 
-describe("IncantationInput", () => {
+describe("ScribeInput", () => {
   it("asocia el rótulo al campo y marca el error", () => {
-    const host = mount(<IncantationInput label="Contraseña" error />);
+    const host = mount(<ScribeInput label="Contraseña" error />);
     const input = host.querySelector("input")!;
     const label = host.querySelector("label")!;
     expect(label.getAttribute("for")).toBe(input.id);
@@ -71,7 +71,7 @@ describe("IncantationInput", () => {
 
   it("llama a onChange al escribir", () => {
     const onChange = vi.fn();
-    const host = mount(<IncantationInput onChange={onChange} />);
+    const host = mount(<ScribeInput onChange={onChange} />);
     const input = host.querySelector("input")!;
     // React sigue el valor con un "tracker": hay que asignar con el setter nativo.
     const setValue = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")!.set!;
@@ -150,11 +150,11 @@ describe("RadialMenu", () => {
   });
 });
 
-describe("SacrificialButton", () => {
+describe("StrikeButton", () => {
   it("anuncia su estado y avisa onSacrifice una sola vez", async () => {
     const onSacrifice = vi.fn();
     const host = mount(
-      <SacrificialButton label="Confirmar" sacrificedLabel="Hecho" onSacrifice={onSacrifice} />,
+      <StrikeButton label="Confirmar" sacrificedLabel="Hecho" onSacrifice={onSacrifice} />,
     );
     const btn = host.querySelector("button")!;
     expect(btn.getAttribute("aria-label")).toBe("Confirmar");
@@ -169,7 +169,7 @@ describe("SacrificialButton", () => {
     const onSubmit = vi.fn((e: Event) => e.preventDefault());
     const host = mount(
       <form>
-        <SacrificialButton label="Borrar" />
+        <StrikeButton label="Borrar" />
       </form>,
     );
     host.querySelector("form")!.addEventListener("submit", onSubmit);
@@ -180,7 +180,7 @@ describe("SacrificialButton", () => {
   it("onClick con preventDefault cancela el sacrificio", async () => {
     const onSacrifice = vi.fn();
     const host = mount(
-      <SacrificialButton label="Borrar" onClick={(e) => e.preventDefault()} onSacrifice={onSacrifice} />,
+      <StrikeButton label="Borrar" onClick={(e) => e.preventDefault()} onSacrifice={onSacrifice} />,
     );
     const btn = host.querySelector("button")!;
     btn.click();

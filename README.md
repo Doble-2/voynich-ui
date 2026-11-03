@@ -27,7 +27,7 @@ Ordenados por lo que hacen en la historia.
 |---|---|
 | `IlluminatedDropcap` | Letra capital iluminada con pan de oro y lapislázuli |
 | `MarginaliaNotes` | Tooltip convertido en glosa al margen, de otra mano |
-| `TypewriterStutter` | Texto que se escribe como lo copiaría un escriba, con errores corregidos |
+| `ScribeText` | Texto que se escribe como lo copiaría un escriba, con errores corregidos |
 | `VellumTornSection` | Sección de pergamino con los bordes rasgados |
 
 ### Descifrar: puzzles y cifras
@@ -35,8 +35,8 @@ Ordenados por lo que hacen en la historia.
 |---|---|
 | `RingPuzzle` | Disco de anillos concéntricos que se giran hasta alinearlos (como el disco de cifrado de Alberti, 1467) |
 | `Cryptext` | Texto que aparece cifrado y se resuelve letra a letra |
-| `FrequencyTuner` | Escala graduada de latón con un valor objetivo |
-| `IncantationInput` | Campo de texto: la línea sobre la que escribe un escriba |
+| `GraduatedScale` | Escala graduada de latón con un valor objetivo |
+| `ScribeInput` | Campo de texto: la línea sobre la que escribe un escriba |
 
 ### Revelar: lo que está oculto
 | Componente | Qué es |
@@ -54,7 +54,7 @@ Ordenados por lo que hacen en la historia.
 | Componente | Qué es |
 |---|---|
 | `Button` | Tapa de libro en cuero con filete de oro estampado |
-| `SacrificialButton` | Acción irreversible: la rúbrica sangra en el pergamino |
+| `StrikeButton` | Acción irreversible: la rúbrica sangra en el pergamino |
 | `RadialMenu` | Menú circular que se despliega alrededor de un medallón |
 | `ConfinementCircle` | Diálogo modal accesible, con un diagrama circular |
 
@@ -62,7 +62,7 @@ Ordenados por lo que hacen en la historia.
 | Componente | Qué es |
 |---|---|
 | `OuroborosSpinner` | Indicador de carga: la serpiente que se muerde la cola |
-| `HomunculusVessel` | Barra de progreso: un matraz que se llena |
+| `Alembic` | Barra de progreso: un matraz que se llena |
 
 ### Ambiente
 | Componente | Qué es |
@@ -169,7 +169,7 @@ Clases disponibles: `voynich-vellum`, `voynich-inkDark`, `voynich-leather`, `voy
 ## Accesibilidad y movimiento
 
 - Los componentes animados respetan `prefers-reduced-motion`. Los que tienen la prop `motion` permiten además forzarlo: `motion="none"` los deja estáticos.
-- El texto animado (`Cryptext`, `TypewriterStutter`) expone siempre el texto real a los lectores de pantalla.
+- El texto animado (`Cryptext`, `ScribeText`) expone siempre el texto real a los lectores de pantalla.
 - Los controles funcionan con teclado y tienen roles ARIA (`dialog`, `menu`, `progressbar`, `status`…).
 
 ## Desarrollo

@@ -3,15 +3,15 @@
 export { Button } from './components/rituals/Button';
 export { RingPuzzle } from './components/rituals/RingPuzzle';
 export { RadialMenu } from './components/rituals/RadialMenu';
-export { SacrificialButton } from './components/rituals/SacrificialButton';
-export { IncantationInput } from './components/rituals/IncantationInput';
-export { FrequencyTuner } from './components/rituals/FrequencyTuner';
+export { StrikeButton } from './components/rituals/StrikeButton';
+export { ScribeInput } from './components/rituals/ScribeInput';
+export { GraduatedScale } from './components/rituals/GraduatedScale';
 export { ConfinementCircle } from './components/rituals/ConfinementCircle';
 
 export { RefractiveFractal } from './components/phenomena/RefractiveFractal';
 export { CinderDissolve } from './components/phenomena/CinderDissolve';
 export { LensMagnifier } from './components/phenomena/LensMagnifier';
-export { HomunculusVessel } from './components/phenomena/HomunculusVessel';
+export { Alembic } from './components/phenomena/Alembic';
 export { AuraLantern } from './components/phenomena/AuraLantern';
 export { LeyLineScroll } from './components/phenomena/LeyLineScroll';
 export { AbyssParallax } from './components/phenomena/AbyssParallax';
@@ -26,7 +26,7 @@ export { WaxSealShatter } from './components/artifacts/WaxSealShatter';
 export { PalimpsestText } from './components/artifacts/PalimpsestText';
 export { TarotSpreadGrid } from './components/artifacts/TarotSpreadGrid';
 export { InvisibleInkBlock } from './components/artifacts/InvisibleInkBlock';
-export { TypewriterStutter } from './components/artifacts/TypewriterStutter';
+export { ScribeText } from './components/artifacts/ScribeText';
 export { IlluminatedDropcap } from './components/artifacts/IlluminatedDropcap';
 export { MarginaliaNotes } from './components/artifacts/MarginaliaNotes';
 
@@ -61,11 +61,11 @@ export type { CryptextProps, CryptextRef } from './components/artifacts/Cryptext
 export type { RadialMenuProps, RadialMenuItem } from './components/rituals/RadialMenu';
 export type { ScratchCardProps, ScratchCardRef } from './components/artifacts/ScratchCard';
 export type { LensMagnifierProps, LensMagnifierRef } from './components/phenomena/LensMagnifier';
-export type { SacrificialButtonProps } from './components/rituals/SacrificialButton';
-export type { IncantationInputProps } from './components/rituals/IncantationInput';
-export type { FrequencyTunerProps } from './components/rituals/FrequencyTuner';
+export type { StrikeButtonProps, StrikeButtonRef } from './components/rituals/StrikeButton';
+export type { ScribeInputProps } from './components/rituals/ScribeInput';
+export type { GraduatedScaleProps } from './components/rituals/GraduatedScale';
 export type { ConfinementCircleProps } from './components/rituals/ConfinementCircle';
-export type { HomunculusVesselProps } from './components/phenomena/HomunculusVessel';
+export type { AlembicProps, AlembicRef } from './components/phenomena/Alembic';
 export type { AuraLanternProps } from './components/phenomena/AuraLantern';
 export type { LeyLineScrollProps } from './components/phenomena/LeyLineScroll';
 export type { AbyssParallaxProps } from './components/phenomena/AbyssParallax';
@@ -76,7 +76,31 @@ export type { WaxSealShatterProps } from './components/artifacts/WaxSealShatter'
 export type { PalimpsestTextProps } from './components/artifacts/PalimpsestText';
 export type { TarotSpreadGridProps, TarotCard } from './components/artifacts/TarotSpreadGrid';
 export type { InvisibleInkBlockProps } from './components/artifacts/InvisibleInkBlock';
-export type { TypewriterStutterProps } from './components/artifacts/TypewriterStutter';
+export type { ScribeTextProps, ScribeTextRef } from './components/artifacts/ScribeText';
 export type { IlluminatedDropcapProps } from './components/artifacts/IlluminatedDropcap';
 export type { MarginaliaNotesProps } from './components/artifacts/MarginaliaNotes';
 
+// Nombres anteriores, conservados una versión para no romper a nadie.
+import { GraduatedScale as _GraduatedScale } from './components/rituals/GraduatedScale';
+import { ScribeInput as _ScribeInput } from './components/rituals/ScribeInput';
+import { StrikeButton as _StrikeButton } from './components/rituals/StrikeButton';
+import { Alembic as _Alembic } from './components/phenomena/Alembic';
+import { ScribeText as _ScribeText } from './components/artifacts/ScribeText';
+import type { GraduatedScaleProps as _GSP } from './components/rituals/GraduatedScale';
+import type { ScribeInputProps as _SIP } from './components/rituals/ScribeInput';
+import type { StrikeButtonProps as _SBP, StrikeButtonRef as _SBR } from './components/rituals/StrikeButton';
+import type { AlembicProps as _AP, AlembicRef as _AR } from './components/phenomena/Alembic';
+import type { ScribeTextProps as _STP, ScribeTextRef as _STR } from './components/artifacts/ScribeText';
+/** @deprecated Usa `GraduatedScale`. */ export const FrequencyTuner = _GraduatedScale;
+/** @deprecated Usa `ScribeInput`. */ export const IncantationInput = _ScribeInput;
+/** @deprecated Usa `StrikeButton`. */ export const SacrificialButton = _StrikeButton;
+/** @deprecated Usa `Alembic`. */ export const HomunculusVessel = _Alembic;
+/** @deprecated Usa `ScribeText`. */ export const TypewriterStutter = _ScribeText;
+/** @deprecated Usa `GraduatedScaleProps`. */ export type FrequencyTunerProps = _GSP;
+/** @deprecated Usa `ScribeInputProps`. */ export type IncantationInputProps = _SIP;
+/** @deprecated Usa `StrikeButtonProps`. */ export type SacrificialButtonProps = _SBP;
+/** @deprecated Usa `StrikeButtonRef`. */ export type SacrificialButtonRef = _SBR;
+/** @deprecated Usa `AlembicProps`. */ export type HomunculusVesselProps = _AP;
+/** @deprecated Usa `AlembicRef`. */ export type HomunculusVesselRef = _AR;
+/** @deprecated Usa `ScribeTextProps`. */ export type TypewriterStutterProps = _STP;
+/** @deprecated Usa `ScribeTextRef`. */ export type TypewriterStutterRef = _STR;

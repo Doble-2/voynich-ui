@@ -4,7 +4,7 @@ import { useGSAP } from "@gsap/react";
 import { cn } from "../../lib/utils";
 import { useReducedMotion } from "../../lib/useReducedMotion";
 
-export interface IncantationInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+export interface ScribeInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   /** Marca el campo como inválido (rúbrica, `aria-invalid`). */
   error?: boolean;
   /** Rótulo en versalitas sobre la línea. Se asocia al campo para lectores de pantalla. */
@@ -22,12 +22,12 @@ export interface IncantationInputProps extends React.InputHTMLAttributes<HTMLInp
 }
 
 /**
- * `IncantationInput`
+ * `ScribeInput`
  *
  * La línea sobre la que escribe un escriba: texto sobre una regla de tinta que se engrosa al enfocar.
  * Cada pulsación desprende una mota de pan de oro que asciende y se apaga (sin sacudir el campo).
  */
-export const IncantationInput = React.forwardRef<HTMLInputElement, IncantationInputProps>(
+export const ScribeInput = React.forwardRef<HTMLInputElement, ScribeInputProps>(
   (
     {
       className,
@@ -101,4 +101,4 @@ export const IncantationInput = React.forwardRef<HTMLInputElement, IncantationIn
     );
   },
 );
-IncantationInput.displayName = "IncantationInput";
+ScribeInput.displayName = "ScribeInput";

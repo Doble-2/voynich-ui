@@ -4,7 +4,7 @@ import { useGSAP } from "@gsap/react";
 import { cn } from "../../lib/utils";
 import { useReducedMotion } from "../../lib/useReducedMotion";
 
-export interface HomunculusVesselRef {
+export interface AlembicRef {
   /** Llena el recipiente hasta el nivel indicado, con animación opcional. */
   fill: (value: number, duration?: number) => void;
   /** Vacía el recipiente a 0. */
@@ -13,7 +13,7 @@ export interface HomunculusVesselRef {
   pulse: () => void;
 }
 
-export interface HomunculusVesselProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onProgress'> {
+export interface AlembicProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onProgress'> {
   /** Nivel del líquido (0–100). @default 0 */
   progress?: number;
   /** Etiqueta inferior del recipiente. @default "Transmuting..." */
@@ -73,7 +73,7 @@ const SHEEN = "rgb(var(--voynich-vellum))";
 
 const SIZE_MAP = { sm: { w: "w-20", h: "h-24" }, md: { w: "w-28", h: "h-32" }, lg: { w: "w-40", h: "h-44" } };
 
-export const HomunculusVessel = React.forwardRef<HomunculusVesselRef, HomunculusVesselProps>(
+export const Alembic = React.forwardRef<AlembicRef, AlembicProps>(
   (
     {
       className,
@@ -406,4 +406,4 @@ export const HomunculusVessel = React.forwardRef<HomunculusVesselRef, Homunculus
     );
   },
 );
-HomunculusVessel.displayName = "HomunculusVessel";
+Alembic.displayName = "Alembic";

@@ -4,14 +4,14 @@ import { useGSAP } from "@gsap/react";
 import { cn } from "../../lib/utils";
 import { useReducedMotion } from "../../lib/useReducedMotion";
 
-export interface SacrificialButtonRef {
+export interface StrikeButtonRef {
   /** Vuelve al estado original (no sacrificado). */
   reset: () => void;
   /** Ejecuta el sacrificio programáticamente. */
   sacrifice: () => void;
 }
 
-export interface SacrificialButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface StrikeButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   /** Texto del botón en estado normal. @default "Commit" */
   label?: string;
   /** Texto revelado después del sacrificio. @default "Sacrificed" */
@@ -34,7 +34,7 @@ export interface SacrificialButtonProps extends React.ButtonHTMLAttributes<HTMLB
   onReset?: () => void;
 }
 
-export const SacrificialButton = React.forwardRef<SacrificialButtonRef, SacrificialButtonProps>(
+export const StrikeButton = React.forwardRef<StrikeButtonRef, StrikeButtonProps>(
   (
     {
       className,
@@ -221,4 +221,4 @@ export const SacrificialButton = React.forwardRef<SacrificialButtonRef, Sacrific
     );
   },
 );
-SacrificialButton.displayName = "SacrificialButton";
+StrikeButton.displayName = "StrikeButton";
