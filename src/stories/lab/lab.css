@@ -1,0 +1,77 @@
+/* Laboratorio: estilos de los prototipos. No forman parte de la librería hasta que se aprueben. */
+
+/* ── Signo incompleto ── */
+.lab-sign {
+	position: relative;
+	display: inline-block;
+	padding: 0;
+	border: 0;
+	background: none;
+	cursor: pointer;
+	color: rgb(var(--voynich-ink));
+}
+.lab-sign__svg { position: absolute; inset: 0; overflow: visible; }
+.lab-sign__label {
+	position: absolute;
+	white-space: nowrap;
+	font-family: var(--voynich-font-body);
+	font-style: italic;
+	font-size: 17px;
+	line-height: 1.2;
+}
+/* Aguada verde del herbario: solo aparece cuando el signo se cierra. */
+.lab-sign__wash {
+	fill: rgb(118 138 84);
+	opacity: 0;
+	transition: opacity 0.5s ease-out 0.25s;
+}
+.lab-sign__ghost { opacity: 0; transition: opacity 0.2s ease-out; }
+.lab-sign__stroke { stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 0.32s cubic-bezier(0.6, 0, 0.4, 1); }
+.lab-sign:hover .lab-sign__ghost,
+.lab-sign:focus-visible .lab-sign__ghost { opacity: 0.55; }
+.lab-sign:focus-visible { outline: none; }
+.lab-sign:focus-visible .lab-sign__label { text-decoration: underline dotted; text-underline-offset: 4px; }
+.lab-sign[data-closed="true"] .lab-sign__stroke { stroke-dashoffset: 0; }
+.lab-sign[data-closed="true"] .lab-sign__ghost { opacity: 0; }
+.lab-sign[data-closed="true"] .lab-sign__wash { opacity: 0.3; }
+.lab-sign[data-weight="grave"] .lab-sign__stroke { stroke: rgb(var(--voynich-vermilion)); }
+.lab-sign[data-weight="grave"] .lab-sign__wash { fill: rgb(var(--voynich-vermilion)); }
+.lab-sign:disabled { cursor: not-allowed; opacity: 0.45; }
+
+/* ── Vasos comunicantes ── */
+.lab-vessel {
+	position: relative;
+	display: inline-grid;
+	width: 260px;
+	max-width: 100%;
+	padding: 0;
+	border: 0;
+	background: none;
+	cursor: pointer;
+	touch-action: none;
+	user-select: none;
+	-webkit-user-select: none;
+	color: rgb(var(--voynich-ink));
+}
+.lab-vessel__svg { grid-area: 1 / 1; width: 100%; height: auto; overflow: visible; }
+.lab-vessel__label {
+	grid-area: 1 / 1;
+	align-self: center;
+	justify-self: center;
+	margin-left: 27%;
+	font-family: var(--voynich-font-body);
+	font-style: italic;
+	font-size: 17px;
+	pointer-events: none;
+	white-space: nowrap;
+}
+.lab-vessel__line { fill: none; stroke: rgb(var(--voynich-ink) / 0.85); stroke-width: 1; stroke-linecap: round; stroke-linejoin: round; }
+.lab-vessel__mark { stroke-width: 1.2; }
+.lab-vessel__liquid { fill: rgb(90 128 132 / 0.5); }
+.lab-vessel__flow { fill: none; stroke: rgb(90 128 132 / 0.75); stroke-width: 4; stroke-linecap: round; }
+.lab-vessel[data-weight="grave"] .lab-vessel__liquid { fill: rgb(var(--voynich-vermilion) / 0.42); }
+.lab-vessel[data-weight="grave"] .lab-vessel__flow { stroke: rgb(var(--voynich-vermilion) / 0.6); }
+.lab-vessel[data-done] .lab-vessel__mark { stroke: rgb(var(--voynich-vermilion)); stroke-width: 2; }
+.lab-vessel:focus-visible { outline: none; }
+.lab-vessel:focus-visible .lab-vessel__label { text-decoration: underline dotted; text-underline-offset: 4px; }
+.lab-vessel:disabled { cursor: not-allowed; opacity: 0.45; }
