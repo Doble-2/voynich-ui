@@ -66,3 +66,112 @@
 .lab-decipher__word[data-known] .lab-decipher__glyph { color: rgb(var(--voynich-ink) / 0.45); }
 .lab-decipher__count { margin-top: 18px; font-family: var(--voynich-font-sc); font-size: 12px; letter-spacing: 0.14em; opacity: 0.65; }
 @media (prefers-reduced-motion: reduce) { .lab-decipher__gloss { transition: none; } }
+
+/* ───── Marea ───── */
+.lab-tide { margin: 0; display: inline-flex; flex-direction: column; align-items: center; gap: 8px; color: rgb(var(--voynich-ink)); }
+.lab-tide__svg { width: 150px; height: auto; overflow: visible; }
+.lab-tide__ink { fill: none; stroke: rgb(var(--voynich-ink) / 0.85); stroke-width: 1.1; stroke-linecap: round; stroke-linejoin: round; }
+.lab-tide__num { font-family: var(--voynich-font-body); font-size: 9px; fill: rgb(var(--voynich-ink) / 0.6); stroke: none; }
+.lab-tide__water { fill: rgb(90 128 132 / 0.5); }
+.lab-tide__surface { fill: none; stroke: rgb(60 96 100 / 0.55); stroke-width: 1; animation: lab-wave 2.4s ease-in-out infinite alternate; }
+@keyframes lab-wave { to { transform: translateX(-11px); } }
+.lab-tide__spill { fill: none; stroke: rgb(90 128 132 / 0.55); stroke-width: 2.4; stroke-linecap: round; }
+.lab-tide[data-state="over"] .lab-tide__water { fill: rgb(var(--voynich-vermilion) / 0.32); }
+.lab-tide[data-state="over"] .lab-tide__spill { stroke: rgb(var(--voynich-vermilion) / 0.4); }
+.lab-tide__caption { display: flex; flex-direction: column; align-items: center; font-family: var(--voynich-font-body); }
+.lab-tide__what { font-family: var(--voynich-font-sc); letter-spacing: 0.14em; font-size: 12px; }
+.lab-tide__time { font-style: italic; font-size: 14px; opacity: 0.8; }
+.lab-tide[data-state="over"] .lab-tide__time { color: rgb(var(--voynich-vermilion-dark)); opacity: 1; }
+@media (prefers-reduced-motion: reduce) { .lab-tide__surface { animation: none; } }
+
+/* ───── Estratos ───── */
+.lab-strata { position: relative; display: flex; color: rgb(var(--voynich-ink)); min-width: 320px; }
+.lab-strata__core { flex: none; overflow: visible; }
+.lab-strata__fill { fill: rgb(var(--voynich-vellum-dark) / 0.55); }
+.lab-strata__layer[data-kind="aviso"] .lab-strata__fill { fill: rgb(var(--voynich-vermilion) / 0.3); }
+.lab-strata__layer[data-kind="nota"] .lab-strata__fill { fill: rgb(90 128 132 / 0.3); }
+.lab-strata__layer:first-child { animation: lab-settle 0.9s cubic-bezier(0.3, 1.3, 0.5, 1) both; }
+@keyframes lab-settle { from { transform: translateY(-14px); opacity: 0; } }
+.lab-strata__line { fill: none; stroke: rgb(var(--voynich-ink) / 0.7); stroke-width: 0.8; }
+.lab-strata__leader { fill: none; stroke: rgb(var(--voynich-ink) / 0.35); stroke-width: 0.6; stroke-dasharray: 1 2.5; }
+.lab-strata__list { position: relative; flex: 1; margin: 0; padding: 0; list-style: none; }
+.lab-strata__entry { position: absolute; left: 4px; right: 0; display: flex; flex-direction: column; font-family: var(--voynich-font-body); line-height: 1.2; }
+.lab-strata__text { font-size: 14.5px; }
+.lab-strata__entry[data-kind="aviso"] .lab-strata__text { color: rgb(var(--voynich-vermilion-dark)); }
+.lab-strata__when { font-size: 11.5px; font-style: italic; opacity: 0.6; }
+@media (prefers-reduced-motion: reduce) { .lab-strata__layer:first-child { animation: none; } }
+
+/* ───── Constelación ───── */
+.lab-sky { width: 100%; height: auto; overflow: visible; color: rgb(var(--voynich-ink)); }
+.lab-sky__asterism path { fill: none; stroke: rgb(var(--voynich-ink) / 0.18); stroke-width: 0.8; stroke-dasharray: 2 3; transition: stroke 0.3s; }
+.lab-sky__asterism[data-on] path { stroke: rgb(var(--voynich-ink) / 0.7); stroke-dasharray: none; }
+.lab-sky__group { font-family: var(--voynich-font-sc); font-size: 11px; letter-spacing: 0.16em; text-anchor: middle; fill: rgb(var(--voynich-ink) / 0.35); transition: fill 0.3s; }
+.lab-sky__asterism[data-on] .lab-sky__group { fill: rgb(var(--voynich-ink) / 0.85); }
+.lab-sky__star { cursor: pointer; outline: none; }
+.lab-sky__hit { fill: transparent; }
+.lab-sky__shape { fill: rgb(var(--voynich-gold) / 0.45); stroke: rgb(var(--voynich-ink) / 0.8); stroke-width: 0.8; transition: fill 0.25s; }
+.lab-sky__label { font-family: var(--voynich-font-body); font-style: italic; font-size: 12.5px; text-anchor: middle; fill: rgb(var(--voynich-ink) / 0.35); transition: fill 0.25s; }
+.lab-sky__star[data-near] .lab-sky__label { fill: rgb(var(--voynich-ink) / 0.8); }
+.lab-sky__star[data-focus] .lab-sky__shape { fill: rgb(var(--voynich-gold)); }
+.lab-sky__star[data-focus] .lab-sky__label { fill: rgb(var(--voynich-ink)); }
+.lab-sky__star:focus-visible .lab-sky__hit { stroke: rgb(var(--voynich-gold)); stroke-width: 1; stroke-dasharray: 2 3; }
+.lab-sky__ring { fill: none; stroke: rgb(var(--voynich-vermilion)); stroke-width: 1.1; }
+.lab-sky__star[data-chosen] .lab-sky__label { fill: rgb(var(--voynich-vermilion-dark)); }
+
+/* ───── Raíces ───── */
+.lab-roots { width: 100%; height: auto; overflow: visible; color: rgb(var(--voynich-ink)); }
+.lab-roots__ink path { fill: none; stroke: rgb(var(--voynich-ink) / 0.7); stroke-width: 1; stroke-linecap: round; }
+.lab-roots__root { stroke: rgb(var(--voynich-ink) / 0.4) !important; transition: stroke 0.3s, stroke-width 0.3s; }
+.lab-roots__root[data-lineage] { stroke: rgb(var(--voynich-ink) / 0.9) !important; stroke-width: 2 !important; }
+.lab-roots__node { cursor: pointer; outline: none; }
+.lab-roots__hit { fill: transparent; }
+.lab-roots__node:focus-visible .lab-roots__hit { stroke: rgb(var(--voynich-gold)); stroke-dasharray: 2 3; }
+.lab-roots__bulb { fill: rgb(var(--voynich-alch-brown) / 0.25); stroke: rgb(var(--voynich-ink) / 0.8); stroke-width: 0.9; }
+.lab-roots__node[data-lineage] .lab-roots__bulb { fill: rgb(var(--voynich-alch-brown) / 0.55); }
+.lab-roots__node[data-selected] .lab-roots__bulb { fill: rgb(118 138 84 / 0.8); }
+.lab-roots__sprout { fill: none; stroke: rgb(var(--voynich-ink) / 0.45); stroke-width: 0.7; stroke-linecap: round; }
+.lab-roots__label { font-family: var(--voynich-font-body); font-style: italic; font-size: 14px; text-anchor: middle; fill: rgb(var(--voynich-ink) / 0.75); paint-order: stroke; stroke: rgb(var(--voynich-vellum)); stroke-width: 4px; }
+.lab-roots__node[data-lineage] .lab-roots__label { fill: rgb(var(--voynich-ink)); }
+
+/* ───── Tinta que fragua ───── */
+.lab-ink { display: flex; flex-direction: column; gap: 4px; color: rgb(var(--voynich-ink)); font-family: var(--voynich-font-body); }
+.lab-ink__label { font-family: var(--voynich-font-sc); letter-spacing: 0.14em; font-size: 12px; opacity: 0.8; }
+.lab-ink__line { position: relative; border-bottom: 1px solid rgb(var(--voynich-ink) / 0.35); }
+.lab-ink__input {
+	position: relative; z-index: 1; width: 100%; border: 0; background: none; outline: none; padding: 4px 2px;
+	font: italic 20px/1.3 var(--voynich-font-body);
+	transition: color 0.8s ease-out, text-shadow 0.8s ease-out;
+}
+/* Fresca: algo más clara y con un brillo húmedo. */
+.lab-ink[data-phase="wet"] .lab-ink__input { color: rgb(var(--voynich-ink-medium)); text-shadow: 0 0 1px rgb(var(--voynich-ink-medium) / 0.6), 0.6px -0.6px 0 rgb(255 250 235 / 0.7); }
+/* Fraguada: se asienta, mate y más oscura. */
+.lab-ink[data-phase="set"] .lab-ink__input { color: rgb(var(--voynich-ink-deep)); text-shadow: none; }
+/* Corrida: la tinta no seca y se extiende. */
+.lab-ink[data-phase="blot"] .lab-ink__input { color: rgb(var(--voynich-ink-medium)); text-shadow: 0 0 2px rgb(var(--voynich-ink) / 0.5); }
+.lab-ink__blot {
+	position: absolute; left: 2px; top: 50%; width: calc(var(--len, 4) * 0.6em + 1.2em); max-width: 100%; height: 70%; transform: translateY(-50%) scale(0.2); transform-origin: left center;
+	background: radial-gradient(ellipse at 30% 50%, rgb(var(--voynich-ink) / 0.18), transparent 70%);
+	filter: blur(3px); opacity: 0; transition: opacity 0.6s ease-out, transform 1.2s ease-out;
+}
+.lab-ink[data-phase="blot"] .lab-ink__blot { opacity: 1; transform: translateY(-50%) scale(1); }
+.lab-ink__note { min-height: 1.4em; font-style: italic; font-size: 14.5px; color: rgb(var(--voynich-vermilion-dark)); }
+.lab-ink__mark { color: rgb(var(--voynich-vermilion)); font-style: normal; }
+@media (prefers-reduced-motion: reduce) { .lab-ink__input, .lab-ink__blot { transition: none; } }
+
+/* ───── Tamiz ───── */
+.lab-sieve { display: flex; flex-direction: column; gap: 10px; color: rgb(var(--voynich-ink)); font-family: var(--voynich-font-body); }
+.lab-sieve__label { font-family: var(--voynich-font-sc); letter-spacing: 0.14em; font-size: 12px; opacity: 0.8; }
+.lab-sieve__input { border: 0; border-bottom: 1px solid rgb(var(--voynich-ink) / 0.35); background: none; outline: none; padding: 4px 2px; font: italic 19px var(--voynich-font-body); color: inherit; }
+.lab-sieve__input:focus-visible { border-bottom-color: rgb(var(--voynich-gold)); }
+.lab-sieve__kept, .lab-sieve__fallen { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 0; padding: 0; list-style: none; }
+.lab-sieve__kept { min-height: 2.2em; align-items: flex-end; }
+.lab-sieve__grain { border: 0; background: none; padding: 0; font: italic 17px var(--voynich-font-body); color: inherit; cursor: pointer; animation: lab-land 0.35s ease-out both; }
+.lab-sieve__grain:hover, .lab-sieve__grain:focus-visible { text-decoration: underline; text-decoration-thickness: 0.5px; text-underline-offset: 3px; outline: none; }
+.lab-sieve__grain--fallen { font-size: 13px; opacity: 0.4; animation-name: lab-fall; }
+@keyframes lab-land { from { opacity: 0; transform: translateY(6px); } }
+@keyframes lab-fall { from { opacity: 0.9; transform: translateY(-26px); } }
+.lab-sieve__mesh { width: 100%; height: 22px; animation: lab-shake 0.35s ease-out; }
+.lab-sieve__mesh path { fill: none; stroke: rgb(var(--voynich-ink) / 0.6); stroke-width: 1; }
+@keyframes lab-shake { 25% { transform: translateX(-3px); } 60% { transform: translateX(2px); } }
+.lab-sieve__count { font-family: var(--voynich-font-sc); font-size: 11.5px; letter-spacing: 0.14em; opacity: 0.6; }
+@media (prefers-reduced-motion: reduce) { .lab-sieve__grain, .lab-sieve__mesh { animation: none; } }

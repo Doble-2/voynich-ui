@@ -5,7 +5,7 @@
 > Su técnica parece hidráulica, botánica y astronómica, no mecánica; su escritura no se ha descifrado.
 
 Este documento es una propuesta, no el contrato de diseño. Si se aprueba, se integrará en `DESIGN.md`.
-Prototipos en Storybook: **Laboratorio → Sin botones**.
+Prototipos en Storybook: **Laboratorio → Sin botones** y **Laboratorio → Más allá del botón**.
 
 ## Lo que descubrimos
 
@@ -38,16 +38,25 @@ Un valor no se teclea ni se arrastra en el vacío: se **alinea** con algo del mu
 anillo). La escala muestra qué valores tienen sentido (las marcas) y por qué (con qué se alinean). `RingPuzzle` ya
 es esto; la propuesta es que sea la forma general de introducir valores.
 
-## Primitivo 4 — Marea *(propuesta)*
+## Primitivo 4 — Marea *(prototipado)*
 
 Esperar no es un círculo que gira sin decir nada. Es una marea que sube con el tiempo pasado, con una **franja de lo
 esperado**: si el agua rebasa la franja, la espera ya es anómala y se ve. Honesto con la incertidumbre: muestra lo
 transcurrido, no un porcentaje inventado.
 
-## Primitivo 5 — Sedimento *(propuesta)*
+## Primitivo 5 — Sedimento / Estratos *(prototipado)*
 
 Lo que pasa deja **poso en el lugar donde pasó**, no en una esquina de la pantalla. En el mapa, cada lugar acumula
 estratos (lo que ocurrió allí y cuándo); el lector ve el historial donde importa.
+
+## Más primitivos *(prototipados)*
+
+| Problema | Lo que esconde lo de siempre | Alternativa |
+|---|---|---|
+| Encontrar una acción entre muchas (menú, paleta) | Qué va con qué y qué importa más | **Constelación**: asterismos de acciones; tamaño = uso; las flechas llevan a la estrella más cercana en esa dirección |
+| Moverse por una jerarquía (árbol, migas de pan) | Lo explorado frente a lo que no; dónde estás | **Raíces**: la jerarquía crece hacia abajo; lo abierto se entinta; el linaje hasta lo elegido es la miga de pan |
+| Saber si un valor vale (validación) | — (borde rojo y mensaje) | **Tinta que fragua**: lo válido seca (mate); lo inválido no seca, se corre, y la corrección aparece al margen |
+| Buscar (filtro) | Qué se descartó y cuánto | **Tamiz**: lo que coincide queda en la malla; lo demás cae al fondo, visible |
 
 ## Componente por componente
 
@@ -57,11 +66,11 @@ estratos (lo que ocurrió allí y cuándo); el lector ve el historial donde impo
 | `StrikeButton` | Acción irreversible | Mapa: el camino es un río |
 | `ConfinementCircle` | Confirmar una acción grave | Desaparece: el río ya avisa antes de actuar |
 | `Latch` | Alternar entre dos estados | Mapa: dos lugares unidos por una calzada |
-| `RadialMenu` | Encontrar una acción entre muchas | Mapa: las acciones son caminos; muchos caminos = constelación |
+| `RadialMenu` | Encontrar una acción entre muchas | Constelación |
 | `Codex` (y pestañas, que faltaban) | Moverse por el contenido | Mapa de lugares (secciones) con caminos de lectura |
 | `RingPuzzle` | Introducir una combinación | Ya es «alineación»: se mantiene como modelo |
 | `GraduatedScale` | Elegir un valor | Alineación: la marca coincide con algo del mundo |
-| `ScribeInput` | Escribir un valor | Pendiente de repensar (escribir sigue siendo escribir; ¿qué cambia en un alfabeto propio?) |
+| `ScribeInput` | Escribir un valor | Tinta que fragua (la validez es el material) |
 | `Cryptext` | Mostrar texto que se descifra | Desciframiento (sin animación de azar: se descifra al saber) |
 | `WaxSealShatter` | Contenido protegido | Desciframiento: protegido = aún no legible |
 | `PalimpsestText` | Dos capas de texto | Desciframiento: el texto antiguo es el glifo; la glosa, la lectura |
@@ -71,7 +80,9 @@ estratos (lo que ocurrió allí y cuándo); el lector ve el historial donde impo
 | `CinderDissolve` | Destruir / revelar lo de debajo | Mapa: «quemar» es un río hacia un lugar sin retorno |
 | `LensMagnifier` | Ver detalle | Se mantiene (ver de cerca no necesita otra solución) |
 | `OuroborosSpinner`, `Alembic` | Esperar | Marea |
-| `Gloss` | Avisar de lo que pasó | Sedimento en el lugar del suceso |
+| *(no existía)* árbol / navegación jerárquica | Moverse por una jerarquía | Raíces |
+| *(no existía)* búsqueda | Buscar | Tamiz |
+| `Gloss` | Avisar de lo que pasó | Estratos (y sedimento en el lugar del suceso) |
 | `MarginaliaNotes` | Explicar algo en contexto | Se mantiene (la glosa al margen ya es la solución de esa civilización) |
 | `IlluminatedDropcap`, `ScribeText`, `VellumTornSection`, `Surface` | Leer, materiales | Se mantienen como material |
 | `RefractiveFractal`, `LeyLineScroll`, `AbyssParallax` | Ambiente | Se mantienen o se retiran; no resuelven un problema del usuario |
