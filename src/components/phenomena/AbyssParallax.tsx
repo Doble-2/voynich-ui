@@ -19,6 +19,12 @@ export interface AbyssParallaxProps extends React.HTMLAttributes<HTMLDivElement>
   }[];
 }
 
+/**
+ * `AbyssParallax`
+ *
+ * @deprecated Es un parallax genérico, sin material ni artefacto de época (ver DESIGN.md §1), y se
+ * resuelve igual con CSS o ScrollTrigger en la aplicación. Se eliminará en la próxima versión menor.
+ */
 export const AbyssParallax = React.forwardRef<HTMLDivElement, AbyssParallaxProps>(
   ({ className, layers, ...props }, ref) => {
     const containerRef = useRef<HTMLDivElement>(null);

@@ -15,7 +15,7 @@ export interface FrequencyTunerProps extends React.InputHTMLAttributes<HTMLInput
    * @default (min + max) / 2
    */
   tunedValue?: number;
-  /** Unidad que se muestra junto al valor. @default "Hz" */
+  /** Unidad que se muestra junto al valor. @default "°" (grados, como la alidada de un astrolabio) */
   unit?: string;
   /** Se llama cada vez que cambia el valor. */
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -33,7 +33,7 @@ export interface FrequencyTunerProps extends React.InputHTMLAttributes<HTMLInput
  */
 export const FrequencyTuner = React.forwardRef<HTMLInputElement, FrequencyTunerProps>(
   (
-    { className, min = 0, max = 100, step = 1, value = 50, tunedValue, unit = "Hz", onChange, onTuned, ...props },
+    { className, min = 0, max = 100, step = 1, value = 50, tunedValue, unit = "°", onChange, onTuned, ...props },
     ref,
   ) => {
     const [internalValue, setInternalValue] = useState(value);

@@ -6,6 +6,7 @@ const meta = {
   component: AbyssParallax,
   parameters: {
     layout: 'fullscreen',
+    docs: { description: { component: '**Obsoleto.** Un parallax genérico, sin material ni artefacto de época; se eliminará en la próxima versión menor.' } },
   },
   tags: ['autodocs'],
   argTypes: {

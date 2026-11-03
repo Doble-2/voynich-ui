@@ -1,5 +1,6 @@
 import React, { createContext, forwardRef, useContext, useEffect, useId, useImperativeHandle, useState } from "react";
 import { cn } from "../../lib/utils";
+import { AstrolabeRete } from "../phenomena/AstrolabeRete";
 import { composeHandlers, composeRefs } from "../../lib/compose";
 import {
   useRingPuzzle,
@@ -445,4 +446,6 @@ export const RingPuzzle = Object.assign(RingPuzzleRoot, {
   Pivot,
   Glare,
   Status,
+  /** La «araña» calada del astrolabio, para usar como `bgContent` de un anillo. */
+  Rete: AstrolabeRete,
 });

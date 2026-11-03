@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { RingPuzzle, type RingPuzzleRef } from "../components/rituals/RingPuzzle";
-import { AstrolabeRete } from "../components/phenomena/AstrolabeRete";
 import { useState, useRef, useEffect } from "react";
 
 const meta = {
@@ -43,7 +42,7 @@ export const Default: Story = {
         initialRotation: 45,
         targetRotation: 0,
         ringClassName: "text-xl font-manuscript",
-        bgContent: <AstrolabeRete radius={120} innerRadius={58} />,
+        bgContent: <RingPuzzle.Rete radius={120} innerRadius={58} />,
       },
     ],
   },

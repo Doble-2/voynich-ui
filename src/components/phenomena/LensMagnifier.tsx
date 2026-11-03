@@ -7,15 +7,14 @@ import React, {
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { cn } from "../../lib/utils";
+import { useReducedMotion } from "../../lib/useReducedMotion";
 
 export type LensShape = "circle" | "square" | "rounded-square";
-export type LensFilter =
-  | "none"
-  | "sepia"
-  | "grayscale"
-  | "invert"
-  | "vintage"
-  | "x-ray";
+/**
+ * Tinte del cristal. `grayscale`, `invert` y `x-ray` están obsoletos (efectos de pantalla, no de vidrio):
+ * se aceptan por compatibilidad pero se dibujan sin tinte y se eliminarán en la próxima versión menor.
+ */
+export type LensFilter = "none" | "sepia" | "vintage" | "grayscale" | "invert" | "x-ray";
 
 export interface LensMagnifierProps extends React.HTMLAttributes<HTMLDivElement> {
   src: string;
@@ -38,7 +37,7 @@ export const LensMagnifier = forwardRef<LensMagnifierRef, LensMagnifierProps>(
   (
     {
       src,
-      alt = "Magnifiable Content",
+      alt = "",
       zoomLevel = 2,
       lensSize = 150,
       lensBorder = 4,
@@ -48,10 +47,14 @@ export const LensMagnifier = forwardRef<LensMagnifierRef, LensMagnifierProps>(
       showHandle = false,
       smoothFollowing = true,
       className,
+      onKeyDown,
+      tabIndex,
       ...props
     },
     ref,
   ) => {
+    const reduced = useReducedMotion();
+    const follow = smoothFollowing && !reduced ? 0.35 : 0;
     const containerRef = useRef<HTMLDivElement>(null);
     const lensRef = useRef<HTMLDivElement>(null);
     const zoomedImgRef = useRef<HTMLImageElement>(null);
@@ -86,18 +89,18 @@ export const LensMagnifier = forwardRef<LensMagnifierRef, LensMagnifierProps>(
       gsap.to(lens, {
          opacity: 1,
          scale: 1,
-         duration: 0.4,
+         duration: reduced ? 0 : 0.4,
          ease: "back.out(1.5)"
       });
 
       // Creamos un quickTo para optimizar el seguimiento sin disparar renders o múltiples tweens
       // x, y para la Lente (Contenedor Recortado)
-      const xToLens = gsap.quickTo(lens, "x", { duration: smoothFollowing ? 0.35 : 0, ease: "power3.out" });
-      const yToLens = gsap.quickTo(lens, "y", { duration: smoothFollowing ? 0.35 : 0, ease: "power3.out" });
+      const xToLens = gsap.quickTo(lens, "x", { duration: follow, ease: "power3.out" });
+      const yToLens = gsap.quickTo(lens, "y", { duration: follow, ease: "power3.out" });
       
       // x, y para la Imagen ampliada interna (Movimiento opuesto para el recorte)
-      const xToImg = gsap.quickTo(zoomImg, "x", { duration: smoothFollowing ? 0.35 : 0, ease: "power3.out" });
-      const yToImg = gsap.quickTo(zoomImg, "y", { duration: smoothFollowing ? 0.35 : 0, ease: "power3.out" });
+      const xToImg = gsap.quickTo(zoomImg, "x", { duration: follow, ease: "power3.out" });
+      const yToImg = gsap.quickTo(zoomImg, "y", { duration: follow, ease: "power3.out" });
 
       const syncLoop = () => {
         const { x, y } = targetPos.current;
@@ -116,7 +119,7 @@ export const LensMagnifier = forwardRef<LensMagnifierRef, LensMagnifierProps>(
       return () => {
          gsap.ticker.remove(syncLoop);
       };
-    }, { dependencies: [isActive, smoothFollowing, zoomLevel, lensSize], scope: containerRef });
+    }, { dependencies: [isActive, follow, reduced, zoomLevel, lensSize], scope: containerRef });
 
     // Animación de salida de la lente (Independiente del Ticker activo)
     useGSAP(() => {
@@ -125,13 +128,13 @@ export const LensMagnifier = forwardRef<LensMagnifierRef, LensMagnifierProps>(
         gsap.to(lens, {
            opacity: 0,
            scale: 0.6,
-           duration: 0.3,
+           duration: reduced ? 0 : 0.3,
            ease: "power2.in"
         });
       }
     }, { dependencies: [isActive], scope: containerRef });
 
-    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
       if (!containerRef.current) return;
       const rect = containerRef.current.getBoundingClientRect();
       targetPos.current.x = e.clientX - rect.left;
@@ -159,6 +162,24 @@ export const LensMagnifier = forwardRef<LensMagnifierRef, LensMagnifierProps>(
       setIsActive(false);
     };
 
+    // Teclado: al enfocar, la lente aparece en el centro; las flechas la mueven y Escape la aparta.
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+      onKeyDown?.(e);
+      if (e.defaultPrevented) return;
+      const step = e.shiftKey ? 60 : 20;
+      const delta: Record<string, [number, number]> = {
+        ArrowLeft: [-step, 0], ArrowRight: [step, 0], ArrowUp: [0, -step], ArrowDown: [0, step],
+      };
+      if (e.key === "Escape") return setIsActive(false);
+      const d = delta[e.key];
+      if (!d) return;
+      e.preventDefault();
+      if (!isActive) handleMouseEnter();
+      const { w, h } = containerSize.current;
+      targetPos.current.x = Math.max(0, Math.min(w, targetPos.current.x + d[0]));
+      targetPos.current.y = Math.max(0, Math.min(h, targetPos.current.y + d[1]));
+    };
+
     const getShapeRadius = (shape: LensShape) => {
       switch (shape) {
         case "square":
@@ -175,14 +196,8 @@ export const LensMagnifier = forwardRef<LensMagnifierRef, LensMagnifierProps>(
       switch (f) {
         case "sepia":
           return "sepia(80%) contrast(1.2)";
-        case "grayscale":
-          return "grayscale(100%) contrast(1.2)";
-        case "invert":
-          return "invert(100%) hue-rotate(180deg)";
         case "vintage":
           return "sepia(50%) contrast(1.5) brightness(0.9) hue-rotate(-15deg)";
-        case "x-ray":
-          return "invert(100%) grayscale(100%) contrast(2)";
         case "none":
         default:
           return "none";
@@ -193,12 +208,23 @@ export const LensMagnifier = forwardRef<LensMagnifierRef, LensMagnifierProps>(
       <div
         ref={containerRef}
         className={cn(
-          "voy-paper relative overflow-hidden cursor-none select-none group border border-voynich-inkDark/40",
+          "voy-paper relative overflow-hidden cursor-none select-none touch-none group border border-voynich-inkDark/40",
+          "focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4",
           className,
         )}
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
-        onMouseEnter={handleMouseEnter}
+        data-part="root"
+        data-active={isActive}
+        role="group"
+        aria-roledescription="lupa"
+        aria-label={alt ? `${alt} (con lupa: usa las flechas para moverla)` : "Imagen con lupa: usa las flechas para moverla"}
+        tabIndex={tabIndex ?? 0}
+        onPointerMove={handlePointerMove}
+        onPointerDown={handlePointerMove}
+        onPointerLeave={handleMouseLeave}
+        onPointerEnter={handleMouseEnter}
+        onFocus={handleMouseEnter}
+        onBlur={handleMouseLeave}
+        onKeyDown={handleKeyDown}
         {...props}
       >
         <img
@@ -213,6 +239,8 @@ export const LensMagnifier = forwardRef<LensMagnifierRef, LensMagnifierProps>(
 
         <div
           ref={lensRef}
+          data-part="lens"
+          aria-hidden="true"
           className="absolute top-0 left-0 z-10 pointer-events-none overflow-visible will-change-transform opacity-0"
           style={{
             width: lensSize,
@@ -253,7 +281,8 @@ export const LensMagnifier = forwardRef<LensMagnifierRef, LensMagnifierProps>(
               <img
                 ref={zoomedImgRef}
                 src={src}
-                alt="Zoomed"
+                alt=""
+                aria-hidden="true"
                 className="absolute max-w-none pointer-events-none will-change-transform object-cover"
                 draggable={false}
                 style={{

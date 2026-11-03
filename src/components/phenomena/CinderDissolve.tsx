@@ -20,28 +20,14 @@ const easeOutCubic = (value: number) => 1 - (1 - value) ** 3;
 const axisMap: Record<
   DissolveOrigin,
   {
-    gradientDirection: string;
     driftX: number;
     driftY: number;
   }
 > = {
-  top: { gradientDirection: "to bottom", driftX: 0, driftY: 22 },
-  right: { gradientDirection: "to left", driftX: 22, driftY: -10 },
-  bottom: { gradientDirection: "to top", driftX: 0, driftY: -32 },
-  left: { gradientDirection: "to right", driftX: -22, driftY: -10 },
-};
-
-const getEdgeMaskImage = (
-  origin: DissolveOrigin,
-  progress: number,
-  edgeWidth: number,
-) => {
-  const direction = axisMap[origin].gradientDirection;
-  const edge = clamp(progress * 100, 0, 100);
-  const softA = clamp(edge + edgeWidth * 44, 0, 100);
-  const softB = clamp(edge + edgeWidth * 88, 0, 100);
-
-  return `linear-gradient(${direction}, rgba(0,0,0,0) 0%, rgba(0,0,0,0) ${edge}%, rgba(0,0,0,0.56) ${softA}%, rgba(0,0,0,0.95) ${softB}%, rgba(0,0,0,1) 100%)`;
+  top: { driftX: 0, driftY: 22 },
+  right: { driftX: 22, driftY: -10 },
+  bottom: { driftX: 0, driftY: -32 },
+  left: { driftX: -22, driftY: -10 },
 };
 
 const seededUnit = (seed: number, index: number) => {
@@ -232,7 +218,8 @@ export interface CinderDissolveProps extends Omit<React.HTMLAttributes<HTMLEleme
    */
   origin?: DissolveOrigin;
   /**
-   * Define el arquetipo visual del efecto: combustión lenta ("burn") o evanescencia ("evaporate").
+   * @deprecated Solo existe la combustión. `"evaporate"` producía un efecto digital contrario al lenguaje
+   * de diseño y se ignora; la prop se eliminará en la próxima versión menor.
    */
   mode?: DissolveMode;
   /**
@@ -315,7 +302,7 @@ export const CinderDissolve = React.forwardRef<
       duration = 6,
       loop = true,
       origin = "bottom",
-      mode = "burn",
+      mode: _mode,
       edgeWidth = 0.16,
       distortion = 18,
       turbulence = 0.018,
@@ -383,23 +370,14 @@ export const CinderDissolve = React.forwardRef<
     const hasFrontier = resolvedProgress > 0.005 && resolvedProgress < 0.998;
 
     const palette = useMemo(
-      () =>
-        mode === "burn"
-          ? {
-              smoke: smokeColor ?? "rgba(46, 33, 27, 0.54)",
-              warm: glowColor ?? "rgba(255, 122, 52, 0.92)",
-              hot: emberColor ?? "rgba(255, 231, 168, 0.96)",
-              emberA: glowColor ?? "#ff7a1a",
-              emberB: emberColor ?? "#ffe8a3",
-            }
-          : {
-              smoke: smokeColor ?? "rgba(176, 166, 150, 0.28)",
-              warm: glowColor ?? "rgba(150, 134, 110, 0.46)",
-              hot: emberColor ?? "rgba(236, 226, 206, 0.86)",
-              emberA: glowColor ?? "#c4b594",
-              emberB: emberColor ?? "#efe6d2",
-            },
-      [emberColor, glowColor, mode, smokeColor],
+      () => ({
+            smoke: smokeColor ?? "rgba(46, 33, 27, 0.54)",
+            warm: glowColor ?? "rgba(255, 122, 52, 0.92)",
+            hot: emberColor ?? "rgba(255, 231, 168, 0.96)",
+            emberA: glowColor ?? "#ff7a1a",
+            emberB: emberColor ?? "#ffe8a3",
+          }),
+      [emberColor, glowColor, smokeColor],
     );
 
     const seeds = useMemo(
@@ -465,18 +443,6 @@ export const CinderDissolve = React.forwardRef<
     );
 
     const smokePlumes = useMemo(() => {
-      if (mode !== "burn") {
-        return [] as Array<{
-          id: string;
-          x: number;
-          y: number;
-          size: number;
-          opacity: number;
-          duration: number;
-          delay: string;
-        }>;
-      }
-
       const total = Math.max(5, Math.ceil(particleCount * 0.62));
       return Array.from({ length: total }, (_, index) => {
         const anchor = burnPoints[
@@ -496,22 +462,9 @@ export const CinderDissolve = React.forwardRef<
           delay: `${-index * 0.38}s`,
         };
       });
-    }, [burnPoints, mode, particleCount, safeId, size.height, size.width]);
+    }, [burnPoints, particleCount, safeId, size.height, size.width]);
 
     const ashParticles = useMemo(() => {
-      if (mode !== "burn") {
-        return [] as Array<{
-          id: string;
-          x: number;
-          y: number;
-          size: number;
-          opacity: number;
-          duration: number;
-          delay: string;
-          rotate: number;
-        }>;
-      }
-
       const total = Math.max(6, Math.ceil(particleCount * 0.7));
       return Array.from({ length: total }, (_, index) => {
         const anchor = burnPoints[
@@ -532,10 +485,10 @@ export const CinderDissolve = React.forwardRef<
           rotate: (index % 2 === 0 ? -1 : 1) * (8 + (index % 3) * 7),
         };
       });
-    }, [burnPoints, mode, particleCount, safeId, size.height, size.width]);
+    }, [burnPoints, particleCount, safeId, size.height, size.width]);
 
     const flameParticles = useMemo(() => {
-      if (mode !== "burn" || flameVariant !== "particles") {
+      if (flameVariant !== "particles") {
         return [] as Array<{
           id: string;
           x: number;
@@ -575,7 +528,6 @@ export const CinderDissolve = React.forwardRef<
       });
     }, [
       burnPoints,
-      mode,
       flameVariant,
       particleCount,
       safeId,
@@ -595,36 +547,17 @@ export const CinderDissolve = React.forwardRef<
       120,
     );
 
-    const baseFrequency =
-      mode === "burn"
-        ? `${turbulence} ${turbulence * 1.9}`
-        : `${turbulence * 0.72} ${turbulence * 1.32}`;
+    const baseFrequency = `${turbulence} ${turbulence * 1.9}`;
 
-    const edgeMaskImage = useMemo(
-      () => getEdgeMaskImage(origin, resolvedProgress, boundedEdgeWidth),
-      [origin, resolvedProgress, boundedEdgeWidth],
-    );
-
-    const contentStyle =
-      mode === "burn"
-        ? {
-            filter: `url(#${filterId})`,
-            WebkitMask: `url(#${maskId})`,
-            mask: `url(#${maskId})`,
-            WebkitMaskRepeat: "no-repeat",
-            maskRepeat: "no-repeat",
-            WebkitMaskSize: "100% 100%",
-            maskSize: "100% 100%",
-          }
-        : {
-            filter: `url(#${filterId})`,
-            WebkitMaskImage: edgeMaskImage,
-            maskImage: edgeMaskImage,
-            WebkitMaskRepeat: "no-repeat",
-            maskRepeat: "no-repeat",
-            WebkitMaskSize: "100% 100%",
-            maskSize: "100% 100%",
-          };
+    const contentStyle = {
+        filter: `url(#${filterId})`,
+        WebkitMask: `url(#${maskId})`,
+        mask: `url(#${maskId})`,
+        WebkitMaskRepeat: "no-repeat",
+        maskRepeat: "no-repeat",
+        WebkitMaskSize: "100% 100%",
+        maskSize: "100% 100%",
+      };
 
     const burnOpacity = hasFrontier
       ? clamp(0.35 + resolvedProgress * 0.62, 0.35, 1)
@@ -648,7 +581,7 @@ export const CinderDissolve = React.forwardRef<
           }
         }}
         data-part="root"
-        data-mode={mode}
+        data-mode="burn"
         data-state={resolvedProgress <= 0 ? "idle" : resolvedProgress >= 0.998 ? "complete" : "running"}
         data-progress={resolvedProgress.toFixed(2)}
         className={cn(
@@ -678,7 +611,7 @@ export const CinderDissolve = React.forwardRef<
                 ref={(node) => {
                   if (node && animate && !shouldFreezeMotion) {
                     gsap.to(node, {
-                      attr: { baseFrequency: mode === "burn" ? `${turbulence * 1.4} ${turbulence * 2.4}` : `${turbulence * 0.55} ${turbulence * 1.05}` },
+                      attr: { baseFrequency: `${turbulence * 1.4} ${turbulence * 2.4}` },
                       duration: Math.max(safeDuration * 0.42, 1.7),
                       repeat: -1,
                       yoyo: true,
@@ -689,7 +622,7 @@ export const CinderDissolve = React.forwardRef<
                 type="fractalNoise"
                 baseFrequency={baseFrequency}
                 numOctaves={3}
-                seed={mode === "burn" ? 19 : 41}
+                seed={19}
                 result="noise"
               />
               <feDisplacementMap
@@ -716,7 +649,7 @@ export const CinderDissolve = React.forwardRef<
                 height={size.height}
                 fill="white"
               />
-              {mode === "burn" && burnPath && (
+              {burnPath && (
                 <path d={burnPath} fill="black" />
               )}
             </mask>
@@ -775,7 +708,7 @@ export const CinderDissolve = React.forwardRef<
               <feDisplacementMap
                 in="SourceGraphic"
                 in2="flameNoise"
-                scale={mode === "burn" ? 26 : 8}
+                scale={26}
                 xChannelSelector="R"
                 yChannelSelector="G"
               />
@@ -787,7 +720,7 @@ export const CinderDissolve = React.forwardRef<
           {children}
         </div>
 
-        {mode === "burn" && layers?.edge !== false && burnPath && (
+        {layers?.edge !== false && burnPath && (
           <svg
             data-part="edge"
             className={cn(
@@ -853,7 +786,7 @@ export const CinderDissolve = React.forwardRef<
           </svg>
         )}
 
-        {mode === "burn" && layers?.particles !== false && hasFrontier && (
+        {layers?.particles !== false && hasFrontier && (
           <div
             data-part="particles"
             aria-hidden="true"

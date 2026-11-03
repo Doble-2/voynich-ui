@@ -17,6 +17,7 @@ export { LeyLineScroll } from './components/phenomena/LeyLineScroll';
 export { AbyssParallax } from './components/phenomena/AbyssParallax';
 export { OuroborosSpinner } from './components/phenomena/OuroborosSpinner';
 export { VellumTornSection } from './components/phenomena/VellumTornSection';
+/** @deprecated Usa `RingPuzzle.Rete`. */
 export { AstrolabeRete } from './components/phenomena/AstrolabeRete';
 
 export { Cryptext } from './components/artifacts/Cryptext';

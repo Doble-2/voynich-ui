@@ -23,7 +23,7 @@ describe("FrequencyTuner", () => {
     const input = host.querySelector("input")!;
     expect(input.getAttribute("aria-label")).toBe("Frecuencia del astrolabio");
     expect(input.getAttribute("name")).toBe("freq");
-    expect(input.getAttribute("aria-valuetext")).toMatch(/Hz/);
+    expect(input.getAttribute("aria-valuetext")).toMatch(/°/);
   });
 
   it("avisa onTuned al entrar en sintonía, pero no al montar ya sintonizado", async () => {

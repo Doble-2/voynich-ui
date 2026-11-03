@@ -2,7 +2,6 @@ import type { Meta, StoryObj } from "@storybook/react";
 import React from "react";
 import { Button } from "../components/rituals/Button";
 import { RingPuzzle } from "../components/rituals/RingPuzzle";
-import { AstrolabeRete } from "../components/phenomena/AstrolabeRete";
 
 const meta = {
   title: "Introducción/Scriptorium",
@@ -218,7 +217,7 @@ export const Scriptorium: Story = {
               initialRotation: 45,
               targetRotation: 0,
               step: 15,
-              bgContent: <AstrolabeRete radius={164} innerRadius={74} />,
+              bgContent: <RingPuzzle.Rete radius={164} innerRadius={74} />,
             },
           ]}
         />

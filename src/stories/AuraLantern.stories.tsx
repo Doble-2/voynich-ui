@@ -23,17 +23,16 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     size: 200,
+    className: "min-h-[260px]",
     children: (
-      <div className="font-manuscript text-3xl">
-        <p>No todo lo escrito puede ser leído bajo la luz del sol del Mediodía.</p>
-        <p>Pasa el cursor por estos lares para encender la luz de tu conciencia.</p>
+      <div className="font-manuscript text-2xl sm:text-3xl">
+        <p>La receta parece completa a la luz del día.</p>
+        <p>Acerca la vela al margen.</p>
       </div>
     ),
     revealContent: (
-      <div className="font-smallcaps text-sm tracking-widest text-voynich-glow mt-10 ml-20 drop-shadow-[0_0_5px_rgba(94,234,212,0.8)]">
-        <p>{"function unlockTruth() {"}</p>
-        <p>{"  return 'El verdadero sistema está escrito en CSS.';"}</p>
-        <p>{"}"}</p>
+      <div className="font-manuscript italic text-lg mt-24">
+        <p>«…y añádase una dracma de sal de la piedra que el boticario guarda bajo llave.»</p>
       </div>
     ),
   },

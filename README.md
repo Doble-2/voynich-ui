@@ -69,7 +69,7 @@ Ordenados por lo que hacen en la historia.
 |---|---|
 | `RefractiveFractal` | Tinta corrida y manchas de humedad sobre el pergamino |
 | `LeyLineScroll` | Línea que se dibuja al hacer scroll |
-| `AbyssParallax` | Capas a distinta profundidad al hacer scroll |
+| `AbyssParallax` | *Obsoleto*: parallax genérico, se eliminará |
 
 ### Para construir los tuyos
 `Surface` (los materiales: `paper`, `leather`, `rubric`, `bronze`, `gold`), `Slot`, `composeRefs`, `composeHandlers`, `createPartsContext` y los hooks sin dibujo (`useRingPuzzle`, `useRadialMenu`, `useConfinementCircle`, `useWaxSeal`, `useTarotSpread`, `useDissolveProgress`, `useReducedMotion`).

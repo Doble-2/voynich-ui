@@ -564,6 +564,8 @@
 	.voy-tuner__input::-moz-range-thumb { width: 1px; height: 1px; border: 0; }
 	.voy-tuner:focus-within .voy-tuner__thumb { outline: 1px solid rgb(var(--voynich-vellum)); outline-offset: 3px; }
 
+	/* AuraLantern con teclado: sin puntero que seguir, la luz cubre todo (el recorte va inline, de ahí el !important). */
+	.voy-lantern[data-lit="all"] .voy-lantern__revealed { clip-path: none !important; }
 	.voy-scribe { position: relative; display: block; width: 100%; }
 	.voy-scribe__label { display: block; margin-bottom: 4px; font-family: var(--voynich-font-sc); letter-spacing: 0.18em; font-size: 12px; opacity: 0.8; }
 	.voy-scribe__input {
