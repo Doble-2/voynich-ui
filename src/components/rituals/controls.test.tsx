@@ -164,4 +164,28 @@ describe("SacrificialButton", () => {
     expect(onSacrifice).toHaveBeenCalledTimes(1);
     expect(btn.getAttribute("aria-label")).toBe("Hecho");
   });
+
+  it("dentro de un formulario no lo envía (antes era submit por defecto)", () => {
+    const onSubmit = vi.fn((e: Event) => e.preventDefault());
+    const host = mount(
+      <form>
+        <SacrificialButton label="Borrar" />
+      </form>,
+    );
+    host.querySelector("form")!.addEventListener("submit", onSubmit);
+    host.querySelector("button")!.click();
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+
+  it("onClick con preventDefault cancela el sacrificio", async () => {
+    const onSacrifice = vi.fn();
+    const host = mount(
+      <SacrificialButton label="Borrar" onClick={(e) => e.preventDefault()} onSacrifice={onSacrifice} />,
+    );
+    const btn = host.querySelector("button")!;
+    btn.click();
+    await wait(20);
+    expect(onSacrifice).not.toHaveBeenCalled();
+    expect(btn.getAttribute("data-sacrificed")).toBe("false");
+  });
 });

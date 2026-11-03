@@ -27,6 +27,13 @@ describe("Cryptext", () => {
     expect(el.querySelector("[aria-hidden='true']")).not.toBeNull();
   });
 
+  it("un style del usuario se suma al del componente (antes lo reemplazaba entero)", () => {
+    const el = mount(<Cryptext text="VOYNICH" motion="none" style={{ color: "rgb(1, 2, 3)" }} />);
+    const root = el.querySelector<HTMLElement>("[data-part='root']")!;
+    expect(root.style.color).toBe("rgb(1, 2, 3)");
+    expect(root.style.letterSpacing).toBe("0.12em");
+  });
+
   it("con motion='none' muestra el texto revelado de inmediato y avisa onComplete", async () => {
     let done = false;
     const el = mount(<Cryptext text="VOYNICH" motion="none" onComplete={() => (done = true)} />);

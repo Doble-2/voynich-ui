@@ -26,6 +26,8 @@ export interface SacrificialButtonProps extends React.ButtonHTMLAttributes<HTMLB
   scrambleSpeed?: number;
   /** Permitir que el botón vuelva a estado original. @default false */
   resetable?: boolean;
+  /** Se llama antes del sacrificio; `e.preventDefault()` lo cancela. */
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
   /** Callback cuando el botón se sacrifica. */
   onSacrifice?: () => void;
   /** Callback cuando el botón se restaura (si resetable=true). */
@@ -46,6 +48,7 @@ export const SacrificialButton = React.forwardRef<SacrificialButtonRef, Sacrific
       onSacrifice,
       onReset,
       onClick,
+      type,
       ...props
     },
     ref,
@@ -180,13 +183,19 @@ export const SacrificialButton = React.forwardRef<SacrificialButtonRef, Sacrific
         if (resetable) doReset();
         return;
       }
-      doSacrifice();
+      // El consumidor va primero: con `e.preventDefault()` cancela el sacrificio (p. ej., para pedir confirmación).
       onClick?.(e);
+      if (e.defaultPrevented) return;
+      doSacrifice();
     };
 
     return (
       <button
         ref={buttonRef}
+        // Sin `type`, dentro de un <form> sería submit y sacrificarlo enviaría el formulario.
+        type={type ?? "button"}
+        data-part="root"
+        data-sacrificed={isSacrificed}
         onClick={handleClick}
         aria-label={isSacrificed ? sacrificedLabel : label}
         aria-disabled={isSacrificed && !resetable ? true : undefined}
@@ -200,11 +209,12 @@ export const SacrificialButton = React.forwardRef<SacrificialButtonRef, Sacrific
       >
         <div
           ref={bloodRef}
+          data-part="stain"
           aria-hidden="true"
           className="absolute inset-0 z-0 opacity-0 blur-md pointer-events-none"
           style={{ mixBlendMode: "multiply", backgroundColor: bloodColor }}
         />
-        <span ref={textRef} aria-hidden="true" className="voy-label relative z-10 text-[1em]">
+        <span ref={textRef} data-part="label" aria-hidden="true" className="voy-label relative z-10 text-[1em]">
           {label}
         </span>
       </button>

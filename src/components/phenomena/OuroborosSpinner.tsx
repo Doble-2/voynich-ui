@@ -16,13 +16,13 @@ export interface OuroborosSpinnerRef {
 export interface OuroborosSpinnerProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Diámetro de la serpiente (px). @default 64 */
   size?: number;
-  /** Color principal de la serpiente. @default "#c8a55a" */
+  /** Color de la serpiente (`--voy-snake`). @default pan de oro */
   loadingColor?: string;
   /** Activa/desactiva la animación de rotación. @default true */
   isProcessing?: boolean;
-  /** Color de la pista/sombra base. @default "#2b1d14" */
+  /** Color de la pista base (`--voy-track`). @default cuero */
   trackColor?: string;
-  /** Intensidad del resplandor (0–1). @default 0.6 */
+  /** Resplandor (0–1). Va contra el lenguaje de diseño; se mantiene por compatibilidad. @default 0 */
   glowIntensity?: number;
   /** Duración de una rotación completa (seg). @default 3 */
   speed?: number;
@@ -30,7 +30,7 @@ export interface OuroborosSpinnerProps extends React.HTMLAttributes<HTMLDivEleme
   showScales?: boolean;
   /** Mostrar el ojo de la serpiente. @default true */
   showEye?: boolean;
-  /** Color del ojo. @default "#14100b" */
+  /** Color del ojo (`--voy-eye`). @default negro de humo */
   eyeColor?: string;
   /** Grosor del cuerpo de la serpiente. @default 3.5 */
   strokeWidth?: number;
@@ -45,23 +45,30 @@ export interface OuroborosSpinnerProps extends React.HTMLAttributes<HTMLDivEleme
   onCycleComplete?: () => void;
 }
 
+// Colores por variable CSS (capa 2 del contrato), con tokens de la paleta por defecto.
+// En `style`: los atributos de presentación SVG no resuelven `var()` en todos los navegadores.
+const SNAKE = "var(--voy-snake, rgb(var(--voynich-gold)))";
+const TRACK = "var(--voy-track, rgb(var(--voynich-leather)))";
+const EYE = "var(--voy-eye, rgb(var(--voynich-void)))";
+
 export const OuroborosSpinner = React.forwardRef<OuroborosSpinnerRef, OuroborosSpinnerProps>(
   (
     {
       className,
       size = 64,
-      loadingColor = "#c8a55a",
+      loadingColor,
       isProcessing = true,
-      trackColor = "#2b1d14",
+      trackColor,
       glowIntensity = 0,
       speed = 3,
       showScales = true,
       showEye = true,
-      eyeColor = "#14100b",
+      eyeColor,
       strokeWidth = 3.5,
       onCycleComplete,
       label = "Cargando…",
       motion = "auto",
+      style,
       ...props
     },
     ref,
@@ -178,9 +185,6 @@ export const OuroborosSpinner = React.forwardRef<OuroborosSpinnerRef, OuroborosS
     );
 
     const glowPx = size * 0.12 * glowIntensity;
-    const glowAlpha = Math.round(glowIntensity * 96)
-      .toString(16)
-      .padStart(2, "0");
 
     return (
       <div
@@ -191,7 +195,14 @@ export const OuroborosSpinner = React.forwardRef<OuroborosSpinnerRef, OuroborosS
         data-part="root"
         data-motion={reduced ? "none" : undefined}
         className={cn("relative flex items-center justify-center", className)}
-        style={{ width: size, height: size }}
+        style={{
+          width: size,
+          height: size,
+          ...(loadingColor && { "--voy-snake": loadingColor }),
+          ...(trackColor && { "--voy-track": trackColor }),
+          ...(eyeColor && { "--voy-eye": eyeColor }),
+          ...style,
+        } as React.CSSProperties}
         {...props}
       >
         <svg
@@ -199,21 +210,21 @@ export const OuroborosSpinner = React.forwardRef<OuroborosSpinnerRef, OuroborosS
           aria-hidden="true"
           viewBox="0 0 100 100"
           className="w-full h-full"
-          style={{ filter: glowIntensity > 0 ? `drop-shadow(0 0 ${glowPx}px ${loadingColor}${glowAlpha})` : "drop-shadow(1px 2px 1.5px rgb(0 0 0 / 0.6))" }}
+          style={{ filter: glowIntensity > 0 ? `drop-shadow(0 0 ${glowPx}px color-mix(in srgb, ${SNAKE} ${Math.round(glowIntensity * 38)}%, transparent))` : "drop-shadow(1px 2px 1.5px rgb(0 0 0 / 0.6))" }}
         >
           <defs>
             <linearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor={loadingColor} stopOpacity="1" />
-              <stop offset="50%" stopColor={loadingColor} stopOpacity="0.4" />
-              <stop offset="100%" stopColor={loadingColor} stopOpacity="0.9" />
+              <stop offset="0%" style={{ stopColor: SNAKE }} stopOpacity="1" />
+              <stop offset="50%" style={{ stopColor: SNAKE }} stopOpacity="0.4" />
+              <stop offset="100%" style={{ stopColor: SNAKE }} stopOpacity="0.9" />
             </linearGradient>
           </defs>
 
           {/* Outer glow ring */}
-          <circle cx="50" cy="50" r="44" fill="none" stroke={loadingColor} strokeWidth="0.3" opacity="0.15" />
+          <circle cx="50" cy="50" r="44" fill="none" style={{ stroke: SNAKE }} strokeWidth="0.3" opacity="0.15" />
 
           {/* Base shadow track */}
-          <path d="M50 10 A40 40 0 1 1 49.9 10" fill="none" stroke={trackColor} strokeWidth={strokeWidth + 1.5} />
+          <path d="M50 10 A40 40 0 1 1 49.9 10" fill="none" style={{ stroke: TRACK }} strokeWidth={strokeWidth + 1.5} />
 
           {/* The Snake Body */}
           <path
@@ -229,26 +240,26 @@ export const OuroborosSpinner = React.forwardRef<OuroborosSpinnerRef, OuroborosS
           {showScales && (
             <g ref={scalesRef}>
               {scales.map((s, i) => (
-                <circle key={`scale-${i}`} cx={s.cx} cy={s.cy} r={s.r} fill={loadingColor} opacity="0.2" />
+                <circle key={`scale-${i}`} cx={s.cx} cy={s.cy} r={s.r} style={{ fill: SNAKE }} opacity="0.2" />
               ))}
             </g>
           )}
 
           {/* Snake head */}
-          <circle cx="50" cy="10" r="5" fill={loadingColor} opacity="0.9" />
+          <circle cx="50" cy="10" r="5" style={{ fill: SNAKE }} opacity="0.9" />
           {/* Eye */}
-          {showEye && <circle cx="50" cy="9" r="1.5" fill={eyeColor} />}
+          {showEye && <circle cx="50" cy="9" r="1.5" style={{ fill: EYE }} />}
           {/* Jaw/fang */}
-          <polygon points="50,5 54,15 46,15" fill={eyeColor} opacity="0.6" />
+          <polygon points="50,5 54,15 46,15" style={{ fill: EYE }} opacity="0.6" />
         </svg>
 
         {/* Center mystical artifact */}
         <div aria-hidden="true" className="absolute flex items-center justify-center" style={{ width: size * 0.2, height: size * 0.2 }}>
           <div
             className="w-full h-full rounded-full border border-current/20 flex items-center justify-center"
-            style={{ background: `radial-gradient(circle, ${loadingColor}10 0%, transparent 70%)` }}
+            style={{ background: `radial-gradient(circle, color-mix(in srgb, ${SNAKE} 6%, transparent) 0%, transparent 70%)` }}
           >
-            <div className="w-1/3 h-1/3 rounded-full" style={{ backgroundColor: `${loadingColor}30` }} />
+            <div className="w-1/3 h-1/3 rounded-full" style={{ backgroundColor: `color-mix(in srgb, ${SNAKE} 19%, transparent)` }} />
           </div>
         </div>
       </div>

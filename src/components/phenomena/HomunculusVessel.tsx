@@ -18,13 +18,13 @@ export interface HomunculusVesselProps extends Omit<React.HTMLAttributes<HTMLDiv
   progress?: number;
   /** Etiqueta inferior del recipiente. @default "Transmuting..." */
   label?: string;
-  /** Color principal del líquido alquímico. @default "#6fa58d" */
+  /** Color del líquido. Equivale a la variable CSS `--voy-liquid`. @default verdigrís */
   loadingColor?: string;
-  /** Color del contorno del frasco. @default "#8d6a35" */
+  /** Color del contorno del frasco (`--voy-glass`). @default latón claro */
   glassColor?: string;
-  /** Color del tapón. @default "#5a3d26" */
+  /** Color del tapón (`--voy-cork`). @default nogalina */
   corkColor?: string;
-  /** Color del fondo interior del frasco. @default "#14100b" */
+  /** Fondo interior del frasco (`--voy-flask-bg`). @default negro de humo */
   bgColor?: string;
   /** Tamaño del recipiente: preset o px custom. @default "md" */
   size?: "sm" | "md" | "lg" | number;
@@ -44,7 +44,11 @@ export interface HomunculusVesselProps extends Omit<React.HTMLAttributes<HTMLDiv
   showPercent?: boolean;
   /** Frecuencia de generación de burbujas (ms entre cada intento). @default 150 */
   bubbleRate?: number;
-  /** Intensidad del resplandor (0–1). @default 0.27 */
+  /**
+   * Resplandor del líquido (0–1). Va contra el lenguaje de diseño (nada de neón): por defecto el frasco
+   * proyecta una sombra física. Se mantiene por compatibilidad.
+   * @default 0
+   */
   glowIntensity?: number;
   /**
    * `auto` respeta `prefers-reduced-motion`; `none` quita la onda y las burbujas y fija el nivel sin animar.
@@ -59,6 +63,14 @@ export interface HomunculusVesselProps extends Omit<React.HTMLAttributes<HTMLDiv
   onEmpty?: () => void;
 }
 
+// Colores por variable CSS (capa 2 del contrato de flexibilidad), con los tokens de la paleta como valor por defecto.
+// Van en `style` y no en atributos SVG: los atributos de presentación no resuelven `var()` en todos los navegadores.
+const LIQUID = "var(--voy-liquid, rgb(var(--voynich-verdigris)))";
+const GLASS = "var(--voy-glass, rgb(var(--voynich-brass-light)))";
+const CORK = "var(--voy-cork, rgb(var(--voynich-alch-brown)))";
+const FLASK_BG = "var(--voy-flask-bg, rgb(var(--voynich-void)))";
+const SHEEN = "rgb(var(--voynich-vellum))";
+
 const SIZE_MAP = { sm: { w: "w-20", h: "h-24" }, md: { w: "w-28", h: "h-32" }, lg: { w: "w-40", h: "h-44" } };
 
 export const HomunculusVessel = React.forwardRef<HomunculusVesselRef, HomunculusVesselProps>(
@@ -67,10 +79,10 @@ export const HomunculusVessel = React.forwardRef<HomunculusVesselRef, Homunculus
       className,
       progress = 0,
       label = "Transmuting...",
-      loadingColor = "#6fa58d",
-      glassColor = "#8d6a35",
-      corkColor = "#5a3d26",
-      bgColor = "#14100b",
+      loadingColor,
+      glassColor,
+      corkColor,
+      bgColor,
       size = "md",
       showCork = true,
       showBubbles = true,
@@ -80,11 +92,12 @@ export const HomunculusVessel = React.forwardRef<HomunculusVesselRef, Homunculus
       showLabel = true,
       showPercent = true,
       bubbleRate = 150,
-      glowIntensity = 0.27,
+      glowIntensity = 0,
       onProgress,
       onComplete,
       onEmpty,
       motion = "auto",
+      style,
       ...props
     },
     ref,
@@ -247,7 +260,7 @@ export const HomunculusVessel = React.forwardRef<HomunculusVesselRef, Homunculus
             const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
             const r = 0.8 + Math.random() * 2.2;
             circle.setAttribute("r", `${r}`);
-            circle.setAttribute("fill", loadingColor);
+            circle.style.fill = LIQUID;
             circle.setAttribute("opacity", "0.5");
             const startY = 85 + Math.random() * 5;
             const { left, right } = getWallX(startY);
@@ -276,12 +289,9 @@ export const HomunculusVessel = React.forwardRef<HomunculusVesselRef, Homunculus
           intervals.forEach(clearInterval);
         };
       },
-      [progress, reduced, loadingColor, showBubbles, waveAmplitude, waveSpeed, bubbleRate, buildLiquidPath, getWallX, onProgress, onComplete, onEmpty],
+      [progress, reduced, showBubbles, waveAmplitude, waveSpeed, bubbleRate, buildLiquidPath, getWallX, onProgress, onComplete, onEmpty],
     );
 
-    const glowAlpha = Math.round(glowIntensity * 255)
-      .toString(16)
-      .padStart(2, "0");
 
     return (
       <div
@@ -294,6 +304,13 @@ export const HomunculusVessel = React.forwardRef<HomunculusVesselRef, Homunculus
         data-part="root"
         data-motion={reduced ? "none" : undefined}
         className={cn("relative flex flex-col items-center justify-center space-y-4", className)}
+        style={{
+          ...(loadingColor && { "--voy-liquid": loadingColor }),
+          ...(glassColor && { "--voy-glass": glassColor }),
+          ...(corkColor && { "--voy-cork": corkColor }),
+          ...(bgColor && { "--voy-flask-bg": bgColor }),
+          ...style,
+        } as React.CSSProperties}
         {...props}
       >
         <svg
@@ -302,7 +319,10 @@ export const HomunculusVessel = React.forwardRef<HomunculusVesselRef, Homunculus
           viewBox="0 0 100 110"
           className={sizeClasses ? `${sizeClasses.w} ${sizeClasses.h}` : undefined}
           style={{
-            filter: `drop-shadow(0 0 12px ${loadingColor}${glowAlpha})`,
+            filter:
+              glowIntensity > 0
+                ? `drop-shadow(0 0 12px color-mix(in srgb, ${LIQUID} ${Math.round(glowIntensity * 100)}%, transparent))`
+                : "drop-shadow(1px 2px 1.5px rgb(0 0 0 / 0.6))",
             ...(customSizeStyle || {}),
           }}
         >
@@ -313,27 +333,27 @@ export const HomunculusVessel = React.forwardRef<HomunculusVesselRef, Homunculus
             </clipPath>
             {/* Gradient for liquid depth */}
             <linearGradient id={liquidGradId} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor={loadingColor} stopOpacity="0.5" />
-              <stop offset="40%" stopColor={loadingColor} stopOpacity="0.7" />
-              <stop offset="100%" stopColor={loadingColor} stopOpacity="0.9" />
+              <stop offset="0%" style={{ stopColor: LIQUID }} stopOpacity="0.5" />
+              <stop offset="40%" style={{ stopColor: LIQUID }} stopOpacity="0.7" />
+              <stop offset="100%" style={{ stopColor: LIQUID }} stopOpacity="0.9" />
             </linearGradient>
             {/* Subtle glass reflection gradient */}
             <linearGradient id={sheenId} x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stopColor="#f4e6c4" stopOpacity="0.12" />
-              <stop offset="50%" stopColor="#f4e6c4" stopOpacity="0.02" />
-              <stop offset="100%" stopColor="#f4e6c4" stopOpacity="0.06" />
+              <stop offset="0%" style={{ stopColor: SHEEN }} stopOpacity="0.12" />
+              <stop offset="50%" style={{ stopColor: SHEEN }} stopOpacity="0.02" />
+              <stop offset="100%" style={{ stopColor: SHEEN }} stopOpacity="0.06" />
             </linearGradient>
           </defs>
 
           {/* Flask body fill (dark interior) */}
-          <path d="M40,12 L60,12 L60,30 L88,89 Q50,96 12,89 L40,30 Z" fill={bgColor} opacity="0.6" />
+          <path d="M40,12 L60,12 L60,30 L88,89 Q50,96 12,89 L40,30 Z" style={{ fill: FLASK_BG }} opacity="0.6" />
 
           {/* Liquid — clipped to flask interior */}
           <g clipPath={`url(#${clipId})`}>
             {/* Solid liquid body */}
             <path ref={liquidRef} d={buildLiquidPath(88)} fill={`url(#${liquidGradId})`} />
             {/* Animated wave surface (slightly brighter) */}
-            <path ref={waveRef} d={buildLiquidPath(88, 2)} fill={loadingColor} opacity="0.35" />
+            <path ref={waveRef} d={buildLiquidPath(88, 2)} style={{ fill: LIQUID }} opacity="0.35" />
             {/* Bubbles container */}
             <g ref={bubblesRef} />
           </g>
@@ -342,19 +362,19 @@ export const HomunculusVessel = React.forwardRef<HomunculusVesselRef, Homunculus
           <path
             d="M40,10 L60,10 L60,30 L90,90 Q50,96 10,90 L40,30 Z"
             fill="none"
-            stroke={glassColor}
+            style={{ stroke: GLASS }}
             strokeWidth="2.5"
             opacity="0.85"
           />
 
           {/* Neck ring detail */}
-          <line x1="38" y1="10" x2="62" y2="10" stroke={glassColor} strokeWidth="3" opacity="0.7" />
-          <line x1="38" y1="12" x2="62" y2="12" stroke={glassColor} strokeWidth="1.5" opacity="0.4" />
+          <line x1="38" y1="10" x2="62" y2="10" style={{ stroke: GLASS }} strokeWidth="3" opacity="0.7" />
+          <line x1="38" y1="12" x2="62" y2="12" style={{ stroke: GLASS }} strokeWidth="1.5" opacity="0.4" />
 
           {/* Glass highlight — left edge */}
-          <path d="M38,30 L18,85" fill="none" stroke="white" strokeWidth="1.5" opacity="0.15" strokeLinecap="round" />
+          <path d="M38,30 L18,85" fill="none" style={{ stroke: SHEEN }} strokeWidth="1.5" opacity="0.15" strokeLinecap="round" />
           {/* Glass highlight — right subtle */}
-          <path d="M62,30 L80,82" fill="none" stroke="white" strokeWidth="0.8" opacity="0.06" strokeLinecap="round" />
+          <path d="M62,30 L80,82" fill="none" style={{ stroke: SHEEN }} strokeWidth="0.8" opacity="0.06" strokeLinecap="round" />
 
           {/* Glass sheen overlay */}
           <path d="M40,12 L60,12 L60,30 L88,89 Q50,96 12,89 L40,30 Z" fill={`url(#${sheenId})`} />
@@ -362,16 +382,15 @@ export const HomunculusVessel = React.forwardRef<HomunculusVesselRef, Homunculus
           {/* Cork / stopper on top */}
           {showCork && (
             <>
-              <rect x="42" y="4" width="16" height="7" rx="2" fill={corkColor} opacity="0.7" />
+              <rect x="42" y="4" width="16" height="7" rx="2" style={{ fill: CORK }} opacity="0.7" />
               <rect
                 x="43"
                 y="5"
                 width="14"
                 height="2"
                 rx="1"
-                fill={corkColor}
                 opacity="0.5"
-                style={{ filter: "brightness(1.4)" }}
+                style={{ fill: CORK, filter: "brightness(1.4)" }}
               />
             </>
           )}

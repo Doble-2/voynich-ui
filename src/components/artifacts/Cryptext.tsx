@@ -86,6 +86,7 @@ export const Cryptext = forwardRef<CryptextRef, CryptextProps>(
       motion = "auto",
       onComplete: onCompleteCb,
       className,
+      style,
       ...props
     },
     ref,
@@ -186,12 +187,14 @@ export const Cryptext = forwardRef<CryptextRef, CryptextProps>(
 
     return (
       <Tag
-        className={cn("voy-label", className)}
-        style={{ fontSize: "1em", letterSpacing: "0.12em", ...props.style }}
         {...props}
+        data-part="root"
+        data-motion={reduced ? "none" : undefined}
+        className={cn("voy-label", className)}
+        style={{ fontSize: "1em", letterSpacing: "0.12em", ...style }}
       >
         {/* Capa visual animada: los glifos aleatorios no deben leerse en voz alta. */}
-        <span ref={textRef} aria-hidden="true" style={{ display: "inline-block", minWidth: `${text.length * 0.62}em` }}>
+        <span ref={textRef} data-part="glyphs" aria-hidden="true" style={{ display: "inline-block", minWidth: `${text.length * 0.62}em` }}>
           {text}
         </span>
         {/* Texto real, siempre disponible para tecnologías de apoyo. */}
