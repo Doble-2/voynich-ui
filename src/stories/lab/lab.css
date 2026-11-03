@@ -1,77 +1,68 @@
 /* Laboratorio: estilos de los prototipos. No forman parte de la librería hasta que se aprueben. */
 
-/* ── Signo incompleto ── */
-.lab-sign {
-	position: relative;
-	display: inline-block;
-	padding: 0;
-	border: 0;
-	background: none;
-	cursor: pointer;
-	color: rgb(var(--voynich-ink));
-}
-.lab-sign__svg { position: absolute; inset: 0; overflow: visible; }
-.lab-sign__label {
-	position: absolute;
-	white-space: nowrap;
-	font-family: var(--voynich-font-body);
-	font-style: italic;
-	font-size: 17px;
-	line-height: 1.2;
-}
-/* Aguada verde del herbario: solo aparece cuando el signo se cierra. */
-.lab-sign__wash {
-	fill: rgb(118 138 84);
-	opacity: 0;
-	transition: opacity 0.5s ease-out 0.25s;
-}
-.lab-sign__ghost { opacity: 0; transition: opacity 0.2s ease-out; }
-.lab-sign__stroke { stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 0.32s cubic-bezier(0.6, 0, 0.4, 1); }
-.lab-sign:hover .lab-sign__ghost,
-.lab-sign:focus-visible .lab-sign__ghost { opacity: 0.55; }
-.lab-sign:focus-visible { outline: none; }
-.lab-sign:focus-visible .lab-sign__label { text-decoration: underline dotted; text-underline-offset: 4px; }
-.lab-sign[data-closed="true"] .lab-sign__stroke { stroke-dashoffset: 0; }
-.lab-sign[data-closed="true"] .lab-sign__ghost { opacity: 0; }
-.lab-sign[data-closed="true"] .lab-sign__wash { opacity: 0.3; }
-.lab-sign[data-weight="grave"] .lab-sign__stroke { stroke: rgb(var(--voynich-vermilion)); }
-.lab-sign[data-weight="grave"] .lab-sign__wash { fill: rgb(var(--voynich-vermilion)); }
-.lab-sign:disabled { cursor: not-allowed; opacity: 0.45; }
+/* ───── Mapa de rosetas ───── */
+.lab-map { margin: 0; display: flex; flex-direction: column; gap: 10px; color: rgb(var(--voynich-ink)); }
+.lab-map__svg { width: 100%; height: auto; overflow: visible; }
+/* Solo las zonas de acción reciben el puntero (el rótulo del camino incluido, que es donde uno pulsa). */
+.lab-map__way, .lab-map__place, .lab-map__token { pointer-events: none; }
+.lab-map__caption { font-family: var(--voynich-font-body); font-size: 15px; text-align: center; opacity: 0.8; }
 
-/* ── Vasos comunicantes ── */
-.lab-vessel {
-	position: relative;
-	display: inline-grid;
-	width: 260px;
-	max-width: 100%;
-	padding: 0;
-	border: 0;
-	background: none;
-	cursor: pointer;
-	touch-action: none;
-	user-select: none;
-	-webkit-user-select: none;
-	color: rgb(var(--voynich-ink));
-}
-.lab-vessel__svg { grid-area: 1 / 1; width: 100%; height: auto; overflow: visible; }
-.lab-vessel__label {
-	grid-area: 1 / 1;
-	align-self: center;
-	justify-self: center;
-	margin-left: 27%;
+/* Calzada: dos bordes de tinta con el lecho del color del papel entre ellos. */
+.lab-map__road-edge { fill: none; stroke: rgb(var(--voynich-ink) / 0.55); stroke-width: 7; stroke-linecap: round; transition: stroke 0.25s; }
+.lab-map__road-bed { fill: none; stroke: rgb(var(--voynich-vellum)); stroke-width: 4.6; stroke-linecap: round; }
+/* Río: una franja de aguada y una corriente que avanza en su sentido. */
+.lab-map__river { fill: none; stroke: rgb(90 128 132 / 0.38); stroke-width: 6; stroke-linecap: round; transition: stroke 0.25s; }
+.lab-map__current { fill: none; stroke: rgb(var(--voynich-ink) / 0.55); stroke-width: 1; stroke-dasharray: 3 7; stroke-linecap: round; animation: lab-current 1.6s linear infinite; }
+@keyframes lab-current { to { stroke-dashoffset: -20; } }
+.lab-map__verb { font-family: var(--voynich-font-body); font-style: italic; font-size: 13px; fill: rgb(var(--voynich-ink) / 0.55); transition: fill 0.25s; }
+
+/* Solo los caminos que salen de aquí se leen con fuerza; el resto del mapa queda en segundo plano. */
+.lab-map__way:not([data-exit]) { opacity: 0.4; }
+.lab-map__way[data-exit] .lab-map__verb { fill: rgb(var(--voynich-ink) / 0.85); }
+.lab-map__way[data-hover] .lab-map__road-edge { stroke: rgb(var(--voynich-ink) / 0.95); }
+.lab-map__way[data-hover] .lab-map__river { stroke: rgb(90 128 132 / 0.7); }
+.lab-map__way[data-hover] .lab-map__verb { fill: rgb(var(--voynich-ink)); text-decoration: underline; text-decoration-thickness: 0.5px; }
+.lab-map__way[data-kind="river"][data-hover] .lab-map__verb { fill: rgb(var(--voynich-vermilion-dark)); }
+/* La memoria: lo recorrido queda más entintado. */
+.lab-map__way[data-trodden] .lab-map__road-edge { stroke: rgb(var(--voynich-ink) / 0.8); }
+.lab-map__way[data-trodden] .lab-map__river { stroke: rgb(90 128 132 / 0.6); }
+
+.lab-map__ring { fill: rgb(var(--voynich-vellum)); stroke: rgb(var(--voynich-ink) / 0.85); stroke-width: 1.1; }
+.lab-map__ring--inner { fill: none; stroke-width: 0.6; }
+.lab-map__petal { fill: rgb(var(--voynich-lapis) / 0.12); stroke: rgb(var(--voynich-ink) / 0.6); stroke-width: 0.6; }
+.lab-map__wash { fill: rgb(118 138 84 / 0.55); }
+.lab-map__name { font-family: var(--voynich-font-sc); font-size: 12px; letter-spacing: 0.14em; text-anchor: middle; fill: rgb(var(--voynich-ink) / 0.8); }
+.lab-map__place:not([data-here]):not([data-reachable]) { opacity: 0.45; }
+.lab-map__place[data-hover] .lab-map__ring { stroke: rgb(var(--voynich-ink)); stroke-width: 1.6; }
+.lab-map__place[data-hover] .lab-map__name { fill: rgb(var(--voynich-ink)); }
+
+.lab-map__token circle:first-child { fill: rgb(var(--voynich-ink-deep)); stroke: rgb(var(--voynich-vellum)); stroke-width: 1.2; }
+.lab-map__token-lit { fill: rgb(255 240 210 / 0.5); }
+
+.lab-map__hit { cursor: pointer; outline: none; }
+.lab-map__hit-path { fill: none; stroke: transparent; stroke-width: 36; }
+.lab-map__hit-place { fill: transparent; }
+.lab-map__hit:focus-visible .lab-map__hit-place { stroke: rgb(var(--voynich-gold)); stroke-width: 1; stroke-dasharray: 2 3; }
+
+@media (prefers-reduced-motion: reduce) { .lab-map__current { animation: none; } }
+
+/* ───── Desciframiento ───── */
+.lab-decipher { color: rgb(var(--voynich-ink)); }
+.lab-decipher__line { line-height: 1; display: flex; flex-wrap: wrap; column-gap: 12px; row-gap: 14px; align-items: flex-end; }
+.lab-decipher__word { display: inline-flex; flex-direction: column-reverse; align-items: center; gap: 2px; }
+.lab-decipher__glyph { display: flex; align-items: flex-end; line-height: 0; color: rgb(var(--voynich-ink) / 0.85); }
+.lab-decipher__punct { line-height: 1; font-size: 18px; margin-left: 1px; }
+.lab-decipher__gloss {
+	min-height: 1.1em;
 	font-family: var(--voynich-font-body);
 	font-style: italic;
-	font-size: 17px;
-	pointer-events: none;
-	white-space: nowrap;
+	font-size: 15px;
+	color: rgb(var(--voynich-vermilion-dark));
+	opacity: 0;
+	transform: translateY(3px);
+	transition: opacity 0.6s ease-out, transform 0.6s ease-out;
 }
-.lab-vessel__line { fill: none; stroke: rgb(var(--voynich-ink) / 0.85); stroke-width: 1; stroke-linecap: round; stroke-linejoin: round; }
-.lab-vessel__mark { stroke-width: 1.2; }
-.lab-vessel__liquid { fill: rgb(90 128 132 / 0.5); }
-.lab-vessel__flow { fill: none; stroke: rgb(90 128 132 / 0.75); stroke-width: 4; stroke-linecap: round; }
-.lab-vessel[data-weight="grave"] .lab-vessel__liquid { fill: rgb(var(--voynich-vermilion) / 0.42); }
-.lab-vessel[data-weight="grave"] .lab-vessel__flow { stroke: rgb(var(--voynich-vermilion) / 0.6); }
-.lab-vessel[data-done] .lab-vessel__mark { stroke: rgb(var(--voynich-vermilion)); stroke-width: 2; }
-.lab-vessel:focus-visible { outline: none; }
-.lab-vessel:focus-visible .lab-vessel__label { text-decoration: underline dotted; text-underline-offset: 4px; }
-.lab-vessel:disabled { cursor: not-allowed; opacity: 0.45; }
+.lab-decipher__word[data-known] .lab-decipher__gloss { opacity: 1; transform: none; }
+.lab-decipher__word[data-known] .lab-decipher__glyph { color: rgb(var(--voynich-ink) / 0.45); }
+.lab-decipher__count { margin-top: 18px; font-family: var(--voynich-font-sc); font-size: 12px; letter-spacing: 0.14em; opacity: 0.65; }
+@media (prefers-reduced-motion: reduce) { .lab-decipher__gloss { transition: none; } }
