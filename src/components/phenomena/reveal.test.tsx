@@ -2,6 +2,7 @@ import { describe, it, expect, afterEach, vi } from "vitest";
 import { createRef } from "react";
 import { AuraLantern } from "./AuraLantern";
 import { LensMagnifier } from "./LensMagnifier";
+import { PalimpsestText } from "../artifacts/PalimpsestText";
 import { mount, unmount, waitFor, press } from "../../test-utils";
 
 afterEach(unmount);
@@ -61,5 +62,26 @@ describe("LensMagnifier", () => {
     const root = host.querySelector('[data-part="root"]')!;
     pointer(root, "pointerdown");
     await waitFor(() => (root as HTMLElement).dataset.active === "true");
+  });
+});
+
+describe("PalimpsestText", () => {
+  it("avisa onTranslate y onRevert (antes nunca se llamaban)", () => {
+    const onTranslate = vi.fn();
+    const onRevert = vi.fn();
+    const host = mount(<PalimpsestText ancientText="a" translatedText="b" onTranslate={onTranslate} onRevert={onRevert} />);
+    const root = host.querySelector<HTMLElement>('[data-part="root"]')!;
+    root.click();
+    expect(onTranslate).toHaveBeenCalledTimes(1);
+    root.click();
+    expect(onRevert).toHaveBeenCalledTimes(1);
+  });
+
+  it('interaction="hover" traduce al pasar el ratón (antes la prop no hacía nada)', async () => {
+    const host = mount(<PalimpsestText ancientText="a" translatedText="b" interaction="hover" />);
+    const root = host.querySelector<HTMLElement>('[data-part="root"]')!;
+    root.dispatchEvent(new PointerEvent("pointerover", { bubbles: true, pointerType: "mouse" }));
+    root.dispatchEvent(new PointerEvent("pointerenter", { pointerType: "mouse" }));
+    await waitFor(() => root.dataset.translated === "true");
   });
 });

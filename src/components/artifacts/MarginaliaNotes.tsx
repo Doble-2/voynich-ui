@@ -36,7 +36,12 @@ export const MarginaliaNotes = React.forwardRef<HTMLSpanElement, MarginaliaNotes
 
       const open = () => {
         isHoveredRef.current = true;
-        gsap.to(noteEl, { autoAlpha: 1, x: 0, rotation: -0.6, duration: reduced ? 0 : 0.4, ease: 'power2.out' });
+        // Que la glosa no se salga de la pantalla: se desplaza lo justo hacia dentro.
+        const r = noteEl.getBoundingClientRect();
+        const left = r.left - Number(gsap.getProperty(noteEl, 'x'));
+        const margin = 8;
+        const shift = Math.min(0, window.innerWidth - margin - (left + r.width)) || Math.max(0, margin - left);
+        gsap.to(noteEl, { autoAlpha: 1, x: shift, rotation: -0.6, duration: reduced ? 0 : 0.4, ease: 'power2.out' });
       };
       const close = () => {
         isHoveredRef.current = false;
@@ -66,7 +71,7 @@ export const MarginaliaNotes = React.forwardRef<HTMLSpanElement, MarginaliaNotes
     }, { scope: containerRef, dependencies: [trigger, reduced] });
 
     return (
-      <span ref={composeRefs(ref, containerRef)} className={cn("relative group inline-block", className)} {...props}>
+      <span ref={composeRefs(ref, containerRef)} data-part="root" className={cn("relative group inline-block", className)} {...props}>
         <span
           tabIndex={0}
           aria-describedby={noteId}
@@ -77,6 +82,7 @@ export const MarginaliaNotes = React.forwardRef<HTMLSpanElement, MarginaliaNotes
         {/* Glosa al margen: una nota en otra mano sobre un trozo de pergamino. */}
         <span
           ref={noteRef}
+          data-part="note"
           id={noteId}
           role="note"
           className="voy-slip block absolute left-0 top-full mt-2 sm:left-full sm:top-0 sm:mt-0 sm:ml-5 w-52 max-w-[calc(100vw-2rem)] px-3 py-2 text-[13.5px] leading-snug italic opacity-0 invisible z-10 pointer-events-none"

@@ -48,10 +48,10 @@ export const PalimpsestText = React.forwardRef<HTMLDivElement, PalimpsestTextPro
           ease: "power2.inOut",
         });
         
-        // Bring translated text forward with a glowing ink effect
+        // La capa nueva se asienta sobre la antigua (sin brillo: es tinta, no luz).
         gsap.to(modern, {
           opacity: 1,
-          filter: "blur(0px) brightness(1.2)",
+          filter: "blur(0px)",
           scale: 1,
           y: 0,
           duration: t(1.5),
@@ -70,7 +70,7 @@ export const PalimpsestText = React.forwardRef<HTMLDivElement, PalimpsestTextPro
         
         gsap.to(modern, {
           opacity: 0,
-          filter: "blur(10px) brightness(0.5)",
+          filter: "blur(10px)",
           scale: 1.05,
           y: -10,
           duration: t(1.2),
@@ -79,7 +79,16 @@ export const PalimpsestText = React.forwardRef<HTMLDivElement, PalimpsestTextPro
       }
     }, [isTranslated, reduced]);
 
-    const toggleTranslation = () => setIsTranslated((prev) => !prev);
+    // Copia síncrona del estado: dos clics seguidos leerían `isTranslated` aún sin actualizar.
+    const translatedRef = useRef(false);
+    const setTranslated = (next: boolean) => {
+      if (next === translatedRef.current) return;
+      translatedRef.current = next;
+      setIsTranslated(next);
+      (next ? onTranslate : onRevert)?.();
+    };
+    const toggleTranslation = () => setTranslated(!translatedRef.current);
+    const hover = interaction === "hover";
 
     return (
       <div 
@@ -87,8 +96,12 @@ export const PalimpsestText = React.forwardRef<HTMLDivElement, PalimpsestTextPro
         role="button"
         tabIndex={0}
         aria-pressed={isTranslated}
+        data-part="root"
+        data-translated={isTranslated}
         className={cn("relative cursor-pointer min-h-[4rem] group focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4", className)}
         onClick={toggleTranslation}
+        onPointerEnter={hover ? (e) => e.pointerType === "mouse" && setTranslated(true) : undefined}
+        onPointerLeave={hover ? (e) => e.pointerType === "mouse" && setTranslated(false) : undefined}
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
@@ -99,6 +112,7 @@ export const PalimpsestText = React.forwardRef<HTMLDivElement, PalimpsestTextPro
       >
         <div 
           ref={ancientRef}
+          data-part="ancient"
           aria-hidden={isTranslated}
           className="absolute inset-0 transition-none text-lg tracking-[0.14em] leading-relaxed pointer-events-none"
           style={{ opacity: 0.8, filter: "sepia(0.5)", color: ancientColor, fontFamily: "var(--voynich-font-body)", fontStyle: "italic" }}
@@ -107,6 +121,7 @@ export const PalimpsestText = React.forwardRef<HTMLDivElement, PalimpsestTextPro
         </div>
         <div 
           ref={modernRef}
+          data-part="translated"
           aria-hidden={!isTranslated}
           className="relative transition-none text-lg leading-relaxed pointer-events-none"
           style={{ opacity: 0, filter: "blur(10px)", transform: "translateY(-10px) scale(1.05)", fontFamily: "var(--voynich-font-body)", ...(translatedColor ? { color: translatedColor } : {}) }}
@@ -115,7 +130,7 @@ export const PalimpsestText = React.forwardRef<HTMLDivElement, PalimpsestTextPro
         </div>
         
         {/* Subtle helper text on hover */}
-        <div className="voy-label absolute -bottom-7 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-60 group-focus-visible:opacity-60 transition-opacity text-[11px] whitespace-nowrap">
+        <div data-part="hint" aria-hidden="true" className="voy-label absolute -bottom-7 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-60 group-focus-visible:opacity-60 transition-opacity text-[11px] whitespace-nowrap">
           {isTranslated ? "[Deshacer traducción]" : "[Traducir palimpsesto]"}
         </div>
       </div>
