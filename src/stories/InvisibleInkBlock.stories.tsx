@@ -19,7 +19,7 @@ const meta = {
   },
   decorators: [
     (Story) => (
-      <div className="bg-[#1b120c] p-20 flex text-center justify-center font-serif text-[#eadbb6] text-xl">
+      <div className="voy-panel p-20 flex text-center justify-center font-manuscript text-voynich-vellum text-xl">
         <Story />
       </div>
     ),
@@ -47,7 +47,7 @@ export const HoverReveal: Story = {
 export const ClickReveal: Story = {
   args: {
     text: "Pasa el token por la función de hash.",
-    revealColor: "#5eead4",
+    revealColor: "#a34a33",
     interaction: "click",
   },
   decorators: [

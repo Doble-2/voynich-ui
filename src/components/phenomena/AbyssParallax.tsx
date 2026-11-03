@@ -3,6 +3,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { cn } from "../../lib/utils";
+import { useReducedMotion } from "../../lib/useReducedMotion";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -22,12 +23,14 @@ export const AbyssParallax = React.forwardRef<HTMLDivElement, AbyssParallaxProps
   ({ className, layers, ...props }, ref) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const layerRefs = useRef<(HTMLDivElement | null)[]>([]);
+    const reduced = useReducedMotion();
 
     useGSAP(() => {
       const container = containerRef.current;
       const DOMlayers = layerRefs.current.filter(Boolean);
 
-      if (!container || !DOMlayers.length) return;
+      // Movimiento reducido: las capas quedan quietas, sin parallax.
+      if (!container || !DOMlayers.length || reduced) return;
 
       const triggers: ScrollTrigger[] = [];
 
@@ -58,13 +61,12 @@ export const AbyssParallax = React.forwardRef<HTMLDivElement, AbyssParallaxProps
       return () => {
         triggers.forEach(t => t.kill());
       };
-    }, { scope: containerRef });
+    }, { scope: containerRef, dependencies: [reduced] });
 
     return (
       <div 
         ref={containerRef} 
-        className={cn("relative overflow-hidden min-h-[80vh] flex items-center justify-center bg-[#0d0905] [perspective:1200px]", className)} 
-        style={{ backgroundImage: 'radial-gradient(ellipse at center, #1b120c 0%, #0d0905 100%)' }}
+        className={cn("voy-leather relative overflow-hidden min-h-[80vh] flex items-center justify-center [perspective:1200px]", className)} 
         {...props}
       >
         <div className="absolute inset-0 pointer-events-none opacity-20 mix-blend-overlay">

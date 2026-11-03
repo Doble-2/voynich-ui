@@ -29,7 +29,7 @@ const meta = {
   },
   decorators: [
     (Story) => (
-      <div className="bg-[#050302] p-12 rounded-xl">
+      <div className="voy-panel p-12 rounded-xl">
         <Story />
       </div>
     ),
@@ -43,7 +43,7 @@ export const Default: Story = {
   args: {
     progress: 45,
     label: 'Compilando...',
-    loadingColor: '#00d2ff',
+    loadingColor: '#6fa58d',
   },
 };
 
@@ -77,7 +77,7 @@ export const InteractiveProgress = () => {
         ref={vesselRef}
         progress={progress}
         label="Transmutando..."
-        loadingColor="#5eead4"
+        loadingColor="#6fa58d"
         size="lg"
         onComplete={() => console.log('✦ Transmutación completa')}
         onEmpty={() => console.log('⊘ Recipiente vacío')}
@@ -85,19 +85,19 @@ export const InteractiveProgress = () => {
       <div className="flex gap-3">
         <button
           onClick={() => vesselRef.current?.pulse()}
-          className="px-4 py-1.5 text-xs border border-[#5c331d] text-[#eadbb6] font-serif rounded"
+          className="px-4 py-1.5 text-xs border border-voynich-inkMedium text-voynich-vellum font-manuscript rounded"
         >
           ✦ Pulso
         </button>
         <button
           onClick={() => vesselRef.current?.reset()}
-          className="px-4 py-1.5 text-xs border border-[#5c331d] text-[#eadbb6] font-serif rounded"
+          className="px-4 py-1.5 text-xs border border-voynich-inkMedium text-voynich-vellum font-manuscript rounded"
         >
           ⊘ Vaciar
         </button>
         <button
           onClick={() => vesselRef.current?.fill(100, 2)}
-          className="px-4 py-1.5 text-xs border border-[#5c331d] text-[#eadbb6] font-serif rounded"
+          className="px-4 py-1.5 text-xs border border-voynich-inkMedium text-voynich-vellum font-manuscript rounded"
         >
           ▲ Llenar
         </button>

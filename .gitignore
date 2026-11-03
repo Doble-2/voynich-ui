@@ -30,3 +30,7 @@ coverage/
 # Agents (local AI config)
 .agents/
 skills-lock.json
+
+# Capturas de tests de navegador (Vitest)
+.vitest-attachments/
+__screenshots__/

@@ -7,6 +7,6 @@ export default defineConfig({
   splitting: false,
   sourcemap: true,
   clean: true,
-  external: ["react", "react-dom"],
+  external: ["react", "react-dom", "gsap", "@gsap/react"],
   injectStyle: false, // We'll manage styles with tailwind separately
 });

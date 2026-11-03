@@ -2,6 +2,75 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * Design tokens de Voynich UI.
+ * Canales RGB separados por espacio para soportar opacidad en Tailwind (bg-primary/30).
+ * Para re-tematizar, sobrescribe estas variables en tu :root.
+ */
+/* Fuentes autoalojadas (SIL OFL, ver src/fonts). Viajan con el paquete en dist/fonts. */
+@font-face { font-family: 'IM Fell English'; font-style: normal; font-weight: 400; font-display: swap; src: url('./fonts/im-fell-english-latin-400-normal.woff2') format('woff2'); }
+@font-face { font-family: 'IM Fell English'; font-style: italic; font-weight: 400; font-display: swap; src: url('./fonts/im-fell-english-latin-400-italic.woff2') format('woff2'); }
+@font-face { font-family: 'IM Fell English SC'; font-style: normal; font-weight: 400; font-display: swap; src: url('./fonts/im-fell-english-sc-latin-400-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Texturina'; font-style: normal; font-weight: 600; font-display: swap; src: url('./fonts/texturina-latin-600-normal.woff2') format('woff2'); }
+
+:root {
+	/* Papel y pergamino (medidos en la Biblia de Gutenberg y el Voynich) */
+	--voynich-vellum: 228 217 199;       /* #e4d9c7 papel */
+	--voynich-vellum-aged: 216 201 174;  /* #d8c9ae */
+	--voynich-vellum-shade: 214 199 172; /* #d6c7ac */
+	--voynich-vellum-dark: 191 163 135;  /* #bfa387 pergamino del Voynich */
+	--voynich-void: 20 16 11;            /* #14100b negro de humo */
+	--voynich-leather: 43 29 20;         /* #2b1d14 cuero de encuadernación */
+
+	/* Tintas */
+	--voynich-ink: 47 41 33;             /* #2f2921 tinta ferrogálica */
+	--voynich-ink-deep: 28 23 16;        /* #1c1710 */
+	--voynich-ink-medium: 90 75 48;      /* #5a4b30 */
+	--voynich-alch-brown: 139 74 42;     /* #8b4a2a nogalina */
+
+	/* Pigmentos (apagados: nada de saturación de pantalla) */
+	--voynich-lapis: 47 74 122;          /* #2f4a7a */
+	--voynich-verdigris: 90 138 118;     /* #5a8a76 */
+	--voynich-glow: 126 170 150;         /* #7eaa96 verdigrís claro */
+	--voynich-vermilion: 163 74 51;      /* #a34a33 rúbrica (terracota) */
+	--voynich-vermilion-light: 196 104 78;
+	--voynich-vermilion-dark: 112 40 28;
+	--voynich-blood: 107 28 24;          /* #6b1c18 */
+
+	/* Metales (medidos en un astrolabio de 1569) */
+	--voynich-brass: 122 85 16;          /* #7a5510 bronce-oliva */
+	--voynich-brass-light: 191 156 80;   /* #bf9c50 */
+	--voynich-brass-dark: 66 42 4;       /* #422a04 */
+	--voynich-brass-deep: 28 20 6;       /* #1c1406 */
+	--voynich-gold: 200 165 90;          /* #c8a55a pan de oro, solo para detalles */
+	--voynich-gold-light: 220 196 130;   /* #dcc482 */
+
+	/* Tipografía (autoalojada, ver @font-face) */
+	--voynich-font-body: 'IM Fell English', 'Iowan Old Style', Georgia, serif;
+	--voynich-font-sc: 'IM Fell English SC', 'IM Fell English', Georgia, serif;
+	--voynich-font-display: 'Texturina', 'IM Fell English', Georgia, serif;
+	--voynich-font-glyph: 'IM Fell English';
+
+	/* Superficies: CAPAS DE RELIEVE translúcidas (solo luz y sombra, SVG feDiffuseLighting) con una sola luz,
+	   arriba-izquierda. No llevan color propio: se apoyan sobre `background-color`, así que cualquier tono sirve. */
+	--voynich-surface-paper: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320'%3E%3Cfilter id='f' x='0' y='0' width='100%25' height='100%25' color-interpolation-filters='sRGB'%3E %3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.04' numOctaves='4' seed='4' result='pa'/%3E %3CfeTurbulence type='fractalNoise' baseFrequency='0.5 0.5' numOctaves='2' seed='9' result='pb'/%3E %3CfeComposite in='pa' in2='pb' operator='arithmetic' k1='0' k2='0.97' k3='0.03' k4='0' result='ph'/%3E %3CfeDiffuseLighting in='ph' lighting-color='%23fff' surfaceScale='0.7' diffuseConstant='1.0' result='pd'%3E%3CfeDistantLight azimuth='225' elevation='58'/%3E%3C/feDiffuseLighting%3E %3CfeColorMatrix in='pd' type='matrix' values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -1.0 0 0 0 0.848' result='ps'/%3E %3CfeColorMatrix in='pd' type='matrix' values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0.55 0 0 0 -0.466' result='pl'/%3E%3CfeMerge%3E%3CfeMergeNode in='ps'/%3E%3CfeMergeNode in='pl'/%3E%3C/feMerge%3E%3C/filter%3E%3Crect width='320' height='320' filter='url(%23f)'/%3E%3C/svg%3E");
+	--voynich-surface-leather: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='f' x='0' y='0' width='100%25' height='100%25' color-interpolation-filters='sRGB'%3E %3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' seed='12' result='la'/%3E %3CfeTurbulence type='fractalNoise' baseFrequency='0.04' numOctaves='2' seed='17' result='lb'/%3E %3CfeComposite in='la' in2='lb' operator='arithmetic' k1='0' k2='0.55' k3='0.45' k4='0' result='lh'/%3E %3CfeDiffuseLighting in='lh' lighting-color='%23fff' surfaceScale='1.5' diffuseConstant='1.18' result='ld'%3E%3CfeDistantLight azimuth='225' elevation='58'/%3E%3C/feDiffuseLighting%3E %3CfeColorMatrix in='ld' type='matrix' values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -2.3 0 0 0 2.302' result='ls'/%3E %3CfeColorMatrix in='ld' type='matrix' values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  1.7 0 0 0 -1.702' result='ll'/%3E%3CfeMerge%3E%3CfeMergeNode in='ls'/%3E%3CfeMergeNode in='ll'/%3E%3C/feMerge%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23f)'/%3E%3C/svg%3E");
+	--voynich-surface-rubric: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='f' x='0' y='0' width='100%25' height='100%25' color-interpolation-filters='sRGB'%3E %3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' seed='12' result='la'/%3E %3CfeTurbulence type='fractalNoise' baseFrequency='0.04' numOctaves='2' seed='17' result='lb'/%3E %3CfeComposite in='la' in2='lb' operator='arithmetic' k1='0' k2='0.55' k3='0.45' k4='0' result='lh'/%3E %3CfeDiffuseLighting in='lh' lighting-color='%23fff' surfaceScale='1.3' diffuseConstant='1.14' result='ld'%3E%3CfeDistantLight azimuth='225' elevation='58'/%3E%3C/feDiffuseLighting%3E %3CfeColorMatrix in='ld' type='matrix' values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -2.0 0 0 0 1.934' result='ls'/%3E %3CfeColorMatrix in='ld' type='matrix' values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  1.5 0 0 0 -1.45' result='ll'/%3E%3CfeMerge%3E%3CfeMergeNode in='ls'/%3E%3CfeMergeNode in='ll'/%3E%3C/feMerge%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23f)'/%3E%3C/svg%3E");
+	--voynich-surface-bronze: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='420'%3E%3Cfilter id='f' x='0' y='0' width='100%25' height='100%25' color-interpolation-filters='sRGB'%3E %3CfeTurbulence type='fractalNoise' baseFrequency='0.22 0.26' numOctaves='3' seed='7' result='ma'/%3E %3CfeTurbulence type='fractalNoise' baseFrequency='0.006 0.5' numOctaves='2' seed='12' result='mb'/%3E %3CfeComposite in='ma' in2='mb' operator='arithmetic' k1='0' k2='0.94' k3='0.06' k4='0' result='mh'/%3E %3CfeDiffuseLighting in='mh' lighting-color='%23fff' surfaceScale='0.32' diffuseConstant='1.0' result='md'%3E%3CfeDistantLight azimuth='225' elevation='58'/%3E%3C/feDiffuseLighting%3E %3CfeColorMatrix in='md' type='matrix' values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -1.9 0 0 0 1.611' result='ms'/%3E %3CfeColorMatrix in='md' type='matrix' values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  1.5 0 0 0 -1.272' result='ml'/%3E %3CfeTurbulence type='fractalNoise' baseFrequency='0.018 0.026' numOctaves='3' seed='9' result='ta'/%3E %3CfeColorMatrix in='ta' type='matrix' values='0 0 0 0 1  0 0 0 0 0.93  0 0 0 0 0.75  0.7 0 0 0 -0.3' result='tl'/%3E %3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.02' numOctaves='3' seed='16' result='tb'/%3E %3CfeColorMatrix in='tb' type='matrix' values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0.75 0 0 -0.33' result='td'/%3E %3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='20' result='tp'/%3E %3CfeColorMatrix in='tp' type='matrix' values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 1.3 0 -0.7' result='pit'/%3E %3CfeSpecularLighting in='mh' surfaceScale='0.9' specularConstant='0.3' specularExponent='26' lighting-color='%23ffe9b0' result='sp'%3E%3CfeDistantLight azimuth='225' elevation='58'/%3E%3C/feSpecularLighting%3E%3CfeMerge%3E%3CfeMergeNode in='tl'/%3E%3CfeMergeNode in='td'/%3E%3CfeMergeNode in='ms'/%3E%3CfeMergeNode in='ml'/%3E%3CfeMergeNode in='sp'/%3E%3CfeMergeNode in='pit'/%3E%3C/feMerge%3E%3C/filter%3E%3Crect width='420' height='420' filter='url(%23f)'/%3E%3C/svg%3E");
+	--voynich-surface-gold: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='420'%3E%3Cfilter id='f' x='0' y='0' width='100%25' height='100%25' color-interpolation-filters='sRGB'%3E %3CfeTurbulence type='fractalNoise' baseFrequency='0.22 0.26' numOctaves='3' seed='11' result='ma'/%3E %3CfeTurbulence type='fractalNoise' baseFrequency='0.006 0.5' numOctaves='2' seed='16' result='mb'/%3E %3CfeComposite in='ma' in2='mb' operator='arithmetic' k1='0' k2='0.94' k3='0.06' k4='0' result='mh'/%3E %3CfeDiffuseLighting in='mh' lighting-color='%23fff' surfaceScale='0.32' diffuseConstant='1.0' result='md'%3E%3CfeDistantLight azimuth='225' elevation='58'/%3E%3C/feDiffuseLighting%3E %3CfeColorMatrix in='md' type='matrix' values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -1.9 0 0 0 1.611' result='ms'/%3E %3CfeColorMatrix in='md' type='matrix' values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  1.5 0 0 0 -1.272' result='ml'/%3E %3CfeTurbulence type='fractalNoise' baseFrequency='0.018 0.026' numOctaves='3' seed='13' result='ta'/%3E %3CfeColorMatrix in='ta' type='matrix' values='0 0 0 0 1  0 0 0 0 0.93  0 0 0 0 0.75  0.7 0 0 0 -0.3' result='tl'/%3E %3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.02' numOctaves='3' seed='20' result='tb'/%3E %3CfeColorMatrix in='tb' type='matrix' values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0.75 0 0 -0.33' result='td'/%3E %3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='24' result='tp'/%3E %3CfeColorMatrix in='tp' type='matrix' values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 1.3 0 -0.7' result='pit'/%3E %3CfeSpecularLighting in='mh' surfaceScale='0.9' specularConstant='0.22' specularExponent='26' lighting-color='%23ffe9b0' result='sp'%3E%3CfeDistantLight azimuth='225' elevation='58'/%3E%3C/feSpecularLighting%3E%3CfeMerge%3E%3CfeMergeNode in='tl'/%3E%3CfeMergeNode in='td'/%3E%3CfeMergeNode in='ms'/%3E%3CfeMergeNode in='ml'/%3E%3CfeMergeNode in='sp'/%3E%3CfeMergeNode in='pit'/%3E%3C/feMerge%3E%3C/filter%3E%3Crect width='420' height='420' filter='url(%23f)'/%3E%3C/svg%3E");
+
+
+}
+
+@layer components {
+	/* Papel con fibra y relieve, iluminado desde arriba-izquierda. */
+	.voy-paper {
+		background-color: rgb(var(--voynich-vellum));
+		background-image: var(--voynich-surface-paper);
+		background-size: 320px 320px;
+	}
+}
+
 @keyframes voynich-cinder-drift {
 	0% {
 		opacity: 0;
@@ -278,4 +347,493 @@
 .voynich-cinder-frozen,
 .voynich-cinder-frozen * {
 	animation-play-state: paused !important;
+}
+/* Respeta la preferencia del sistema: sin bucles ni partículas animadas por CSS. */
+@media (prefers-reduced-motion: reduce) {
+	[class*="voynich-"],
+	[style*="voynich-"] {
+		animation-duration: 0.001ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.001ms !important;
+	}
+}
+
+/* ───────────────────────────── Surface (material suelto) ─────────────────────────────
+ * <Surface material elevation frame>. Todo se puede sobrescribir con variables:
+ *   --voy-surface        imagen de la textura        --voy-surface-color  color base
+ *   --voy-rule           color del filete            --voy-text           color del texto
+ */
+@layer components {
+	.voy-surface {
+		position: relative;
+		isolation: isolate;
+		color: var(--voy-text, inherit);
+		background-color: var(--voy-surface-color, transparent);
+		background-image: var(--voy-surface, none);
+		background-size: var(--voy-surface-size, 320px 320px);
+		box-shadow: var(--voy-lit, none), var(--voy-cast, 0 0 0 0 transparent);
+	}
+	.voy-surface[data-material="paper"] {
+		--voy-surface: var(--voynich-surface-paper);
+		--voy-surface-color: rgb(var(--voynich-vellum));
+		--voy-text: rgb(var(--voynich-ink));
+		--voy-lit: inset 0 0 18px rgb(140 96 44 / 0.28), inset 1px 1px 0 rgb(255 250 235 / 0.5);
+	}
+	.voy-surface[data-material="leather"] {
+		--voy-surface: var(--voynich-surface-leather);
+		--voy-surface-size: 240px 240px;
+		--voy-surface-color: rgb(80 56 36);
+		--voy-text: rgb(var(--voynich-gold-light));
+		--voy-lit: inset 1px 1px 0 rgb(255 236 196 / 0.15), inset -1px -1px 0 rgb(0 0 0 / 0.4);
+	}
+	.voy-surface[data-material="rubric"] {
+		--voy-surface: var(--voynich-surface-rubric);
+		--voy-surface-size: 240px 240px;
+		--voy-surface-color: rgb(176 82 58);
+		--voy-text: rgb(var(--voynich-vellum));
+		--voy-lit: inset 1px 1px 0 rgb(255 200 170 / 0.3), inset -1px -1px 0 rgb(0 0 0 / 0.4);
+	}
+	.voy-surface[data-material="bronze"] {
+		--voy-surface: var(--voynich-surface-bronze);
+		--voy-surface-size: 420px 420px;
+		--voy-surface-color: rgb(var(--voynich-brass));
+		--voy-text: rgb(var(--voynich-ink-deep));
+		--voy-lit: inset 1.5px 1.5px 1px rgb(var(--voynich-gold-light) / 0.5), inset -1.5px -1.5px 1px rgb(0 0 0 / 0.5);
+	}
+	.voy-surface[data-material="gold"] {
+		--voy-surface: var(--voynich-surface-gold);
+		--voy-surface-size: 420px 420px;
+		--voy-surface-color: rgb(184 147 74);
+		--voy-text: rgb(var(--voynich-ink-deep));
+		--voy-lit: inset 1.5px 1.5px 1px rgb(255 240 200 / 0.6), inset -1.5px -1.5px 1px rgb(0 0 0 / 0.4);
+	}
+	/* Sombra proyectada: siempre abajo-derecha, más larga cuanto más elevada. */
+	.voy-surface[data-elevation="0"] { --voy-cast: 0 0 0 1px rgb(0 0 0 / 0.25); }
+	.voy-surface[data-elevation="1"] { --voy-cast: 0 0 0 1px rgb(0 0 0 / 0.3), 2px 4px 4px rgb(0 0 0 / 0.35), 8px 14px 18px -6px rgb(0 0 0 / 0.5); }
+	.voy-surface[data-elevation="2"] { --voy-cast: 0 0 0 1px rgb(0 0 0 / 0.3), 3px 6px 5px rgb(0 0 0 / 0.35), 12px 22px 28px -8px rgb(0 0 0 / 0.6); }
+	.voy-surface[data-elevation="3"] { --voy-cast: 0 0 0 1px rgb(0 0 0 / 0.3), 5px 10px 8px rgb(0 0 0 / 0.35), 20px 36px 44px -10px rgb(0 0 0 / 0.65); }
+	/* Filete estampado. */
+	.voy-surface[data-frame]:not([data-frame="none"])::before {
+		content: "";
+		position: absolute;
+		inset: 7px;
+		border: 1px solid var(--voy-rule, rgb(var(--voynich-gold) / 0.7));
+		border-radius: 1px;
+		pointer-events: none;
+		z-index: -1;
+	}
+	.voy-surface[data-frame="ink"] { --voy-rule: rgb(var(--voynich-ink) / 0.45); }
+}
+
+/* ───────────────────────────── Primitivas compartidas ─────────────────────────────
+ * Piezas que reutilizan varias familias de componentes. Todas con la misma luz
+ * (arriba-izquierda) y los mismos materiales.
+ */
+@layer components {
+	/* Mesa de cuero con la viñeta de la escena. */
+	.voy-leather {
+		background-color: rgb(80 56 36);
+		background-image: radial-gradient(ellipse 120% 90% at 42% 40%, transparent 35%, rgb(3 5 7 / 0.7) 100%), var(--voynich-surface-leather);
+		background-size: auto, 240px 240px;
+	}
+	/* Panel de cuero con filete de oro: modales, contenedores, estuches. */
+	.voy-panel {
+		position: relative;
+		isolation: isolate;
+		color: rgb(var(--voynich-gold-light));
+		background-color: rgb(80 56 36);
+		background-image: linear-gradient(135deg, rgb(255 238 200 / 0.09) 0%, transparent 45%, rgb(0 0 0 / 0.22) 100%), var(--voynich-surface-leather);
+		background-size: auto, 240px 240px;
+		border-radius: 3px;
+		box-shadow:
+			inset 1px 1px 0 rgb(255 236 196 / 0.15),
+			inset -1px -1px 0 rgb(0 0 0 / 0.4),
+			0 0 0 1px rgb(var(--voynich-brass-deep)),
+			2px 4px 4px rgb(0 0 0 / 0.35),
+			10px 22px 30px -8px rgb(0 0 0 / 0.65);
+	}
+	.voy-panel::before {
+		content: "";
+		position: absolute;
+		inset: 7px;
+		border: 1px solid rgb(var(--voynich-gold) / 0.7);
+		border-radius: 1px;
+		pointer-events: none;
+		z-index: -1;
+	}
+	/* Nota de pergamino (glosas, etiquetas, tarjetas). */
+	.voy-slip {
+		color: rgb(var(--voynich-ink));
+		background-color: rgb(var(--voynich-vellum-aged));
+		background-image: var(--voynich-surface-paper);
+		background-size: 320px 320px;
+		border-radius: 1px;
+		box-shadow:
+			inset 0 0 18px rgb(140 96 44 / 0.28),
+			inset 1px 1px 0 rgb(255 250 235 / 0.5),
+			0 0 0 1px rgb(var(--voynich-ink) / 0.28),
+			2px 3px 3px rgb(0 0 0 / 0.3),
+			8px 14px 18px -6px rgb(0 0 0 / 0.55);
+	}
+	/* Rótulo en versalitas, como las etiquetas de un códice. */
+	.voy-label {
+		font-family: var(--voynich-font-sc);
+		letter-spacing: 0.18em;
+		font-size: 0.8em;
+	}
+}
+
+/* ───────────────────────────── Controles de escritorio ─────────────────────────────
+ * FrequencyTuner (escala graduada de latón) e IncantationInput (línea de escriba).
+ */
+@layer components {
+	.voy-tuner { position: relative; height: 52px; display: flex; align-items: flex-end; padding-bottom: 6px; }
+	.voy-tuner__scale {
+		position: relative;
+		width: 100%;
+		height: 18px;
+		border-radius: 2px;
+		background-color: rgb(var(--voynich-brass));
+		background-image:
+			repeating-linear-gradient(90deg, rgb(var(--voynich-brass-deep)) 0 1px, transparent 1px 10%),
+			repeating-linear-gradient(90deg, rgb(var(--voynich-brass-deep) / 0.75) 0 1px, transparent 1px 2%),
+			var(--voynich-surface-bronze);
+		background-size: 100% 72%, 100% 40%, 420px 420px;
+		background-position: 0 100%, 0 100%, 0 0;
+		background-repeat: no-repeat, no-repeat, repeat;
+		box-shadow:
+			inset 1px 1px 0 rgb(var(--voynich-gold-light) / 0.45),
+			inset -1px -1px 0 rgb(0 0 0 / 0.5),
+			0 0 0 1px rgb(var(--voynich-brass-deep)),
+			2px 4px 6px rgb(0 0 0 / 0.45);
+	}
+	.voy-tuner__thumb {
+		position: absolute;
+		bottom: 1px;
+		width: 10px;
+		height: 36px;
+		margin-left: -5px;
+		border-radius: 1px;
+		pointer-events: none;
+		background-color: rgb(184 147 74);
+		background-image: var(--voynich-surface-gold);
+		background-size: 420px 420px;
+		box-shadow:
+			inset 1px 1px 0 rgb(255 240 200 / 0.6),
+			inset -1px -1px 0 rgb(0 0 0 / 0.45),
+			0 0 0 1px rgb(var(--voynich-brass-deep)),
+			2px 4px 5px rgb(0 0 0 / 0.55);
+		transition: transform 0.18s ease-out;
+	}
+	/* Hilo de la ventanilla que cruza la escala. */
+	.voy-tuner__thumb::after {
+		content: "";
+		position: absolute;
+		left: 50%;
+		top: 4px;
+		bottom: 4px;
+		width: 1px;
+		margin-left: -0.5px;
+		background: rgb(var(--voynich-brass-deep) / 0.85);
+	}
+	.voy-tuner[data-tuned="true"] .voy-tuner__thumb { transform: scale(1.12, 1.04); }
+	.voy-tuner__readout {
+		position: absolute;
+		top: 0;
+		transform: translateX(-50%);
+		white-space: nowrap;
+		font-family: var(--voynich-font-sc);
+		letter-spacing: 0.14em;
+		font-size: 13px;
+		pointer-events: none;
+		transition: color 0.2s ease-out;
+	}
+	.voy-tuner[data-tuned="true"] .voy-tuner__readout { color: rgb(var(--voynich-vermilion-light)); }
+	.voy-tuner__input {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		margin: 0;
+		opacity: 0;
+		cursor: pointer;
+		appearance: none;
+		background: transparent;
+	}
+	.voy-tuner__input::-webkit-slider-thumb { appearance: none; width: 1px; height: 1px; }
+	.voy-tuner__input::-moz-range-thumb { width: 1px; height: 1px; border: 0; }
+	.voy-tuner:focus-within .voy-tuner__thumb { outline: 1px solid rgb(var(--voynich-vellum)); outline-offset: 3px; }
+
+	.voy-scribe { position: relative; display: block; width: 100%; }
+	.voy-scribe__label { display: block; margin-bottom: 4px; font-family: var(--voynich-font-sc); letter-spacing: 0.18em; font-size: 12px; opacity: 0.8; }
+	.voy-scribe__input {
+		width: 100%;
+		padding: 6px 4px 7px;
+		background: transparent;
+		color: inherit;
+		font-family: var(--voynich-font-body);
+		font-size: 1.1rem;
+		border: 0;
+		border-radius: 0;
+		/* Línea de escriba: la regla sobre la que se escribe. */
+		background-image: linear-gradient(currentColor, currentColor);
+		background-size: 100% 1px;
+		background-position: 0 100%;
+		background-repeat: no-repeat;
+		transition: background-size 0.3s ease-out, color 0.2s;
+	}
+	.voy-scribe__input::placeholder { font-style: italic; opacity: 0.45; }
+	.voy-scribe__input:focus { outline: none; background-size: 100% 2px; }
+	.voy-scribe__input:focus-visible { box-shadow: 0 6px 0 -5px rgb(var(--voynich-gold)); }
+	.voy-scribe__input[aria-invalid="true"] { color: rgb(var(--voynich-vermilion-light)); background-image: linear-gradient(rgb(var(--voynich-vermilion)), rgb(var(--voynich-vermilion))); }
+	.voy-scribe__fleck {
+		position: absolute;
+		bottom: 2px;
+		width: 3px;
+		height: 3px;
+		border-radius: 50%;
+		pointer-events: none;
+		background: rgb(var(--voynich-gold-light));
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.voy-tuner__thumb,
+		.voy-tuner__readout,
+		.voy-scribe__input { transition: none; }
+	}
+}
+
+/* ───────────────────────────── Medallón ─────────────────────────────
+ * Disco de latón en relieve: el cubo y los elementos del RadialMenu.
+ */
+@layer components {
+	.voy-medallion {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border-radius: 50%;
+		color: rgb(var(--voynich-ink-deep));
+		text-shadow: 0.5px 0.7px 0 rgb(var(--voynich-gold-light) / 0.5);
+		background-color: rgb(var(--voynich-brass));
+		background-image: radial-gradient(circle at 30% 26%, rgb(255 238 190 / 0.28) 0%, transparent 55%), var(--voynich-surface-bronze);
+		background-size: auto, 420px 420px;
+		box-shadow:
+			inset 1.5px 1.5px 1px rgb(var(--voynich-gold-light) / 0.6),
+			inset -1.5px -1.5px 1px rgb(0 0 0 / 0.5),
+			inset 0 0 0 4px rgb(var(--voynich-brass)),
+			inset 0 0 0 5px rgb(var(--voynich-brass-deep) / 0.6),
+			0 0 0 1px rgb(var(--voynich-brass-deep)),
+			2px 4px 5px rgb(0 0 0 / 0.45),
+			6px 12px 14px -3px rgb(0 0 0 / 0.5);
+		transition: transform 0.16s ease-out, filter 0.16s ease-out;
+	}
+	.voy-medallion:hover { filter: brightness(1.12); transform: translateY(-1px); }
+	.voy-medallion:active { transform: translateY(1px); }
+	@media (prefers-reduced-motion: reduce) { .voy-medallion { transition: none; } .voy-medallion:hover, .voy-medallion:active { transform: none; } }
+}
+
+/* ───────────────────────────── Button ─────────────────────────────
+ * Tapa de libro del Renacimiento, iluminada por UNA luz (arriba-izquierda):
+ * el borde recibe luz por arriba-izquierda, proyecta sombra hacia abajo-derecha,
+ * y el filete estampado brilla donde apunta el cursor.
+ *   primary   → cuero con filete de oro
+ *   secondary → rúbrica (cuero teñido de terracota)
+ *   outline   → pergamino con filete de tinta
+ */
+@layer components {
+	.voy-btn {
+		--voy-lit: inset 1px 1px 0 rgb(255 236 196 / 0.17), inset -1px -1px 0 rgb(0 0 0 / 0.38);
+		--voy-shade: linear-gradient(135deg, rgb(255 238 200 / 0.1) 0%, transparent 45%, rgb(0 0 0 / 0.2) 100%);
+		position: relative;
+		isolation: isolate;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.6em;
+		font-family: var(--voynich-font-sc);
+		letter-spacing: 0.14em;
+		line-height: 1;
+		white-space: nowrap;
+		cursor: pointer;
+		user-select: none;
+		border: 0;
+		background-color: var(--voy-bg);
+		background-image: var(--voy-shade), var(--voy-surface);
+		background-size: auto, 240px 240px;
+		box-shadow: var(--voy-lit), 0 0 0 1px var(--voy-edge), 1px 2px 2px rgb(0 0 0 / 0.35), 4px 9px 14px -5px rgb(0 0 0 / 0.6);
+		transform: translateY(0);
+		transition: transform 0.16s ease-out, box-shadow 0.16s ease-out;
+	}
+	/* Filete estampado (parte `Button.Frame`): brilla en el punto donde está la luz del cursor. */
+	.voy-btn__frame {
+		position: absolute;
+		inset: 4px;
+		padding: 1px;
+		border-radius: inherit;
+		background: radial-gradient(110px circle at var(--lx, -300px) var(--ly, -300px), var(--voy-rule-hot), var(--voy-rule) 62%);
+		-webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+		-webkit-mask-composite: xor;
+		mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+		pointer-events: none;
+		z-index: -1;
+	}
+	.voy-btn__label { position: relative; }
+	.voy-btn__icon { display: inline-flex; align-items: center; }
+	.voy-btn:hover:not(:disabled) {
+		transform: translateY(-1px);
+		box-shadow: var(--voy-lit), 0 0 0 1px var(--voy-edge), 1px 3px 3px rgb(0 0 0 / 0.35), 6px 14px 20px -6px rgb(0 0 0 / 0.65);
+	}
+	.voy-btn:active:not(:disabled) {
+		transform: translateY(1px);
+		box-shadow: var(--voy-lit), 0 0 0 1px var(--voy-edge), 0 1px 1px rgb(0 0 0 / 0.4);
+		transition-duration: 0.04s;
+	}
+	.voy-btn:focus-visible { outline: 1px solid var(--voy-rule-hot); outline-offset: 3px; }
+	.voy-btn:disabled { cursor: not-allowed; opacity: 0.5; }
+	.voy-btn[data-motion="none"],
+	.voy-btn[data-motion="none"]:hover,
+	.voy-btn[data-motion="none"]:active { transition: none; transform: none; }
+
+	.voy-btn--primary {
+		--voy-bg: rgb(80 56 36);
+		--voy-bg-hover: rgb(96 68 44);
+		--voy-surface: var(--voynich-surface-leather);
+		--voy-edge: rgb(var(--voynich-brass-deep));
+		--voy-rule: rgb(var(--voynich-gold) / 0.72);
+		--voy-rule-hot: rgb(var(--voynich-gold-light));
+		color: rgb(var(--voynich-gold-light));
+		text-shadow: 0 -1px 0 rgb(0 0 0 / 0.55);
+	}
+	.voy-btn--secondary {
+		--voy-bg: rgb(176 82 58);
+		--voy-bg-hover: rgb(190 94 68);
+		--voy-surface: var(--voynich-surface-rubric);
+		--voy-edge: rgb(var(--voynich-vermilion-dark));
+		--voy-rule: rgb(var(--voynich-vellum) / 0.55);
+		--voy-rule-hot: rgb(var(--voynich-vellum));
+		color: rgb(var(--voynich-vellum));
+		text-shadow: 0 -1px 0 rgb(0 0 0 / 0.4);
+	}
+	.voy-btn--outline {
+		--voy-lit: inset 1px 1px 0 rgb(255 255 255 / 0.5), inset -1px -1px 0 rgb(var(--voynich-ink) / 0.18);
+		--voy-shade: linear-gradient(135deg, rgb(255 255 255 / 0.18) 0%, transparent 60%, rgb(var(--voynich-ink) / 0.06) 100%);
+		--voy-bg: rgb(var(--voynich-vellum));
+		--voy-surface: var(--voynich-surface-paper);
+		--voy-edge: rgb(var(--voynich-ink) / 0.8);
+		--voy-rule: rgb(var(--voynich-ink) / 0.38);
+		--voy-rule-hot: rgb(var(--voynich-vermilion));
+		color: rgb(var(--voynich-ink));
+		text-shadow: 0 1px 0 rgb(255 255 255 / 0.35);
+		background-size: auto, 320px 320px;
+	}
+
+	/* Sin material: solo estructura. Todo el aspecto lo pones tú (clases, estilo o variables). */
+	.voy-btn--unstyled {
+		background: none;
+		box-shadow: none;
+		color: inherit;
+		font-family: inherit;
+		letter-spacing: normal;
+	}
+	.voy-btn--unstyled .voy-btn__frame { display: none; }
+
+	@media (prefers-reduced-motion: reduce) {
+		.voy-btn,
+		.voy-btn:hover,
+		.voy-btn:active { transition: none; transform: none; }
+	}
+}
+
+/* ───────────────────────────── RingPuzzle ─────────────────────────────
+ * Placa de bronce martillado con grabado de precisión. Los anillos se apilan y
+ * se proyectan sombra entre sí (luz arriba-izquierda); un resalte sigue al cursor.
+ * Un anillo encajado se dora: cambia el material, no se enciende.
+ */
+@layer components {
+	.voy-astrolabe {
+		position: relative;
+		color: rgb(var(--voynich-vellum));
+		background: radial-gradient(circle at 50% 42%, rgb(34 26 18) 0%, rgb(var(--voynich-void)) 72%);
+		box-shadow:
+			0 0 0 2px rgb(var(--voynich-void)),
+			0 0 0 3px rgb(var(--voynich-brass) / 0.85),
+			0 0 0 7px rgb(var(--voynich-void)),
+			0 0 0 8px rgb(var(--voynich-brass) / 0.4),
+			6px 18px 36px rgb(0 0 0 / 0.6);
+	}
+	/* Resalte de luz que sigue al cursor sobre el metal. */
+	.voy-astrolabe__glare {
+		position: absolute;
+		inset: 0;
+		border-radius: 50%;
+		z-index: 90;
+		pointer-events: none;
+		background: radial-gradient(240px circle at var(--lx, 30%) var(--ly, 24%), rgb(255 226 160 / 0.5), transparent 70%);
+		mix-blend-mode: soft-light;
+		opacity: 0.75;
+		transition: opacity 0.4s ease-out;
+	}
+	.voy-astrolabe:not(:hover) .voy-astrolabe__glare { opacity: 0.35; }
+	.voy-astrolabe__pivot {
+		background: radial-gradient(circle at 36% 32%, rgb(var(--voynich-brass-light)) 0 20%, rgb(var(--voynich-brass)) 26% 40%, rgb(var(--voynich-ink-deep)) 42%);
+		box-shadow: 1px 2px 3px rgb(0 0 0 / 0.7), 0 0 0 1px rgb(var(--voynich-brass-deep) / 0.9);
+	}
+	.voy-ring {
+		color: rgb(var(--voynich-ink-deep));
+		text-shadow: 0.6px 0.8px 0 rgb(var(--voynich-brass-light) / 0.5);
+		background-color: rgb(var(--voynich-brass));
+		background-image: var(--voynich-surface-bronze);
+		background-size: 420px 420px;
+		/* Bisel con luz arriba-izquierda + sombra proyectada sobre el anillo de abajo. */
+		box-shadow:
+			inset 1.5px 1.5px 1px rgb(var(--voynich-gold-light) / 0.55),
+			inset -1.5px -1.5px 1px rgb(0 0 0 / 0.55),
+			0 0 0 1px rgb(var(--voynich-brass-deep)),
+			2px 4px 6px rgb(0 0 0 / 0.5),
+			5px 11px 16px rgb(0 0 0 / 0.38);
+	}
+	/* Capa dorada: aparece al encajar. */
+	.voy-ring::before {
+		content: "";
+		position: absolute;
+		inset: 0;
+		border-radius: 50%;
+		background-color: rgb(184 147 74);
+		background-image: var(--voynich-surface-gold);
+		background-size: 420px 420px;
+		opacity: 0;
+		transition: opacity 0.7s ease-out;
+		pointer-events: none;
+	}
+	.voy-ring[data-locked="true"]::before { opacity: 1; }
+	.voy-ring__engraving {
+		position: absolute; inset: 0; width: 100%; height: 100%;
+		color: rgb(var(--voynich-brass-deep));
+		/* El surco recibe luz en su borde abajo-derecha. */
+		filter: drop-shadow(0.6px 0.8px 0 rgb(var(--voynich-gold-light) / 0.5));
+		pointer-events: none;
+		transition: color 0.25s ease-out;
+	}
+	.voy-ring[data-interactive="true"]:hover { filter: brightness(1.13); }
+	.voy-ring:focus:not(:focus-visible),
+	.voy-ring[data-locked="true"]:focus { outline: none; }
+	.voy-ring:focus-visible { outline: 1px solid rgb(var(--voynich-vellum)); outline-offset: -6px; }
+	.voy-ring__divider { background: rgb(var(--voynich-brass-deep) / 0.42); }
+
+	/* Filigrana calada: metal en relieve sobre una placa rehundida, con sombra proyectada. */
+	.voy-rete { position: absolute; inset: 0; pointer-events: none; }
+	.voy-rete__recess { fill: rgb(var(--voynich-brass-deep) / 0.62); }
+	.voy-rete__metal {
+		fill: rgb(var(--voynich-brass));
+		stroke: rgb(var(--voynich-gold-light) / 0.55);
+		stroke-width: 0.5;
+		filter: drop-shadow(1px 1.8px 1.3px rgb(0 0 0 / 0.7));
+	}
+	.voy-rete__metal circle { fill: none; stroke: rgb(var(--voynich-brass)); }
+
+	@media (prefers-reduced-motion: reduce) {
+		.voy-ring::before,
+		.voy-ring__engraving,
+		.voy-astrolabe__glare { transition: none; }
+	}
 }

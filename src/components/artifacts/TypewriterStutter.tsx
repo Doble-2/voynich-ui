@@ -2,6 +2,7 @@ import React, { useRef, useImperativeHandle } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { cn } from "../../lib/utils";
+import { useReducedMotion } from "../../lib/useReducedMotion";
 
 export interface TypewriterStutterRef {
   /** Reinicia la animación desde el principio. */
@@ -40,7 +41,7 @@ export const TypewriterStutter = React.forwardRef<TypewriterStutterRef, Typewrit
       text,
       speed = 50,
       startDelay = 0,
-      textColor = "#eadbb6",
+      textColor,
       cursorColor,
       showCursor = true,
       loop = false,
@@ -57,6 +58,7 @@ export const TypewriterStutter = React.forwardRef<TypewriterStutterRef, Typewrit
     const isPaused = useRef(false);
     const pausedPos = useRef(0);
     const triggerRef = useRef<() => void>(() => {});
+    const reduced = useReducedMotion();
 
     const safeTimeout = (fn: () => void, delay: number) => {
       const id = setTimeout(fn, delay);
@@ -94,8 +96,16 @@ export const TypewriterStutter = React.forwardRef<TypewriterStutterRef, Typewrit
         if (!node) return;
 
         // Cursor blinking
+        // Movimiento reducido: el texto aparece completo, sin tecleo ni parpadeo.
+        if (reduced) {
+          node.textContent = text;
+          triggerRef.current = () => {};
+          onComplete?.();
+          return;
+        }
+
         if (cursor && showCursor) {
-          gsap.to(cursor, { opacity: 0, duration: 0.4, repeat: -1, yoyo: true, ease: "steps(1)" });
+          gsap.to(cursor, { opacity: 0.15, duration: 0.55, repeat: -1, yoyo: true, ease: "sine.inOut" });
         }
 
         triggerRef.current = () => {
@@ -124,16 +134,10 @@ export const TypewriterStutter = React.forwardRef<TypewriterStutterRef, Typewrit
             // Random glitch
             if (Math.random() < glitchRate && pos > 0 && !isGlitching) {
               isGlitching = true;
-              const glitchChar = String.fromCharCode(33 + Math.floor(Math.random() * 60));
+              // Un error de escriba: una letra equivocada que se corrige al instante.
+              const slips = "aeiourstnmlcd";
+              const glitchChar = slips[Math.floor(Math.random() * slips.length)]!;
               node.textContent = text.slice(0, pos - 1) + glitchChar;
-
-              gsap.to(containerRef.current, {
-                x: (Math.random() - 0.5) * 4,
-                duration: 0.05,
-                yoyo: true,
-                repeat: 3,
-                ease: "none",
-              });
 
               safeTimeout(() => {
                 isGlitching = false;
@@ -167,23 +171,26 @@ export const TypewriterStutter = React.forwardRef<TypewriterStutterRef, Typewrit
           clearAllTimeouts();
         };
       },
-      [text, speed, startDelay, showCursor, loop, glitchRate],
+      [text, speed, startDelay, showCursor, loop, glitchRate, reduced],
     );
 
-    const resolvedCursorColor = cursorColor || textColor;
+    const resolvedCursorColor = cursorColor || textColor || "currentColor";
 
     return (
       <div
         ref={containerRef}
-        className={cn("font-mono text-sm leading-relaxed tracking-wider", className)}
-        style={{ color: textColor }}
+        className={cn("text-base leading-relaxed", className)}
+        style={{ fontFamily: "var(--voynich-font-body)", letterSpacing: "0.02em", ...(textColor ? { color: textColor } : {}) }}
         {...props}
       >
-        <span ref={textRef} />
+        {/* El texto completo siempre está disponible para lectores de pantalla. */}
+        <span className="sr-only">{text}</span>
+        <span ref={textRef} aria-hidden="true" />
         {showCursor && (
           <span
             ref={cursorRef}
-            className="inline-block w-[0.5em] h-[1em] ml-1 align-middle"
+            aria-hidden="true"
+            className="inline-block w-[2px] h-[1.05em] ml-[3px] align-text-bottom"
             style={{ backgroundColor: resolvedCursorColor }}
           />
         )}

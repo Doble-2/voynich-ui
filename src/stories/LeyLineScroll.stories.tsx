@@ -15,7 +15,7 @@ const meta = {
   },
   decorators: [
     (Story) => (
-      <div className="bg-[#050302] flex relative min-h-screen text-[#eadbb6] p-10 font-serif">
+      <div className="voy-leather flex relative min-h-screen text-voynich-vellum p-10 font-manuscript">
         <div className="flex-1 space-y-96 pl-24 pt-48 pb-[100vh]">
           <h1 className="text-6xl font-bold">Capítulo I: El Origen</h1>
           <p className="text-xl max-w-xl opacity-70">
@@ -23,7 +23,7 @@ const meta = {
             Sigue la línea dorada hacia abajo para iniciar el compilador estelar.
           </p>
           <div className="h-96" />
-          <h2 className="text-4xl font-bold text-[#5eead4]">Nodo 2: Recursividad</h2>
+          <h2 className="text-4xl font-bold text-voynich-glow">Nodo 2: Recursividad</h2>
           <p className="text-xl max-w-xl opacity-70">
             Todo aquello que desciende debe volver a llamarse a sí mismo hasta que
             los recursos de memoria quiebren o la lógica encuentre su salvación en

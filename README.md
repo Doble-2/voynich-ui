@@ -77,7 +77,7 @@ npm install react react-dom
 
 ```tsx
 import { ConfinementCircle, RingPuzzle, TypewriterStutter } from 'voynich-ui';
-import 'voynich-ui/dist/style.css';
+import 'voynich-ui/style.css';
 
 function App() {
   return (
@@ -99,6 +99,45 @@ function App() {
   );
 }
 ```
+
+## 🧩 Personalización
+
+Cada componente se puede recomponer, de menos a más control:
+
+```tsx
+// 1) Props
+<Button variant="secondary">Sellar</Button>
+
+// 2) Variables CSS: retoca el material sin tocar el componente
+<Button style={{ '--voy-bg': 'rgb(47 74 122)' }}>Lapislázuli</Button>
+
+// 3) Partes: reordena, quita o sustituye piezas internas
+<Button.Root variant="outline">
+  <Button.Icon>✦</Button.Icon>
+  <Button.Label>Sellar</Button.Label>
+</Button.Root>
+
+// 4) asChild: aplica el botón a tu propio elemento
+<Button asChild><a href="/codex">Leer el códice</a></Button>
+
+// 5) Headless: la mecánica del puzzle con tu propio dibujo
+const puzzle = useRingPuzzle({ rings, onSolve });
+return (
+  <div ref={puzzle.containerRef}>
+    {puzzle.sortedRings.map((ring) => (
+      <div key={ring.id} {...puzzle.getRingProps(ring)}>…tu dibujo…</div>
+    ))}
+  </div>
+);
+```
+
+También puedes construir tus propios componentes con los materiales de la librería:
+
+```tsx
+<Surface material="leather" elevation={2} frame="gilt">…</Surface>
+```
+
+Materiales: `paper`, `leather`, `rubric`, `bronze`, `gold`. Consulta [`DESIGN.md`](./DESIGN.md#10-contrato-de-flexibilidad) para el contrato completo.
 
 ## 🎨 Design Tokens
 

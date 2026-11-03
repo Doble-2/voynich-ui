@@ -1,3 +1,4 @@
+import { Button } from "../components/rituals/Button";
 import type { Meta, StoryObj } from "@storybook/react";
 import { ScratchCard, type ScratchCardRef } from "../components/artifacts/ScratchCard";
 import { useRef, useState } from "react";
@@ -28,8 +29,8 @@ export const WinningTicket: Story = {
     const [won, setWon] = useState(false);
 
     return (
-      <div className="flex flex-col items-center gap-4 p-8 bg-zinc-100 rounded-xl relative">
-        <h2 className="text-2xl font-bold text-zinc-800">Raspa para ganar</h2>
+      <div className="flex flex-col items-center gap-4 p-8 voy-paper rounded-xl relative">
+        <h2 className="text-2xl font-bold text-voynich-inkDark">Raspa para ganar</h2>
         <ScratchCard
           width={400}
           height={200}
@@ -37,13 +38,13 @@ export const WinningTicket: Story = {
           brushSize={25}
           clearThreshold={0.5}
           onComplete={() => setWon(true)}
-          className="rounded-xl shadow-inner border border-zinc-300"
+          className="rounded-xl shadow-inner border border-voynich-inkMedium/40"
         >
-          <div className="w-full h-full bg-gradient-to-br from-yellow-300 to-amber-500 flex items-center justify-center relative overflow-hidden">
+          <div className="w-full h-full bg-gradient-to-br from-voynich-brass to-voynich-brass flex items-center justify-center relative overflow-hidden">
             <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20 mix-blend-overlay"></div>
             <div className="text-center relative z-10">
               <span className="text-6xl filter drop-shadow-md">💰</span>
-              <h3 className="text-3xl font-black text-white mt-2 drop-shadow-md">
+              <h3 className="text-3xl font-black text-voynich-vellum mt-2 drop-shadow-md">
                 ¡$1,000,000!
               </h3>
             </div>
@@ -51,7 +52,7 @@ export const WinningTicket: Story = {
         </ScratchCard>
 
         {won && (
-          <p className="text-xl font-bold text-green-600 animate-bounce">
+          <p className="text-xl font-bold text-voynich-vermilion">
             ¡Felicidades!
           </p>
         )}
@@ -64,9 +65,9 @@ export const WinningTicket: Story = {
 export const ArchaicMapReveal: Story = {
   render: () => {
     return (
-      <div className="p-12 bg-neutral-950 flex flex-col items-center justify-center rounded-2xl border border-white/5 relative overflow-hidden">
+      <div className="p-12 voy-panel flex flex-col items-center justify-center rounded-2xl border border-voynich-inkMedium/40 relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-30" />
-        <h2 className="text-rose-500/80 font-serif text-xl mb-6 tracking-widest uppercase relative z-10">
+        <h2 className="text-voynich-vermilion/80 font-manuscript text-xl mb-6 tracking-widest uppercase relative z-10">
           Despeja la ceniza
         </h2>
 
@@ -97,33 +98,23 @@ export const ControlExterno: Story = {
     const cardRef = useRef<ScratchCardRef>(null);
 
     return (
-      <div className="flex flex-col items-center gap-6 p-8 bg-slate-50 rounded-xl border border-slate-200 shadow-sm">
+      <div className="flex flex-col items-center gap-6 p-8 voy-paper rounded-xl border border-voynich-inkMedium/40 shadow-sm">
         <ScratchCard
           ref={cardRef}
           width={300}
           height={300}
-          coverImage="#3b82f6" // blue-500
+          
           brushSize={20}
           className="rounded-lg shadow-inner"
         >
-          <div className="w-full h-full bg-white flex items-center justify-center">
+          <div className="w-full h-full voy-paper flex items-center justify-center">
             <span className="text-4xl">😎</span>
           </div>
         </ScratchCard>
 
         <div className="flex gap-4">
-          <button
-            onClick={() => cardRef.current?.reset()}
-            className="px-4 py-2 bg-slate-200 text-slate-800 rounded hover:bg-slate-300 font-medium transition-colors"
-          >
-            Resetear / Ocultar
-          </button>
-          <button
-            onClick={() => cardRef.current?.clear()}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 font-medium shadow-md transition-colors"
-          >
-            Revelar Todo Mágicamente
-          </button>
+          <Button variant="outline" size="sm" onClick={() => cardRef.current?.reset()}>Resetear / Ocultar</Button>
+          <Button size="sm" onClick={() => cardRef.current?.clear()}>Revelar todo</Button>
         </div>
       </div>
     );

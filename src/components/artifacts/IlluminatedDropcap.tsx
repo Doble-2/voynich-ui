@@ -1,94 +1,121 @@
-import React, { useRef, useId } from 'react';
+import React, { useRef } from 'react';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { cn } from '../../lib/utils';
+import { useReducedMotion } from '../../lib/useReducedMotion';
 
 export interface IlluminatedDropcapProps extends React.HTMLAttributes<HTMLDivElement> {
-  /** La letra capital iluminada. */
+  /** La letra capital. */
   letter: string;
-  /** El texto del cuerpo que fluye alrededor de la letra. */
+  /** El texto que sigue a la capital (sin la primera letra). */
   text: string;
-  /** Color de la letra. @default "rgb(251,191,36)" (amber-400) */
+  /**
+   * Color de la letra. Por defecto, pan de oro claro.
+   * @default "rgb(var(--voynich-gold-light))"
+   */
   letterColor?: string;
-  /** Color del borde ornamental. @default "rgba(217,119,6,0.4)" (amber-600/40) */
+  /**
+   * Color del filete (la doble regla que enmarca la capital).
+   * @default "rgb(var(--voynich-gold))"
+   */
   borderColor?: string;
-  /** Color de fondo de la caja de la letra. @default "#1a0f05" */
+  /**
+   * Color del campo de la capital. Por defecto, lapislázuli.
+   * @default "rgb(var(--voynich-lapis))"
+   */
   bgColor?: string;
-  /** Tamaño de la letra capital. @default "3rem" */
+  /**
+   * Tamaño de la letra.
+   * @default "3.4rem"
+   */
   fontSize?: string;
-  /** Color del resplandor. @default "rgba(245,158,11,0.4)" */
+  /** @deprecated Ya no hay brillo pulsante (no es propio de un códice). Se ignora. */
   glowColor?: string;
 }
 
+/**
+ * `IlluminatedDropcap`
+ *
+ * Una capital iluminada: letra en pan de oro sobre un campo de lapislázuli, enmarcada por una doble
+ * regla de oro. Se asienta sobre la página con una entrada serena. El texto hereda el color del
+ * contexto, de modo que funciona igual sobre pergamino que sobre cuero.
+ */
 export const IlluminatedDropcap = React.forwardRef<HTMLDivElement, IlluminatedDropcapProps>(
-  ({ letter, text, className, letterColor = "rgb(251,191,36)", borderColor = "rgba(217,119,6,0.4)", bgColor = "#1a0f05", fontSize = "3rem", glowColor = "rgba(245,158,11,0.4)", ...props }, ref) => {
+  (
+    {
+      letter,
+      text,
+      className,
+      letterColor = 'rgb(var(--voynich-gold-light))',
+      borderColor = 'rgb(var(--voynich-gold))',
+      bgColor = 'rgb(var(--voynich-lapis))',
+      fontSize = '3.4rem',
+      glowColor: _deprecatedGlow,
+      ...props
+    },
+    ref,
+  ) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const letterRef = useRef<HTMLDivElement>(null);
-    const glowId = `dropcap-glow-${useId().replace(/:/g, "")}`;
+    const reduced = useReducedMotion();
 
-    useGSAP(() => {
-      const letterEl = letterRef.current;
-      if (!letterEl) return;
-
-      // Gold foil shimmer entrance
-      gsap.fromTo(letterEl,
-        { opacity: 0, scale: 0.6, rotationY: 60, filter: "brightness(0.3)" },
-        { 
-          opacity: 1, scale: 1, rotationY: 0, filter: "brightness(1)",
-          duration: 1.8, ease: 'back.out(1.4)',
-        }
-      );
-
-      // Continuous subtle glow pulse
-      gsap.to(letterEl, {
-        boxShadow: `0 0 25px ${glowColor}, inset 0 0 15px ${glowColor.replace(/[\d.]+\)$/, '0.1)')}`,
-        duration: 2,
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut",
-        delay: 2,
-      });
-    }, { scope: containerRef });
+    useGSAP(
+      () => {
+        const letterEl = letterRef.current;
+        if (!letterEl || reduced) return;
+        gsap.fromTo(
+          letterEl,
+          { opacity: 0, y: 8, filter: 'brightness(0.7)' },
+          { opacity: 1, y: 0, filter: 'brightness(1)', duration: 1.1, ease: 'power2.out' },
+        );
+      },
+      { scope: containerRef, dependencies: [reduced] },
+    );
 
     return (
-      <div ref={containerRef} className={cn("inline-block", className)} {...props}>
-        <div ref={letterRef} className="float-left mr-4 mb-1 relative"
-          style={{ perspective: "400px" }}
-        >
-          {/* Ornamental border frame */}
-          <div className="relative w-20 h-20 flex items-center justify-center border-2"
+      <div
+        ref={(node) => {
+          containerRef.current = node;
+          if (typeof ref === 'function') ref(node);
+          else if (ref) ref.current = node;
+        }}
+        className={cn('inline-block', className)}
+        {...props}
+      >
+        <div ref={letterRef} className="float-left mr-4 mb-1 relative">
+          <div
+            className="relative w-[88px] h-[88px] flex items-center justify-center"
             style={{
-              borderColor: borderColor,
               backgroundColor: bgColor,
-              borderRadius: '4px 12px 4px 8px',
-              boxShadow: `0 0 15px ${glowColor.replace(/[\d.]+\)$/, '0.15)')}, inset 0 0 10px ${glowColor.replace(/[\d.]+\)$/, '0.05)')}`,
+              backgroundImage:
+                'radial-gradient(circle at 30% 25%, rgb(255 255 255 / 0.18) 0%, transparent 60%), radial-gradient(circle at 70% 85%, rgb(0 0 0 / 0.3) 0%, transparent 60%)',
+              // Doble filete: la regla exterior gruesa y otra interior más fina.
+              boxShadow: `inset 0 0 0 3px rgb(0 0 0 / 0.35), inset 0 0 0 4px ${borderColor}, inset 0 0 0 7px rgb(0 0 0 / 0.3), inset 0 0 0 8px ${borderColor}, 2px 4px 5px rgb(0 0 0 / 0.4)`,
             }}
           >
-            {/* Corner flourishes */}
-            <span className="absolute -top-1 -left-1 text-amber-700/30 text-xs">❧</span>
-            <span className="absolute -bottom-1 -right-1 text-amber-700/30 text-xs rotate-180">❧</span>
-
-            {/* The letter itself */}
-            <span className="font-serif select-none"
-              style={{ 
-                fontSize: fontSize,
+            <span
+              className="select-none"
+              aria-hidden="true"
+              style={{
+                fontFamily: 'var(--voynich-font-display)',
+                fontWeight: 600,
+                fontSize,
+                lineHeight: 1,
                 color: letterColor,
-                textShadow: `0 0 12px ${glowColor}, 0 2px 4px rgba(0,0,0,0.6)`,
-                filter: 'contrast(1.2) brightness(1.1)',
+                textShadow: '0 -1px 0 rgb(0 0 0 / 0.5), 0 1px 0 rgb(255 240 200 / 0.18)',
               }}
             >
               {letter}
             </span>
           </div>
         </div>
-        <p className="text-[#eadbb6]/80 leading-relaxed font-serif text-base"
-          style={{ filter: 'sepia(0.15) contrast(1.05) brightness(0.95)' }}
-        >
+        <p className="leading-relaxed text-base" style={{ fontFamily: 'var(--voynich-font-body)' }}>
+          <span className="sr-only">{letter}</span>
           {text}
         </p>
       </div>
     );
-  }
+  },
 );
 
-IlluminatedDropcap.displayName = "IlluminatedDropcap";
+IlluminatedDropcap.displayName = 'IlluminatedDropcap';

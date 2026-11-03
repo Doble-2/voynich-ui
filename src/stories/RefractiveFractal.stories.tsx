@@ -34,17 +34,17 @@ export const ManchaFondo: Story = {
     speed: 15,
   },
   render: (args) => (
-    <div className="relative w-[500px] h-[500px] flex items-center justify-center bg-slate-950 rounded-3xl overflow-hidden border border-slate-800">
+    <div className="relative w-[500px] h-[500px] flex items-center justify-center voy-panel rounded-3xl overflow-hidden border border-voynich-inkMedium/40">
       <RefractiveFractal
         {...args}
         // Creamos una bola base con degradados múltiples. El componente la distorsionará hasta el caos.
-        className="absolute inset-0 m-auto w-[350px] h-[350px] bg-gradient-to-tr from-rose-500 via-fuchsia-600 to-indigo-500 rounded-full blur-[20px]"
+        className="absolute inset-0 m-auto w-[350px] h-[350px] bg-gradient-to-tr from-voynich-vermilion via-voynich-brass to-voynich-lapis rounded-full blur-[20px]"
       />
       <div className="relative z-10 text-center pointer-events-none">
-        <h2 className="text-4xl font-bold text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
+        <h2 className="text-4xl font-bold text-voynich-vellum drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
           Fluido Dinámico
         </h2>
-        <p className="text-slate-300 drop-shadow-md">
+        <p className="text-voynich-vellum drop-shadow-md">
           Patrón derivado tipo Mandelbrot
         </p>
       </div>
@@ -59,7 +59,7 @@ export const BotonInteractivo: Story = {
     const [hover, setHover] = useState(false);
 
     return (
-      <div className="p-20 bg-[#0a0a0a] rounded-3xl flex items-center justify-center">
+      <div className="p-20 voy-panel rounded-3xl flex items-center justify-center">
         <button
           className="relative inline-flex items-center justify-center border-none bg-transparent outline-none cursor-pointer group"
           onMouseEnter={() => setHover(true)}
@@ -81,7 +81,7 @@ export const BotonInteractivo: Story = {
           />
 
           {/* El texto va superpuesto para que sea legible y no sea distorsionado por el filtro SVG */}
-          <span className="relative z-10 px-12 py-5 text-white font-mono font-bold text-xl tracking-[0.2em] pointer-events-none drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
+          <span className="relative z-10 px-12 py-5 text-voynich-vellum font-smallcaps font-bold text-xl tracking-[0.2em] pointer-events-none drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
             EJECUTAR_SEC
           </span>
         </button>
@@ -125,7 +125,7 @@ export const TexturaAlien: Story = {
   render: (args) => (
     <RefractiveFractal
       {...args}
-      className="w-[500px] h-[300px] bg-gradient-to-r from-lime-400 to-green-900 rounded-xl"
+      className="w-[500px] h-[300px] bg-gradient-to-r from-voynich-gold to-voynich-verdigris rounded-xl"
     />
   ),
 };
@@ -142,10 +142,10 @@ export const TextoLiquido: Story = {
   render: (args) => (
     <div className="flex items-center justify-center p-24 bg-black rounded-xl">
       <RefractiveFractal {...args} className="text-center">
-        <h1 className="text-8xl font-black text-transparent bg-clip-text bg-gradient-to-br from-purple-400 via-pink-500 to-red-500 w-full inline-block pb-4">
+        <h1 className="text-8xl font-black text-transparent bg-clip-text bg-gradient-to-br from-purple-400 via-pink-500 to-voynich-vermilion w-full inline-block pb-4">
           LIQUID
         </h1>
-        <h1 className="text-8xl font-black text-transparent bg-clip-text bg-gradient-to-br from-purple-400 via-pink-500 to-red-500 mt-[-20px] w-full inline-block">
+        <h1 className="text-8xl font-black text-transparent bg-clip-text bg-gradient-to-br from-purple-400 via-pink-500 to-voynich-vermilion mt-[-20px] w-full inline-block">
           STATE
         </h1>
       </RefractiveFractal>
@@ -163,9 +163,9 @@ export const GlitchEffect: Story = {
     speed: 0.5, // Muy rápido
   },
   render: (args) => (
-    <div className="relative p-12 bg-zinc-950 flex flex-col items-center gap-6 rounded-md border border-zinc-800">
+    <div className="relative p-12 voy-panel flex flex-col items-center gap-6 rounded-md border border-voynich-inkMedium/40">
       <RefractiveFractal {...args}>
-        <div className="text-6xl font-mono font-bold text-red-500 tracking-tighter">
+        <div className="text-6xl font-smallcaps font-bold text-voynich-vermilion tracking-tighter">
           SYSTEM_FAILURE
         </div>
       </RefractiveFractal>
@@ -201,7 +201,7 @@ export const CristalEsmerilado: Story = {
       />
 
       {/* El panel de cristal encima */}
-      <div className="relative z-10 w-[80%] h-[70%] bg-white/10 backdrop-blur-md border border-white/30 rounded-xl flex items-center justify-center overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
+      <div className="relative z-10 w-[80%] h-[70%] voy-paper/10 backdrop-blur-md border border-voynich-inkMedium/40 rounded-xl flex items-center justify-center overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
         {/* El fractal que se aplica *solamente* al div envolvente simulando la textura física en la superficie del cristal */}
         <RefractiveFractal
           {...args}
@@ -209,10 +209,10 @@ export const CristalEsmerilado: Story = {
         />
 
         <div className="relative z-20 text-center">
-          <h3 className="text-2xl text-white font-light tracking-widest drop-shadow-md">
+          <h3 className="text-2xl text-voynich-vellum font-light tracking-widest drop-shadow-md">
             FROSTED
           </h3>
-          <p className="text-white/70 font-mono text-sm mt-1">G L A S S</p>
+          <p className="text-voynich-vellum/70 font-smallcaps text-sm mt-1">G L A S S</p>
         </div>
       </div>
     </div>
@@ -229,16 +229,16 @@ export const TintaManuscrito: Story = {
     animate: false,
   },
   render: (args) => (
-    <div className="p-16 bg-[#eaddc4] max-w-sm border-[12px] border-[#311b0e] shadow-[inset_0_0_80px_rgba(100,50,20,0.2)] rounded-sm relative overflow-hidden flex flex-col gap-6">
+    <div className="p-16 voy-paper max-w-sm border-[12px] border-[#311b0e] shadow-[inset_0_0_80px_rgba(100,50,20,0.2)] rounded-sm relative overflow-hidden flex flex-col gap-6">
       {/* Decoloración falsa del papel */}
       <div className="absolute inset-0 bg-[radial-gradient(circle,_transparent_30%,_#c6a982_150%)] pointer-events-none mix-blend-multiply opacity-60" />
 
       {/* Nuestro componente simulando la sangría de la pluma de un escriba */}
       <RefractiveFractal {...args} className="relative z-10">
-        <h2 className="text-5xl font-serif text-[#2a1309] font-bold tracking-tight mb-2">
+        <h2 className="text-5xl font-manuscript text-[#2a1309] font-bold tracking-tight mb-2">
           Codex Vol. IV
         </h2>
-        <p className="text-xl font-serif text-[#3b1f11] leading-relaxed text-justify opacity-90">
+        <p className="text-xl font-manuscript text-[#3b1f11] leading-relaxed text-justify opacity-90">
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam in dui
           mauris. Vivamus hendrerit arcu sed erat molestie vehicula. Sed auctor
           neque eu tellus rhoncus ut eleifend nibh porttitor.
@@ -246,12 +246,12 @@ export const TintaManuscrito: Story = {
 
         {/* Un elemento gráfico extra también distorsionado como sello de cera/tinta seca */}
         <div className="my-6 w-16 h-16 bg-[#781f14] rounded-full mx-auto opacity-80 mix-blend-multiply flex items-center justify-center">
-          <span className="text-[#eaddc4] text-xs font-serif italic">
+          <span className="text-[#eaddc4] text-xs font-manuscript italic">
             Secreto
           </span>
         </div>
 
-        <p className="text-lg font-serif text-[#3b1f11] font-bold italic tracking-widest text-center">
+        <p className="text-lg font-manuscript text-[#3b1f11] font-bold italic tracking-widest text-center">
           Incipit Vita Nova
         </p>
       </RefractiveFractal>

@@ -2,6 +2,10 @@ import React, { useId, useMemo, useRef, useState } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { cn } from "../../lib/utils";
+import { useReducedMotion } from "../../lib/useReducedMotion";
+import { useDissolveProgress } from "./useDissolveProgress";
+
+export { useDissolveProgress };
 
 type DissolveMode = "burn" | "evaporate";
 type DissolveOrigin = "top" | "right" | "bottom" | "left";
@@ -283,6 +287,18 @@ export interface CinderDissolveProps extends Omit<React.HTMLAttributes<HTMLEleme
    * Callback cuando la destrucción/animación se completa (progreso = 1).
    */
   onComplete?: () => void;
+  /**
+   * Qué capas decorativas se dibujan. Apaga las que no quieras.
+   * - `edge`: el contorno incandescente del frente de quemado.
+   * - `particles`: humo, ceniza y llamas.
+   * @default { edge: true, particles: true }
+   */
+  layers?: { edge?: boolean; particles?: boolean };
+  /**
+   * Quita el aspecto por defecto (borde orgánico y filtros de contraste y sepia) y deja solo el efecto.
+   * @default false
+   */
+  unstyled?: boolean;
 }
 
 export const CinderDissolve = React.forwardRef<
@@ -293,7 +309,7 @@ export const CinderDissolve = React.forwardRef<
     {
       as: Tag = "div",
       progress = 0,
-      animate = false,
+      animate: animateProp = false,
       paused = false,
       pauseAt,
       duration = 6,
@@ -311,6 +327,10 @@ export const CinderDissolve = React.forwardRef<
       smokeColor,
       pointAmount = 30,
       burnSeed = 21,
+      onProgress,
+      onComplete,
+      layers,
+      unstyled = false,
       className,
       children,
       style,
@@ -319,10 +339,18 @@ export const CinderDissolve = React.forwardRef<
     ref,
   ) => {
     const containerRef = useRef<HTMLElement | null>(null);
-    const progressProxyRef = useRef({ val: progress, phase: 0 });
     const [size, setSize] = useState({ width: 1, height: 1 });
-    const [animatedProgress, setAnimatedProgress] = useState(progress);
-    const [tick, setTick] = useState(0);
+    // El avance lo gobierna un hook propio (reutilizable): con movimiento reducido queda congelado en `progress`.
+    const { progress: resolvedProgress, tick, animate } = useDissolveProgress({
+      progress,
+      animate: animateProp,
+      paused,
+      pauseAt,
+      duration,
+      loop,
+      onProgress,
+      onComplete,
+    });
 
     const id = useId();
     const safeId = id.replace(/:/g, "");
@@ -351,52 +379,6 @@ export const CinderDissolve = React.forwardRef<
       return () => observer.disconnect();
     }, []);
 
-    // Loop de GSAP para reemplazar RequestAnimationFrame e interpolar progreso
-    useGSAP(() => {
-      if (!animate) {
-        setAnimatedProgress(progress);
-        return;
-      }
-
-      if (paused) {
-        if (clampedPauseAt !== undefined) {
-          setAnimatedProgress(clampedPauseAt);
-        }
-        return;
-      }
-
-      const proxy = progressProxyRef.current;
-      proxy.val = 0; // reiniciar loop si cambia animate
-
-      const tween = gsap.to(proxy, {
-        val: 1,
-        duration: safeDuration,
-        ease: "power1.inOut",
-        repeat: loop ? -1 : 0,
-        onUpdate: () => {
-          // Fase cíclica controlada por el progreso del tween
-          const currentProgress = proxy.val;
-
-          if (clampedPauseAt !== undefined && currentProgress >= clampedPauseAt) {
-            setAnimatedProgress(clampedPauseAt);
-            setTick(gsap.ticker.time * 1000);
-            tween.pause();
-            return;
-          }
-
-          setAnimatedProgress(currentProgress);
-          setTick(gsap.ticker.time * 1000); // Mantenemos el tick global para el SVG path gen
-        }
-      });
-
-      return () => {
-        tween.kill();
-      };
-    }, {
-      dependencies: [animate, clampedPauseAt, loop, paused, progress, safeDuration]
-    });
-
-    const resolvedProgress = clamp(animate ? animatedProgress : progress, 0, 1);
     const boundedEdgeWidth = clamp(edgeWidth, 0.05, 0.35);
     const hasFrontier = resolvedProgress > 0.005 && resolvedProgress < 0.998;
 
@@ -411,11 +393,11 @@ export const CinderDissolve = React.forwardRef<
               emberB: emberColor ?? "#ffe8a3",
             }
           : {
-              smoke: smokeColor ?? "rgba(203, 213, 225, 0.26)",
-              warm: glowColor ?? "rgba(148, 163, 184, 0.46)",
-              hot: emberColor ?? "rgba(241, 245, 249, 0.86)",
-              emberA: glowColor ?? "#cbd5e1",
-              emberB: emberColor ?? "#f8fafc",
+              smoke: smokeColor ?? "rgba(176, 166, 150, 0.28)",
+              warm: glowColor ?? "rgba(150, 134, 110, 0.46)",
+              hot: emberColor ?? "rgba(236, 226, 206, 0.86)",
+              emberA: glowColor ?? "#c4b594",
+              emberB: emberColor ?? "#efe6d2",
             },
       [emberColor, glowColor, mode, smokeColor],
     );
@@ -665,11 +647,17 @@ export const CinderDissolve = React.forwardRef<
             ref.current = node;
           }
         }}
+        data-part="root"
+        data-mode={mode}
+        data-state={resolvedProgress <= 0 ? "idle" : resolvedProgress >= 0.998 ? "complete" : "running"}
+        data-progress={resolvedProgress.toFixed(2)}
         className={cn(
-          "relative isolate overflow-hidden rounded-[40%_10%_80%_20%/20%_60%_40%_90%] contrast-[1.2] brightness-[0.9] sepia-[0.3]",
+          "relative isolate overflow-hidden",
+          !unstyled && "rounded-[40%_10%_80%_20%/20%_60%_40%_90%] contrast-[1.2] brightness-[0.9] sepia-[0.3]",
           className,
         )}
-        style={style}
+        // `--dissolve-progress` (0 a 1) deja estilar cualquier cosa según el avance, desde tu CSS.
+        style={{ ["--dissolve-progress" as string]: resolvedProgress, ...style }}
         {...props}
       >
         <svg
@@ -795,12 +783,13 @@ export const CinderDissolve = React.forwardRef<
           </defs>
         </svg>
 
-        <div className="relative z-10 h-full w-full" style={contentStyle}>
+        <div data-part="content" className="relative z-10 h-full w-full" style={contentStyle}>
           {children}
         </div>
 
-        {mode === "burn" && burnPath && (
+        {mode === "burn" && layers?.edge !== false && burnPath && (
           <svg
+            data-part="edge"
             className={cn(
               "pointer-events-none absolute inset-0 z-20",
               shouldFreezeMotion && "voynich-cinder-frozen",
@@ -864,8 +853,9 @@ export const CinderDissolve = React.forwardRef<
           </svg>
         )}
 
-        {mode === "burn" && hasFrontier && (
+        {mode === "burn" && layers?.particles !== false && hasFrontier && (
           <div
+            data-part="particles"
             aria-hidden="true"
             className={cn(
               "pointer-events-none absolute inset-0 z-30",

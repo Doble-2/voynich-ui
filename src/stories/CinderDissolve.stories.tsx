@@ -53,7 +53,7 @@ En los registros perdidos del Códice, los alquimistas debían destruir pruebas 
     (Story) => (
       <div className="relative p-12 overflow-hidden flex items-center justify-center min-h-[400px]">
         {/* Decorador de textura de pergamino de fondo */}
-        <div className="pointer-events-none absolute inset-0 bg-[#f4e8d3] opacity-20 bg-[radial-gradient(#e0cda7_1px,transparent_1px)] [background-size:16px_16px] blur-[1px]"></div>
+        <div className="pointer-events-none absolute inset-0 voy-paper opacity-20 bg-[radial-gradient(#e0cda7_1px,transparent_1px)] [background-size:16px_16px] blur-[1px]"></div>
         <Story />
       </div>
     ),
@@ -86,10 +86,10 @@ export const ManuscritoConsumido: Story = {
     },
   },
   render: (args) => (
-    <div className="relative w-[560px] overflow-hidden rounded-[2rem] border border-[#5c331d] bg-[radial-gradient(circle_at_top,_#6f4122,_#21120a_58%,_#120906_100%)] p-8 shadow-[0_30px_90px_rgba(0,0,0,0.45)]">
+    <div className="relative w-[560px] overflow-hidden rounded-[2rem] border border-voynich-inkMedium bg-[radial-gradient(circle_at_top,_#6f4122,_#21120a_58%,_#120906_100%)] p-8 shadow-[0_30px_90px_rgba(0,0,0,0.45)]">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_14%,_rgba(255,222,157,0.2),_transparent_24%),radial-gradient(circle_at_72%_88%,_rgba(255,98,36,0.16),_transparent_20%),linear-gradient(180deg,rgba(255,173,92,0.06),transparent_34%,rgba(19,8,5,0.44)_100%)]" />
       <CinderDissolve {...args} className="rounded-[1.5rem]">
-        <article className="relative overflow-hidden rounded-[1.5rem] border border-amber-900/50 bg-[#eadbb6] px-10 py-12 text-[#30180d] shadow-[inset_0_0_40px_rgba(97,52,24,0.2),0_18px_45px_rgba(0,0,0,0.18)]">
+        <article className="relative overflow-hidden rounded-[1.5rem] border border-voynich-brass/40 voy-paper px-10 py-12 text-voynich-inkDark shadow-[inset_0_0_40px_rgba(97,52,24,0.2),0_18px_45px_rgba(0,0,0,0.18)]">
           <div className="absolute inset-0 bg-[radial-gradient(circle,_transparent_35%,_rgba(95,55,28,0.18)_120%)] mix-blend-multiply" />
           <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-[linear-gradient(180deg,rgba(57,25,12,0),rgba(57,25,12,0.16)_45%,rgba(28,10,5,0.34)_100%)]" />
           <div className="relative space-y-6">
@@ -97,7 +97,7 @@ export const ManuscritoConsumido: Story = {
               <p className="text-xs uppercase tracking-[0.45em] text-[#8f5835]">
                 Archivo Recuperado
               </p>
-              <h2 className="mt-3 text-5xl font-serif font-bold tracking-tight">
+              <h2 className="mt-3 text-5xl font-manuscript font-bold tracking-tight">
                 Codex Ignis
               </h2>
             </div>
@@ -138,36 +138,36 @@ export const EvaporacionHolografica: Story = {
     },
   },
   render: (args) => (
-    <div className="relative flex w-[580px] items-center justify-center overflow-hidden rounded-[2rem] border border-slate-700/70 bg-[linear-gradient(145deg,_#030712,_#0f172a_55%,_#1e293b)] p-10 shadow-[0_30px_90px_rgba(2,6,23,0.65)]">
+    <div className="relative flex w-[580px] items-center justify-center overflow-hidden rounded-[2rem] border border-voynich-inkMedium/40 bg-[linear-gradient(145deg,_#030712,_#0f172a_55%,_#1e293b)] p-10 shadow-[0_30px_90px_rgba(2,6,23,0.65)]">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,_rgba(125,211,252,0.18),_transparent_22%),radial-gradient(circle_at_82%_70%,_rgba(226,232,240,0.12),_transparent_20%)]" />
       <CinderDissolve {...args} className="w-full max-w-[440px] rounded-[28px]">
-        <section className="relative overflow-hidden rounded-[28px] border border-sky-200/20 bg-slate-900/70 p-8 backdrop-blur-md">
+        <section className="relative overflow-hidden rounded-[28px] border border-voynich-inkMedium/40/20 voy-panel p-8 backdrop-blur-md">
           <div className="absolute inset-0 bg-[linear-gradient(135deg,_rgba(125,211,252,0.18),_transparent_30%,_rgba(255,255,255,0.08)_100%)]" />
           <div className="relative space-y-8">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-xs uppercase tracking-[0.35em] text-sky-200/75">
+                <p className="text-xs uppercase tracking-[0.35em] text-voynich-vermilion/75">
                   Nodo atmosferico
                 </p>
-                <h3 className="mt-3 text-4xl font-semibold tracking-tight text-slate-50">
+                <h3 className="mt-3 text-4xl font-semibold tracking-tight text-voynich-inkDark">
                   Vapor Protocol
                 </h3>
               </div>
-              <div className="rounded-full border border-sky-200/20 px-4 py-1 text-xs uppercase tracking-[0.35em] text-sky-100/80">
+              <div className="rounded-full border border-voynich-inkMedium/40/20 px-4 py-1 text-xs uppercase tracking-[0.35em] text-voynich-vermilion/80">
                 Phase 03
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 text-sm text-slate-300">
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+            <div className="grid grid-cols-2 gap-4 text-sm text-voynich-vellum">
+              <div className="rounded-2xl border border-voynich-inkMedium/40 voy-paper/5 p-4">
                 Densidad 0.84
               </div>
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+              <div className="rounded-2xl border border-voynich-inkMedium/40 voy-paper/5 p-4">
                 Ionizacion 72%
               </div>
             </div>
 
-            <p className="max-w-[34ch] text-base leading-7 text-slate-300/90">
+            <p className="max-w-[34ch] text-base leading-7 text-voynich-vellum/90">
               El panel se desmaterializa en capas frias y niebla luminosa, como
               si estuviera perdiendo masa en una camara de vacio.
             </p>
@@ -195,10 +195,10 @@ export const RetratoIncinerado: Story = {
     burnSeed: 29,
   },
   render: (args) => (
-    <div className="rounded-[2rem] bg-[#120b09] p-8 shadow-[0_24px_70px_rgba(0,0,0,0.45)]">
+    <div className="rounded-[2rem] voy-panel p-8 shadow-[0_24px_70px_rgba(0,0,0,0.45)]">
       <CinderDissolve
         {...args}
-        className="overflow-hidden rounded-[1.75rem] border border-orange-500/20"
+        className="overflow-hidden rounded-[1.75rem] border border-voynich-brass/20"
       >
         <img
           src="https://images.unsplash.com/photo-1515405295579-ba7b45403062?q=80&w=1800&auto=format&fit=crop"
@@ -245,16 +245,16 @@ export const SenalTerminal: Story = {
     const glowOpacity = shutdown > 0.4 ? 1 - (shutdown - 0.4) / 0.6 : 0;
 
     return (
-      <div className="w-[620px] rounded-[1.75rem] border border-zinc-600/40 bg-[#040404] p-8 shadow-[0_25px_80px_rgba(0,0,0,0.65)]">
-        <div className="relative overflow-hidden rounded-[1.2rem] border border-zinc-500/35 bg-black">
+      <div className="w-[620px] rounded-[1.75rem] border border-voynich-inkMedium/40 voy-panel p-8 shadow-[0_25px_80px_rgba(0,0,0,0.65)]">
+        <div className="relative overflow-hidden rounded-[1.2rem] border border-voynich-inkMedium/40 bg-black">
           <div
-            className="relative min-h-[240px] px-8 py-7 font-mono text-emerald-300 shadow-[inset_0_0_40px_rgba(16,185,129,0.08)] transition-[clip-path,opacity] duration-100"
+            className="relative min-h-[240px] px-8 py-7 font-smallcaps text-voynich-glow shadow-[inset_0_0_40px_rgba(16,185,129,0.08)] transition-[clip-path,opacity] duration-100"
             style={{
               clipPath: `inset(${inset})`,
               opacity: 1 - shutdown * 0.92,
             }}
           >
-            <div className="mb-5 flex items-center gap-2 text-[10px] uppercase tracking-[0.35em] text-emerald-400/65">
+            <div className="mb-5 flex items-center gap-2 text-[10px] uppercase tracking-[0.35em] text-voynich-glow">
               <span className="h-2 w-2 rounded-full bg-emerald-400" />
               CRT SIGNAL
             </div>
@@ -262,7 +262,7 @@ export const SenalTerminal: Story = {
               <p>&gt; syncing phosphor grid...</p>
               <p>&gt; vertical hold unstable...</p>
               <p>&gt; beam collapsing to center line...</p>
-              <p className="text-amber-300">&gt; shutdown complete</p>
+              <p className="text-voynich-vermilion">&gt; shutdown complete</p>
             </div>
           </div>
 
@@ -299,23 +299,23 @@ export const DisolucionManual: Story = {
     particleCount: 9,
   },
   render: (args) => (
-    <div className="relative rounded-[2rem] border border-slate-300 bg-[linear-gradient(135deg,_#f8fafc,_#e2e8f0)] p-10 shadow-[0_24px_60px_rgba(15,23,42,0.12)]">
+    <div className="relative rounded-[2rem] border border-voynich-inkMedium/40 bg-[linear-gradient(135deg,_#f8fafc,_#e2e8f0)] p-10 shadow-[0_24px_60px_rgba(15,23,42,0.12)]">
       <CinderDissolve {...args} className="rounded-[1.5rem]">
-        <div className="w-[480px] rounded-[1.5rem] border border-slate-300 bg-white px-8 py-7">
+        <div className="w-[480px] rounded-[1.5rem] border border-voynich-inkMedium/40 voy-paper px-8 py-7">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs uppercase tracking-[0.35em] text-slate-500">
+              <p className="text-xs uppercase tracking-[0.35em] text-voynich-vellum/60">
                 Snapshot
               </p>
-              <h3 className="mt-3 text-3xl font-semibold text-slate-900">
+              <h3 className="mt-3 text-3xl font-semibold text-voynich-inkDark">
                 Fase intermedia
               </h3>
             </div>
-            <div className="rounded-full bg-slate-900 px-4 py-2 text-xs uppercase tracking-[0.3em] text-white">
+            <div className="rounded-full voy-panel px-4 py-2 text-xs uppercase tracking-[0.3em] text-voynich-vellum">
               52%
             </div>
           </div>
-          <p className="mt-8 max-w-[36ch] text-base leading-7 text-slate-600">
+          <p className="mt-8 max-w-[36ch] text-base leading-7 text-voynich-inkMedium">
             Esta historia deja el progreso fijo para inspeccionar el borde,
             ajustar la densidad del humo y comprobar el acabado del mask en un
             punto concreto de la desintegracion.
@@ -343,13 +343,13 @@ export const PausaEnPunto: Story = {
     burnSeed: 25,
   },
   render: (args) => (
-    <div className="relative w-[620px] overflow-hidden rounded-[2rem] border border-amber-900/40 bg-[radial-gradient(circle_at_top,_#5a341f,_#180d07_62%)] p-10 shadow-[0_28px_80px_rgba(0,0,0,0.5)]">
+    <div className="relative w-[620px] overflow-hidden rounded-[2rem] border border-voynich-brass/40 bg-[radial-gradient(circle_at_top,_#5a341f,_#180d07_62%)] p-10 shadow-[0_28px_80px_rgba(0,0,0,0.5)]">
       <CinderDissolve {...args} className="rounded-[1.5rem]">
-        <div className="rounded-[1.5rem] border border-amber-800/40 bg-[#eadbb6] p-10 text-[#2f190f] shadow-[inset_0_0_35px_rgba(88,48,24,0.2)]">
+        <div className="rounded-[1.5rem] border border-voynich-brass/40 voy-paper p-10 text-[#2f190f] shadow-[inset_0_0_35px_rgba(88,48,24,0.2)]">
           <p className="text-xs uppercase tracking-[0.4em] text-[#8f5835]">
             Modo Pausa
           </p>
-          <h3 className="mt-4 text-4xl font-serif font-bold">
+          <h3 className="mt-4 text-4xl font-manuscript font-bold">
             Frame Congelado
           </h3>
           <p className="mt-5 max-w-[42ch] text-lg leading-8">
@@ -379,11 +379,11 @@ export const LlamasParticuladas: Story = {
   render: (args) => (
     <div className="relative w-[580px] overflow-hidden rounded-[2rem] border border-[#5f3019] bg-[radial-gradient(circle_at_top,_#5d341d,_#160b06_64%)] p-10 shadow-[0_28px_80px_rgba(0,0,0,0.5)]">
       <CinderDissolve {...args} className="rounded-[1.5rem]">
-        <div className="rounded-[1.5rem] border border-amber-800/40 bg-[#eadbb6] p-10 text-[#2f190f] shadow-[inset_0_0_35px_rgba(88,48,24,0.2)]">
+        <div className="rounded-[1.5rem] border border-voynich-brass/40 voy-paper p-10 text-[#2f190f] shadow-[inset_0_0_35px_rgba(88,48,24,0.2)]">
           <p className="text-xs uppercase tracking-[0.4em] text-[#8f5835]">
             Variante Alterna
           </p>
-          <h3 className="mt-4 text-4xl font-serif font-bold">
+          <h3 className="mt-4 text-4xl font-manuscript font-bold">
             Llamas por particulas
           </h3>
           <p className="mt-5 max-w-[42ch] text-lg leading-8">
@@ -412,9 +412,9 @@ export const BonanzaTransition: Story = {
   render: (args) => (
     <div className="relative w-[760px] h-[440px] overflow-hidden rounded-[2rem] border border-[#5b311a] bg-[radial-gradient(circle_at_50%_35%,_#783f1d,_#1a0d07_62%)] p-6 shadow-[0_30px_90px_rgba(0,0,0,0.5)]">
       <CinderDissolve {...args} className="w-full h-full rounded-[1.5rem]">
-        <div className="relative flex h-full w-full items-center justify-center overflow-hidden rounded-[1.5rem] bg-[#e6d5b1]">
+        <div className="relative flex h-full w-full items-center justify-center overflow-hidden rounded-[1.5rem] voy-paper">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(0,0,0,0),rgba(0,0,0,0.18)_74%)]" />
-          <h2 className="relative text-6xl font-serif font-bold text-[#2b180f] tracking-tight text-center">
+          <h2 className="relative text-6xl font-manuscript font-bold text-[#2b180f] tracking-tight text-center">
             BURNING
             <br />
             PAPER
@@ -438,10 +438,10 @@ export const SplashRevealCenter: Story = {
     burnSeed: 41,
   },
   render: (args) => (
-    <div className="relative w-[640px] h-[360px] overflow-hidden rounded-[1.5rem] border border-[#4a2815] bg-[#130b07] p-4 shadow-[0_24px_70px_rgba(0,0,0,0.45)]">
+    <div className="relative w-[640px] h-[360px] overflow-hidden rounded-[1.5rem] border border-[#4a2815] voy-panel p-4 shadow-[0_24px_70px_rgba(0,0,0,0.45)]">
       <CinderDissolve {...args} className="w-full h-full rounded-[1.25rem]">
         <div className="flex h-full w-full items-center justify-center rounded-[1.25rem] bg-[linear-gradient(145deg,#f8e7c9,#d6b98b)]">
-          <p className="text-5xl font-serif font-bold text-[#2c170e]">
+          <p className="text-5xl font-manuscript font-bold text-[#2c170e]">
             VOYNICH UI
           </p>
         </div>

@@ -30,14 +30,14 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     size: 80,
-    loadingColor: '#5eead4',
+    loadingColor: '#c8a55a',
     isProcessing: true,
   },
   render: (args) => (
     <div className="flex flex-col items-center gap-6">
-      <p className="text-xs font-serif text-[#eadbb6]/40 uppercase tracking-[0.3em]">Procesando Ritual...</p>
+      <p className="text-xs font-manuscript text-voynich-vellum/40 uppercase tracking-[0.3em]">Procesando Ritual...</p>
       <OuroborosSpinner {...args} />
-      <p className="text-[10px] text-[#5c331d] font-mono animate-pulse">
+      <p className="text-[10px] text-voynich-inkMedium font-smallcaps animate-pulse">
         ⟲ INVOCANDO ENTIDADES REMOTAS
       </p>
     </div>
@@ -54,11 +54,11 @@ export const BloodRitual: Story = {
     speed: 4,
   },
   render: (args) => (
-    <div className="flex flex-col items-center gap-8 p-8 border border-red-900/30 rounded-full w-64 h-64 justify-center"
+    <div className="flex flex-col items-center gap-8 p-8 border border-voynich-brass/40 rounded-full w-64 h-64 justify-center"
       style={{ background: 'radial-gradient(circle, #1a0505 0%, #0d0905 100%)' }}
     >
       <OuroborosSpinner {...args} />
-      <p className="text-xs font-serif text-red-400/60 text-center italic">
+      <p className="text-xs font-manuscript text-voynich-vermilion text-center italic">
         «El ouroboros devora su propia cola, <br/>consumando el ciclo eterno»
       </p>
     </div>
@@ -73,8 +73,8 @@ export const ScaleVariations: Story = {
     <div className="flex items-end gap-12">
       {[32, 48, 64, 96, 128].map((size) => (
         <div key={size} className="flex flex-col items-center gap-3">
-          <OuroborosSpinner size={size} isProcessing loadingColor="#5eead4" />
-          <span className="text-[10px] text-[#5c331d] font-mono">{size}px</span>
+          <OuroborosSpinner size={size} isProcessing loadingColor="#c8a55a" />
+          <span className="text-[10px] text-voynich-inkMedium font-smallcaps">{size}px</span>
         </div>
       ))}
     </div>
@@ -91,26 +91,26 @@ export const ImperativeControl = () => {
         ref={spinnerRef}
         size={100}
         isProcessing
-        loadingColor="#5eead4"
+        loadingColor="#c8a55a"
         onCycleComplete={() => setCycles((c) => c + 1)}
       />
-      <p className="text-xs text-[#eadbb6]/50 font-mono">Ciclos completados: {cycles}</p>
+      <p className="text-xs text-voynich-vellum/50 font-smallcaps">Ciclos completados: {cycles}</p>
       <div className="flex gap-3">
         <button
           onClick={() => spinnerRef.current?.start()}
-          className="px-4 py-1.5 text-xs border border-[#5c331d] text-[#eadbb6] font-serif rounded"
+          className="px-4 py-1.5 text-xs border border-voynich-inkMedium text-voynich-vellum font-manuscript rounded"
         >
           ▶ Start
         </button>
         <button
           onClick={() => spinnerRef.current?.stop()}
-          className="px-4 py-1.5 text-xs border border-[#5c331d] text-[#eadbb6] font-serif rounded"
+          className="px-4 py-1.5 text-xs border border-voynich-inkMedium text-voynich-vellum font-manuscript rounded"
         >
           ⏸ Stop
         </button>
         <button
           onClick={() => spinnerRef.current?.toggle()}
-          className="px-4 py-1.5 text-xs border border-[#5c331d] text-[#eadbb6] font-serif rounded"
+          className="px-4 py-1.5 text-xs border border-voynich-inkMedium text-voynich-vellum font-manuscript rounded"
         >
           ⟲ Toggle
         </button>

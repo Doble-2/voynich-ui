@@ -2,6 +2,7 @@ import React, { useId, useRef } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { cn } from "../../lib/utils";
+import { useReducedMotion } from "../../lib/useReducedMotion";
 
 /**
  * Propiedades del componente RefractiveFractal.
@@ -82,7 +83,7 @@ export const RefractiveFractal = React.forwardRef<
       refractionFactor = 30,
       frequency = 0.02,
       seed = 0,
-      animate = false,
+      animate: animateProp = false,
       speed = 10,
       isDisturbed = false,
       className,
@@ -95,6 +96,8 @@ export const RefractiveFractal = React.forwardRef<
     forwardedRef,
   ) => {
     const id = useId();
+    // Movimiento reducido: sin "respiración" continua; la distorsión por hover sigue siendo una respuesta directa.
+    const animate = animateProp && !useReducedMotion();
     // Limpiamos los dos puntos para que el ID sea seguro para CSS
     const filterId = `fractal-${id.replace(/:/g, "")}`;
 

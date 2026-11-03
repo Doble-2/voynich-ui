@@ -1,174 +1,152 @@
-import React, { useRef, useState } from "react";
-import gsap from "gsap";
-import { useGSAP } from "@gsap/react";
+import React, { forwardRef } from "react";
 import { cn } from "../../lib/utils";
+import { composeHandlers, composeRefs } from "../../lib/compose";
+import { createPartsContext } from "../../lib/context";
+import { useTarotSpread, type TarotCard, type TarotSpreadType, type UseTarotSpreadOptions } from "./useTarotSpread";
 
-export interface TarotCard {
-  id: string;
-  title: string;
-  description: string;
-  frontImage?: React.ReactNode;
-  backImage?: React.ReactNode;
+export { useTarotSpread };
+export type { TarotCard, TarotSpreadType, UseTarotSpreadOptions };
+
+interface SpreadContext {
+  spread: ReturnType<typeof useTarotSpread>;
 }
+const [SpreadProvider, useSpread] = createPartsContext<SpreadContext>("TarotSpreadGrid");
 
-export interface TarotSpreadGridProps extends React.HTMLAttributes<HTMLDivElement> {
+interface CardContext {
+  card: TarotCard;
+}
+const [CardProvider, useCard] = createPartsContext<CardContext>("TarotSpreadGrid");
+
+export interface TarotSpreadGridProps extends React.HTMLAttributes<HTMLDivElement>, Omit<UseTarotSpreadOptions, "cards"> {
+  /** Las cartas de la tirada. */
   cards: TarotCard[];
-  spreadType?: "fan" | "cross" | "grid";
 }
 
-export const TarotSpreadGrid = React.forwardRef<HTMLDivElement, TarotSpreadGridProps>(
-  ({ className, cards, spreadType = "fan", ...props }, ref) => {
-    const containerRef = useRef<HTMLDivElement>(null);
-    const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
-    const [spreadLoaded, setSpreadLoaded] = useState(false);
-    const [activeCard, setActiveCard] = useState<string | null>(null);
+/* ───────────────────────── Back / Front ───────────────────────── */
 
-    useGSAP(() => {
-      const container = containerRef.current;
-      if (!container || !cardRefs.current.length || spreadLoaded) return;
+/** `TarotSpreadGrid.Back`: el reverso (cuero con una estrella de compás a pan de oro). Con hijos, dibujas el tuyo. */
+const Back = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, children, ...props }, ref) => {
+  const { card } = useCard("Back");
+  return (
+    <div ref={ref} data-part="back" className={cn("voy-panel absolute inset-0 w-full h-full overflow-hidden [backface-visibility:hidden]", className)} {...props}>
+      {children ?? (
+        <>
+          <svg viewBox="-50 -50 100 100" aria-hidden="true" className="absolute inset-0 m-auto w-24 h-24 pointer-events-none" fill="none" stroke="rgb(var(--voynich-gold))" strokeWidth="0.9" style={{ filter: "drop-shadow(0 1px 0 rgb(0 0 0 / 0.6))" }}>
+            <circle r="44" />
+            <circle r="38" strokeWidth="0.5" />
+            <path d="M0-36 L8-8 L36 0 L8 8 L0 36 L-8 8 L-36 0 L-8-8Z" />
+            <path d="M25-25 L5-5 M25 25 L5 5 M-25 25 L-5 5 M-25-25 L-5-5" strokeWidth="0.6" />
+            <circle r="4" fill="rgb(var(--voynich-gold))" />
+          </svg>
+          {card.backImage}
+        </>
+      )}
+    </div>
+  );
+});
+Back.displayName = "TarotSpreadGrid.Back";
 
-      const mm = gsap.matchMedia();
-      const targets = cardRefs.current.filter(Boolean);
+/** `TarotSpreadGrid.Front`: el anverso (papel con título, imagen y descripción). Con hijos, dibujas el tuyo. */
+const Front = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, style, children, ...props }, ref) => {
+  const { card } = useCard("Front");
+  return (
+    <div ref={ref} data-part="front" className={cn("voy-slip absolute inset-0 w-full h-full overflow-hidden [backface-visibility:hidden]", className)} style={{ transform: "rotateY(180deg)", ...style }} {...props}>
+      {children ?? (
+        <div className="flex flex-col h-full p-4 items-center justify-between text-center m-[5px] border border-voynich-inkDark/35 shadow-[inset_0_0_0_3px_rgb(var(--voynich-vellum-aged)),inset_0_0_0_4px_rgb(var(--voynich-ink)/0.2)]">
+          <p className="voy-label text-[12.5px] border-b border-voynich-inkDark/25 pb-2 w-full">{card.title}</p>
+          <div className="flex-1 w-full my-2 relative">{card.frontImage || <div className="absolute inset-0 bg-voynich-vellumDark mix-blend-multiply opacity-35" />}</div>
+          <p className="font-manuscript italic text-[12.5px] leading-snug text-voynich-inkMedium h-12 w-full">{card.description}</p>
+        </div>
+      )}
+    </div>
+  );
+});
+Front.displayName = "TarotSpreadGrid.Front";
 
-      // Distribute based on spread type
-      if (spreadType === "fan") {
-        gsap.fromTo(targets, 
-          { x: 0, y: 0, rotation: 0, opacity: 0, scale: 0.8 },
-          {
-            x: (i) => (i - targets.length / 2) * 50,
-            y: (i) => Math.abs(i - targets.length / 2) * 15,
-            rotation: (i) => (i - targets.length / 2) * 10,
-            opacity: 1,
-            scale: 1,
-            duration: 1.5,
-            ease: "circ.inOut",
-            stagger: 0.1,
-            transformOrigin: "center bottom",
-          }
-        );
-      } else if (spreadType === "cross") {
-        // Celtic cross simplified
-        gsap.fromTo(targets, 
-          { x: 0, y: 0, rotation: 0, opacity: 0, scale: 0.5 },
-          {
-            x: (i) => {
-              if (i === 1) return 20; // Crossing
-              if (i > 1) return (i - 1) * 80;
-              return 0;
-            },
-            y: (i) => {
-              if (i === 1) return 10;
-              if (i % 2 === 0) return 40;
-              return -40;
-            },
-            rotation: (i) => i === 1 ? 90 : (Math.random() - 0.5) * 5, // The cross card rotates
-            opacity: 1,
-            scale: 1,
-            duration: 1.2,
-            stagger: 0.3,
-            ease: "power3.inOut",
-          }
-        );
-      } else {
-        // Grid
-        gsap.fromTo(targets, 
-          { y: 50, opacity: 0, rotationY: 180 },
-          { y: 0, opacity: 1, rotationY: 0, duration: 1, stagger: 0.1, ease: "back.out(1.2)" }
-        );
-      }
+/* ───────────────────────── Card ───────────────────────── */
 
-      setSpreadLoaded(true);
-    }, [spreadType]);
+export interface TarotCardPartProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "children"> {
+  /** La carta que dibuja esta parte. */
+  card: TarotCard;
+  /** Si lo pasas, dibujas el interior (normalmente `TarotSpreadGrid.Back` y `TarotSpreadGrid.Front`). */
+  children?: React.ReactNode;
+}
 
-    // Flip card interaction
-    const handleCardClick = (id: string, index: number) => {
-      const card = cardRefs.current[index];
-      if (!card) return;
-
-      const isFlipped = activeCard === id;
-      setActiveCard(isFlipped ? null : id);
-
-      gsap.to(card.querySelector('.card-inner'), {
-        rotationY: isFlipped ? 0 : 180,
-        duration: 0.8,
-        ease: "power2.inOut",
-        z: isFlipped ? 0 : 50,
-      });
-
-      // Levitating effect on active card
-      gsap.to(card, {
-        y: isFlipped ? "-=10" : "-=30", // lift
-        scale: isFlipped ? 1.0 : 1.1,
-        boxShadow: isFlipped 
-          ? "0 4px 10px rgba(0, 0, 0, 0.5)" 
-          : "0 20px 40px rgba(234, 219, 182, 0.2)",
-        duration: 0.4,
-        ease: "sine.inOut"
-      });
-    };
-
-    return (
-      <div 
-        ref={containerRef} 
-        className={cn("relative min-h-[400px] flex items-center justify-center p-8 [perspective:1000px]", className)} 
+/**
+ * `TarotSpreadGrid.Card`
+ *
+ * Una carta que se reparte, se eleva y gira, y que ya es un control de teclado. El interior por defecto es
+ * `Back` + `Front`; pasa tus propios hijos para dibujar otra cosa. Estado: `data-state="back" | "flipped"`.
+ */
+const CardPart = forwardRef<HTMLDivElement, TarotCardPartProps>(({ card, className, style, onClick, onKeyDown, children, ...props }, forwardedRef) => {
+  const { spread } = useSpread("Card");
+  const index = spread.indexOf(card);
+  const { ref: behaviorRef, onClick: bClick, onKeyDown: bKey, style: bStyle, ...behavior } = spread.getCardProps(card, index);
+  return (
+    <CardProvider value={{ card }}>
+      <div
+        ref={composeRefs(behaviorRef, forwardedRef)}
+        data-part="card"
+        data-card-id={card.id}
+        {...behavior}
+        onClick={composeHandlers(onClick, bClick)}
+        onKeyDown={composeHandlers(onKeyDown, bKey)}
+        className={cn("relative w-40 h-64 cursor-pointer [transform-style:preserve-3d] transition-all rounded-[3px] focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4", className)}
+        style={{ ...bStyle, ...style }}
         {...props}
       >
-        <div className={cn(
-          "relative",
-          spreadType === "grid" ? "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" : "flex items-center justify-center"
-        )}>
-          {cards.map((card, index) => (
-            <div 
-              key={card.id}
-              ref={(el) => { cardRefs.current[index] = el; }}
-              className="relative w-40 h-64 cursor-pointer [transform-style:preserve-3d] transition-all"
-              style={{
-                position: spreadType === "grid" ? "relative" : "absolute",
-                zIndex: activeCard === card.id ? 50 : index + 1
-              }}
-              onClick={() => handleCardClick(card.id, index)}
-            >
-              {/* Inner container to hold 3D flip */}
-              <div 
-                className="card-inner relative w-full h-full [transform-style:preserve-3d]"
-                style={{ transformOrigin: "center center" }}
-              >
-                {/* Back (Cover) */}
-                <div 
-                  className="absolute inset-0 w-full h-full bg-[#180a04] border-2 border-[#5c331d] rounded-lg shadow-2xl overflow-hidden [backface-visibility:hidden]"
-                >
-                  <div className="absolute inset-2 border border-[#eadbb6]/20 bg-[#21120a] flex items-center justify-center pointer-events-none p-4">
-                    {/* Alchemical back pattern placeholder */}
-                    <div className="w-16 h-16 border border-[#eadbb6]/30 rotate-45 flex items-center justify-center">
-                      <div className="w-12 h-12 border border-[#eadbb6]/40 rounded-full" />
-                    </div>
-                  </div>
-                  {card.backImage}
-                </div>
-
-                {/* Front (Content) */}
-                <div 
-                  className="absolute inset-0 w-full h-full bg-[#eadbb6] text-[#30180d] border-2 border-[#8b6b4a] rounded-lg shadow-inner overflow-hidden [backface-visibility:hidden]"
-                  style={{ transform: "rotateY(180deg)" }}
-                >
-                  <div className="flex flex-col h-full p-4 items-center justify-between text-center border-4 border-[#30180d]/10 m-1">
-                    <p className="font-serif font-black text-sm tracking-widest border-b border-[#30180d]/20 pb-2 w-full uppercase">
-                      {card.title}
-                    </p>
-                    <div className="flex-1 w-full my-2 relative">
-                       {card.frontImage || <div className="absolute inset-0 bg-[#d9c59c] mix-blend-multiply opacity-50" />}
-                    </div>
-                    <p className="font-mono text-[10px] leading-tight text-[#5c331d] opacity-80 h-10 w-full">
-                      {card.description}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
+        <div data-part="card-inner" className="relative w-full h-full [transform-style:preserve-3d]" style={{ transformOrigin: "center center" }}>
+          {children ?? (
+            <>
+              <Back />
+              <Front />
+            </>
+          )}
         </div>
       </div>
-    );
-  }
-);
-TarotSpreadGrid.displayName = "TarotSpreadGrid";
+    </CardProvider>
+  );
+});
+CardPart.displayName = "TarotSpreadGrid.Card";
+
+/* ───────────────────────── Root ───────────────────────── */
+
+/**
+ * `TarotSpreadGrid.Root`
+ *
+ * El contenedor de la tirada y su mecánica. Con hijos, compón tú las cartas; sin ellos dibuja una por cada
+ * elemento de `cards`.
+ */
+const Root = forwardRef<HTMLDivElement, TarotSpreadGridProps>(({ className, cards, spreadType = "fan", motion, children, ...props }, ref) => {
+  const spread = useTarotSpread({ cards, spreadType, motion });
+  return (
+    <SpreadProvider value={{ spread }}>
+      <div ref={composeRefs(spread.containerRef, ref)} data-part="root" className={cn("relative min-h-[400px] flex items-center justify-center p-8 [perspective:1000px]", className)} {...props}>
+        <div data-part="layout" className={cn("relative", spreadType === "grid" ? "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" : "flex items-center justify-center")}>
+          {children ?? cards.map((card) => <CardPart key={card.id} card={card} />)}
+        </div>
+      </div>
+    </SpreadProvider>
+  );
+});
+Root.displayName = "TarotSpreadGrid.Root";
+
+/**
+ * `TarotSpreadGrid`
+ *
+ * Una tirada de cartas que se reparten en abanico, cruz o rejilla y giran al pulsarlas.
+ *
+ * @example Por defecto
+ * <TarotSpreadGrid cards={cards} spreadType="fan" />
+ *
+ * @example Tus propias cartas
+ * <TarotSpreadGrid.Root cards={cards}>
+ *   {cards.map((c) => (
+ *     <TarotSpreadGrid.Card key={c.id} card={c}>
+ *       <TarotSpreadGrid.Back>…tu reverso…</TarotSpreadGrid.Back>
+ *       <TarotSpreadGrid.Front />
+ *     </TarotSpreadGrid.Card>
+ *   ))}
+ * </TarotSpreadGrid.Root>
+ */
+export const TarotSpreadGrid = Object.assign(Root, { Root, Card: CardPart, Back, Front });

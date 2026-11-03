@@ -3,6 +3,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { cn } from "../../lib/utils";
+import { useReducedMotion } from "../../lib/useReducedMotion";
 
 // Register ScrollTrigger inside the component or globally
 if (typeof window !== "undefined") {
@@ -17,14 +18,21 @@ export interface LeyLineScrollProps extends React.HTMLAttributes<HTMLDivElement>
 }
 
 export const LeyLineScroll = React.forwardRef<HTMLDivElement, LeyLineScrollProps>(
-  ({ className, color = "#5c331d", glowColor = "#eadbb6", strokeWidth = 2, height = "100vh", ...props }, ref) => {
+  ({ className, color = "#5a4b30", glowColor = "#dcc482", strokeWidth = 2, height = "100vh", ...props }, ref) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const pathRef = useRef<SVGPathElement>(null);
+    const reduced = useReducedMotion();
 
     useGSAP(() => {
       const path = pathRef.current;
       const container = containerRef.current;
       if (!path || !container) return;
+
+      // Movimiento reducido: la línea aparece ya trazada, sin depender del scroll.
+      if (reduced) {
+        gsap.set(path, { strokeDasharray: "none", strokeDashoffset: 0, opacity: 1 });
+        return;
+      }
 
       const pathLength = path.getTotalLength();
 
@@ -47,10 +55,10 @@ export const LeyLineScroll = React.forwardRef<HTMLDivElement, LeyLineScrollProps
           scrub: 1, // Smooth scrubbing taking 1 second to catch up
           onUpdate: (self) => {
             // Pulse the glow thickness based on velocity
+            // Un trazo de pluma: al ir más rápido, se carga más tinta y la línea engrosa.
             const velocity = Math.abs(self.getVelocity() / 100);
             gsap.to(path, {
-              strokeWidth: strokeWidth + Math.min(velocity, 4),
-              filter: `drop-shadow(0 0 ${10 + velocity * 20}px ${glowColor})`,
+              strokeWidth: strokeWidth + Math.min(velocity, 3),
               duration: 0.2,
               overwrite: "auto"
             });
@@ -59,7 +67,6 @@ export const LeyLineScroll = React.forwardRef<HTMLDivElement, LeyLineScrollProps
              // Revert pulse
              gsap.to(path, {
               strokeWidth: strokeWidth,
-              filter: `drop-shadow(0 0 10px ${glowColor})`,
               duration: 0.5,
               overwrite: "auto"
             });
@@ -74,7 +81,7 @@ export const LeyLineScroll = React.forwardRef<HTMLDivElement, LeyLineScrollProps
         trigger?.kill();
         tween.kill();
       };
-    }, { scope: containerRef });
+    }, { scope: containerRef, dependencies: [reduced] });
 
     return (
       <div 
@@ -106,7 +113,7 @@ export const LeyLineScroll = React.forwardRef<HTMLDivElement, LeyLineScrollProps
             strokeWidth={strokeWidth}
             strokeLinecap="round"
             className="transition-all"
-            style={{ filter: `drop-shadow(0 0 10px ${glowColor})` }}
+            style={{ filter: "drop-shadow(1px 2px 1px rgb(0 0 0 / 0.5))" }}
           />
 
           {/* Decorative Nods/Nodes */}

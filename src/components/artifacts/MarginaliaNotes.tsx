@@ -1,9 +1,10 @@
-import React, { useRef } from 'react';
+import React, { useRef, useId } from 'react';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { cn } from '../../lib/utils';
+import { useReducedMotion } from '../../lib/useReducedMotion';
 
-export interface MarginaliaNotesProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface MarginaliaNotesProps extends React.HTMLAttributes<HTMLSpanElement> {
   /** The tooltip text shown in the margin annotation. */
   note: string;
   /** The inline content that triggers the annotation on hover. */
@@ -18,10 +19,13 @@ export interface MarginaliaNotesProps extends React.HTMLAttributes<HTMLDivElemen
   trigger?: "hover" | "click";
 }
 
-export const MarginaliaNotes = React.forwardRef<HTMLDivElement, MarginaliaNotesProps>(
-  ({ children, note, className, noteColor = "rgb(255,243,200)", noteBgColor = "#2b1810", noteBorderColor = "#5c331d", trigger = "hover", ...props }, ref) => {
-    const containerRef = useRef<HTMLDivElement>(null);
-    const noteRef = useRef<HTMLDivElement>(null);
+export const MarginaliaNotes = React.forwardRef<HTMLSpanElement, MarginaliaNotesProps>(
+  ({ children, note, className, noteColor, noteBgColor, noteBorderColor, trigger = "hover", ...props }, ref) => {
+    const noteId = useId();
+    const reduced = useReducedMotion();
+    const openRef = useRef(false);
+    const containerRef = useRef<HTMLSpanElement>(null);
+    const noteRef = useRef<HTMLSpanElement>(null);
     const isHoveredRef = useRef(false);
 
     useGSAP(() => {
@@ -29,45 +33,62 @@ export const MarginaliaNotes = React.forwardRef<HTMLDivElement, MarginaliaNotesP
       const noteEl = noteRef.current;
       if (!container || !noteEl) return;
 
-      const handleEnter = () => {
+      const open = () => {
         isHoveredRef.current = true;
-        gsap.to(noteEl, {
-          autoAlpha: 1,
-          x: 0,
-          duration: 0.4,
-          ease: 'power2.out',
-        });
+        gsap.to(noteEl, { autoAlpha: 1, x: 0, rotation: -0.6, duration: reduced ? 0 : 0.4, ease: 'power2.out' });
       };
-
-      const handleLeave = () => {
+      const close = () => {
         isHoveredRef.current = false;
-        gsap.to(noteEl, {
-          autoAlpha: 0,
-          x: 10,
-          duration: 0.3,
-          ease: 'power2.in',
-        });
+        gsap.to(noteEl, { autoAlpha: 0, x: 8, rotation: 0, duration: reduced ? 0 : 0.3, ease: 'power2.in' });
       };
+      const toggle = () => { openRef.current = !openRef.current; openRef.current ? open() : close(); };
+      const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') { openRef.current = false; close(); } };
 
-      container.addEventListener('mouseenter', handleEnter);
-      container.addEventListener('mouseleave', handleLeave);
+      if (trigger === 'click') {
+        container.addEventListener('click', toggle);
+      } else {
+        container.addEventListener('mouseenter', open);
+        container.addEventListener('mouseleave', close);
+        container.addEventListener('focusin', open);
+        container.addEventListener('focusout', close);
+      }
+      container.addEventListener('keydown', onKey);
 
       return () => {
-        container.removeEventListener('mouseenter', handleEnter);
-        container.removeEventListener('mouseleave', handleLeave);
+        container.removeEventListener('click', toggle);
+        container.removeEventListener('mouseenter', open);
+        container.removeEventListener('mouseleave', close);
+        container.removeEventListener('focusin', open);
+        container.removeEventListener('focusout', close);
+        container.removeEventListener('keydown', onKey);
       };
-    }, { scope: containerRef });
+    }, { scope: containerRef, dependencies: [trigger, reduced] });
 
     return (
-      <div ref={containerRef} className={cn("relative group inline-block", className)} {...props}>
-        <span className="border-b border-dashed border-gray-500 cursor-help">{children}</span>
-        <div 
-          ref={noteRef} 
-          className="absolute left-full top-0 ml-4 w-48 p-2 text-xs font-serif text-amber-100 bg-[#2b1810] border border-[#5c331d] shadow-lg opacity-0 invisible z-10 pointer-events-none before:content-[''] before:absolute before:top-2 before:-left-2 before:border-[8px] before:border-transparent before:border-r-[#5c331d]"
+      <span ref={containerRef} className={cn("relative group inline-block", className)} {...props}>
+        <span
+          tabIndex={0}
+          aria-describedby={noteId}
+          className="cursor-help border-b border-dotted border-current focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4"
         >
-            {note}
-        </div>
-      </div>
+          {children}
+        </span>
+        {/* Glosa al margen: una nota en otra mano sobre un trozo de pergamino. */}
+        <span
+          ref={noteRef}
+          id={noteId}
+          role="note"
+          className="voy-slip block absolute left-full top-0 ml-5 w-52 px-3 py-2 text-[13.5px] leading-snug italic opacity-0 invisible z-10 pointer-events-none"
+          style={{
+            fontFamily: "var(--voynich-font-body)",
+            ...(noteColor ? { color: noteColor } : {}),
+            ...(noteBgColor ? { backgroundColor: noteBgColor } : {}),
+            ...(noteBorderColor ? { borderColor: noteBorderColor } : {}),
+          }}
+        >
+          {note}
+        </span>
+      </span>
     );
   }
 );

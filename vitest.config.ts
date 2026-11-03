@@ -15,6 +15,21 @@ export default defineConfig({
   test: {
     projects: [
       {
+        // Tests unitarios de comportamiento (hooks, lógica, a11y). Corren en Chromium real.
+        extends: true,
+        test: {
+          name: 'unit',
+          include: ['src/**/*.test.{ts,tsx}'],
+          setupFiles: ['src/test-setup.ts'],
+          browser: {
+            enabled: true,
+            headless: true,
+            provider: playwright({}),
+            instances: [{ browser: 'chromium' }],
+          },
+        },
+      },
+      {
         extends: true,
         plugins: [
           // The plugin will run tests for the stories defined in your Storybook config

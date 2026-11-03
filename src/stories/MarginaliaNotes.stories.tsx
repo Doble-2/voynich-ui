@@ -27,7 +27,7 @@ export const Default: Story = {
     children: "esta sección ha sido alterada",
   },
   render: () => (
-    <div className="max-w-2xl mx-auto font-serif text-base leading-loose text-[#eadbb6]/70 p-8"
+    <div className="max-w-2xl mx-auto font-manuscript text-base leading-loose text-voynich-vellum/70 p-8"
       style={{ filter: 'sepia(0.1) contrast(1.05)' }}
     >
       <p>
@@ -60,11 +60,11 @@ export const DenseAnnotation: Story = {
     children: "texto anotado",
   },
   render: () => (
-    <div className="max-w-xl mx-auto font-serif text-sm leading-loose text-[#eadbb6]/60 p-8 border-l-2 border-[#5c331d]/20 ml-8">
+    <div className="max-w-xl mx-auto font-manuscript text-sm leading-loose text-voynich-vellum/60 p-8 border-l-2 border-voynich-inkMedium/20 ml-8">
       <div className="mb-4 flex items-center gap-2">
-        <div className="h-px flex-1 bg-[#5c331d]/15" />
-        <span className="text-[8px] text-[#5c331d]/30 uppercase tracking-[0.4em]">marginalia densa</span>
-        <div className="h-px flex-1 bg-[#5c331d]/15" />
+        <div className="h-px flex-1 bg-voynich-inkMedium/15" />
+        <span className="text-[8px] text-voynich-inkMedium/30 uppercase tracking-[0.4em]">marginalia densa</span>
+        <div className="h-px flex-1 bg-voynich-inkMedium/15" />
       </div>
       <p>
         Cada {' '}

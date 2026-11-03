@@ -8,6 +8,7 @@ import React, {
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { cn } from "../../lib/utils";
+import { useReducedMotion } from "../../lib/useReducedMotion";
 
 export interface ScratchCardProps extends React.HTMLAttributes<HTMLDivElement> {
   /**
@@ -21,8 +22,8 @@ export interface ScratchCardProps extends React.HTMLAttributes<HTMLDivElement> {
    */
   height?: number;
   /**
-   * The image URL, color, or gradient to display as the cover over the scratch card.
-   * @default 'gray'
+   * La cubierta que se rasca: una URL `url(...)`, un color CSS o un degradado.
+   * Si se omite, se pinta una cubierta de pan de oro con grano y vetas.
    */
   coverImage?: string;
   /**
@@ -82,12 +83,67 @@ export interface ScratchCardRef {
  * </ScratchCard>
  * ```
  */
+/**
+ * Pinta una cubierta de pan de oro: base tonal, grano fino, vetas largas y un marco grabado.
+ * Determinista: el mismo tamaño da siempre la misma cubierta.
+ */
+function paintGoldLeaf(ctx: CanvasRenderingContext2D, w: number, h: number) {
+  let seed = 1337;
+  const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+
+  const base = ctx.createLinearGradient(0, 0, w, h);
+  base.addColorStop(0, "#c9a45a");
+  base.addColorStop(0.45, "#b08a45");
+  base.addColorStop(1, "#8f6c2c");
+  ctx.fillStyle = base;
+  ctx.fillRect(0, 0, w, h);
+
+  // Manchas tonales suaves (pátina / pulido desigual).
+  for (let i = 0; i < 26; i++) {
+    const x = rnd() * w, y = rnd() * h, r = 20 + rnd() * 70;
+    const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+    const light = rnd() > 0.5;
+    g.addColorStop(0, light ? "rgba(240,215,150,0.22)" : "rgba(80,50,10,0.2)");
+    g.addColorStop(1, "rgba(0,0,0,0)");
+    ctx.fillStyle = g;
+    ctx.fillRect(x - r, y - r, r * 2, r * 2);
+  }
+
+  // Grano fino.
+  const img = ctx.getImageData(0, 0, w, h);
+  for (let i = 0; i < img.data.length; i += 4) {
+    const n = (rnd() - 0.5) * 26;
+    img.data[i] = Math.max(0, Math.min(255, img.data[i]! + n));
+    img.data[i + 1] = Math.max(0, Math.min(255, img.data[i + 1]! + n));
+    img.data[i + 2] = Math.max(0, Math.min(255, img.data[i + 2]! + n * 0.6));
+  }
+  ctx.putImageData(img, 0, 0);
+
+  // Vetas largas del pan de oro aplicado a mano.
+  ctx.lineWidth = 1;
+  for (let i = 0; i < 70; i++) {
+    const y = rnd() * h, x = rnd() * w, len = 30 + rnd() * 120;
+    ctx.strokeStyle = rnd() > 0.5 ? "rgba(255,235,170,0.12)" : "rgba(70,45,10,0.12)";
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x + len, y + (rnd() - 0.5) * 6);
+    ctx.stroke();
+  }
+
+  // Marco grabado: doble filete de tinta.
+  ctx.strokeStyle = "rgba(48,30,8,0.75)";
+  ctx.lineWidth = 1.5;
+  ctx.strokeRect(6.5, 6.5, w - 13, h - 13);
+  ctx.lineWidth = 0.8;
+  ctx.strokeRect(10.5, 10.5, w - 21, h - 21);
+}
+
 export const ScratchCard = forwardRef<ScratchCardRef, ScratchCardProps>(
   (
     {
       width = 300,
       height = 200,
-      coverImage = "#888",
+      coverImage,
       brushSize = 20,
       brushHardness = 1,
       clearThreshold = 0.5,
@@ -100,6 +156,7 @@ export const ScratchCard = forwardRef<ScratchCardRef, ScratchCardProps>(
   ) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
+    const reduced = useReducedMotion();
 
     const [isScratching, setIsScratching] = useState(false);
     const [isCleared, setIsCleared] = useState(false);
@@ -133,7 +190,7 @@ export const ScratchCard = forwardRef<ScratchCardRef, ScratchCardProps>(
       ctx.globalCompositeOperation = "source-over";
 
       let isDrawn = false;
-      if (coverImage.startsWith("url")) {
+      if (coverImage && coverImage.startsWith("url")) {
         const img = new Image();
         const match = coverImage.match(/url\(['"]?(.*?)['"]?\)/);
         if (match && match[1]) {
@@ -148,8 +205,12 @@ export const ScratchCard = forwardRef<ScratchCardRef, ScratchCardProps>(
       } 
       
       if (!isDrawn) {
-        ctx.fillStyle = coverImage;
-        ctx.fillRect(0, 0, width, height);
+        if (coverImage) {
+          ctx.fillStyle = coverImage;
+          ctx.fillRect(0, 0, width, height);
+        } else {
+          paintGoldLeaf(ctx, width, height);
+        }
         setupEraseMode(ctx);
       }
     };
@@ -185,7 +246,7 @@ export const ScratchCard = forwardRef<ScratchCardRef, ScratchCardProps>(
          tweenRef.current = gsap.to(canvas, {
            opacity: 0,
            filter: "blur(4px)",
-           duration: 1.2,
+           duration: reduced ? 0 : 1.2,
            ease: "power2.inOut",
            onComplete: () => {
              const ctx = canvas.getContext("2d");
@@ -321,9 +382,28 @@ export const ScratchCard = forwardRef<ScratchCardRef, ScratchCardProps>(
           {children}
         </div>
 
-        {/* The Scratchable Canvas Layer */}
+        {/* La capa rascable es puramente visual; el contenido de debajo siempre está en el DOM. */}
+        {!isCleared && (
+          <button
+            type="button"
+            className="sr-only focus:not-sr-only focus:absolute focus:z-20 focus:left-2 focus:top-2 focus:px-2 focus:py-1 focus:text-xs voy-slip"
+            onClick={() => {
+              const canvas = canvasRef.current;
+              if (!canvas || isCleared) return;
+              setIsCleared(true);
+              tweenRef.current = gsap.to(canvas, {
+                opacity: 0,
+                duration: reduced ? 0 : 0.6,
+                onComplete: () => onComplete?.(),
+              });
+            }}
+          >
+            Revelar contenido
+          </button>
+        )}
         <canvas
           ref={canvasRef}
+          aria-hidden="true"
           onMouseDown={handleStart}
           onMouseUp={handleEnd}
           onMouseLeave={handleEnd}

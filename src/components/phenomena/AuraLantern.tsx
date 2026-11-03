@@ -8,20 +8,20 @@ export interface AuraLanternProps extends React.HTMLAttributes<HTMLDivElement> {
   revealContent?: React.ReactNode;
   /** Diámetro del halo (px). @default 150 */
   size?: number;
-  /** Color del resplandor de la linterna. @default "rgba(234,219,182,1)" */
+  /** Color del resplandor de la linterna. @default "rgba(255,206,140,1)" */
   glowColor?: string;
   /** Velocidad de seguimiento del mouse (seg). @default 0.1 */
   followSpeed?: number;
   /** Intensidad del brillo (0–1). @default 0.8 */
   intensity?: number;
-  /** Color de fondo del contenedor. @default "#0d0905" */
+  /** Color de fondo del contenedor. @default "#14100b" */
   bgColor?: string;
   /** Callback cuando se revela contenido con la posición actual. */
   onReveal?: (position: { x: number; y: number }) => void;
 }
 
 export const AuraLantern = React.forwardRef<HTMLDivElement, AuraLanternProps>(
-  ({ className, children, revealContent, size = 150, glowColor = "rgba(234,219,182,1)", followSpeed = 0.1, intensity = 0.8, bgColor = "#0d0905", onReveal, ...props }, ref) => {
+  ({ className, children, revealContent, size = 150, glowColor = "rgba(255,206,140,1)", followSpeed = 0.1, intensity = 0.8, bgColor = "#14100b", onReveal, ...props }, ref) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const lanternRef = useRef<HTMLDivElement>(null);
     const revealRef = useRef<HTMLDivElement>(null);
@@ -96,11 +96,12 @@ export const AuraLantern = React.forwardRef<HTMLDivElement, AuraLanternProps>(
     return (
       <div
         ref={containerRef}
-        className={cn("relative overflow-hidden cursor-crosshair text-[#30180d]", className)}
-        style={{ backgroundColor: bgColor }}
+        className={cn("relative overflow-hidden cursor-crosshair", className)}
+        style={{ backgroundColor: bgColor, fontFamily: "var(--voynich-font-body)" }}
         {...props}
       >
-        <div className="relative z-10 p-8 h-full pointer-events-none opacity-50 mix-blend-multiply">
+        {/* La capa base apenas se distingue en la penumbra: la vela revela el resto. */}
+        <div className="relative z-10 p-8 h-full pointer-events-none" style={{ color: "rgb(var(--voynich-ink-medium))", opacity: 0.7 }}>
           {children}
         </div>
 
@@ -111,15 +112,16 @@ export const AuraLantern = React.forwardRef<HTMLDivElement, AuraLanternProps>(
           style={{
             width: size,
             height: size,
-            background: `radial-gradient(circle at center, ${glowColor} 0%, ${glowColor.replace(/[\d.]+\)$/, `${intensity * 0.8})`)} 40%, rgba(13, 9, 5, 0) 70%)`,
+            background: `radial-gradient(circle at center, ${glowColor} 0%, ${glowColor.replace(/[\d.]+\)$/, `${intensity * 0.8})`)} 40%, rgba(20, 16, 11, 0) 70%)`,
             mixBlendMode: "screen",
             opacity: 0,
           }}
         />
         <div
           ref={revealRef}
-          className="absolute inset-0 z-10 p-8 h-full pointer-events-none text-[#eadbb6]"
+          className="absolute inset-0 z-10 p-8 h-full pointer-events-none"
           style={{
+            color: "rgb(var(--voynich-vellum))",
             clipPath: `circle(${size / 2}px at var(--lantern-x, 0px) var(--lantern-y, 0px))`,
             opacity: 0,
           }}

@@ -15,11 +15,11 @@ export interface OuroborosSpinnerRef {
 export interface OuroborosSpinnerProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Diámetro de la serpiente (px). @default 64 */
   size?: number;
-  /** Color principal de la serpiente. @default "#5eead4" */
+  /** Color principal de la serpiente. @default "#c8a55a" */
   loadingColor?: string;
   /** Activa/desactiva la animación de rotación. @default true */
   isProcessing?: boolean;
-  /** Color de la pista/sombra base. @default "#21120a" */
+  /** Color de la pista/sombra base. @default "#2b1d14" */
   trackColor?: string;
   /** Intensidad del resplandor (0–1). @default 0.6 */
   glowIntensity?: number;
@@ -29,7 +29,7 @@ export interface OuroborosSpinnerProps extends React.HTMLAttributes<HTMLDivEleme
   showScales?: boolean;
   /** Mostrar el ojo de la serpiente. @default true */
   showEye?: boolean;
-  /** Color del ojo. @default "#0d0905" */
+  /** Color del ojo. @default "#14100b" */
   eyeColor?: string;
   /** Grosor del cuerpo de la serpiente. @default 3.5 */
   strokeWidth?: number;
@@ -42,14 +42,14 @@ export const OuroborosSpinner = React.forwardRef<OuroborosSpinnerRef, OuroborosS
     {
       className,
       size = 64,
-      loadingColor = "#5eead4",
+      loadingColor = "#c8a55a",
       isProcessing = true,
-      trackColor = "#21120a",
-      glowIntensity = 0.6,
+      trackColor = "#2b1d14",
+      glowIntensity = 0,
       speed = 3,
       showScales = true,
       showEye = true,
-      eyeColor = "#0d0905",
+      eyeColor = "#14100b",
       strokeWidth = 3.5,
       onCycleComplete,
       ...props
@@ -179,7 +179,7 @@ export const OuroborosSpinner = React.forwardRef<OuroborosSpinnerRef, OuroborosS
         <svg
           viewBox="0 0 100 100"
           className="w-full h-full"
-          style={{ filter: `drop-shadow(0 0 ${glowPx}px ${loadingColor}${glowAlpha})` }}
+          style={{ filter: glowIntensity > 0 ? `drop-shadow(0 0 ${glowPx}px ${loadingColor}${glowAlpha})` : "drop-shadow(1px 2px 1.5px rgb(0 0 0 / 0.6))" }}
         >
           <defs>
             <linearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="100%">
@@ -225,7 +225,7 @@ export const OuroborosSpinner = React.forwardRef<OuroborosSpinnerRef, OuroborosS
         {/* Center mystical artifact */}
         <div className="absolute flex items-center justify-center" style={{ width: size * 0.2, height: size * 0.2 }}>
           <div
-            className="w-full h-full rounded-full border border-[#eadbb6]/20 flex items-center justify-center"
+            className="w-full h-full rounded-full border border-current/20 flex items-center justify-center"
             style={{ background: `radial-gradient(circle, ${loadingColor}10 0%, transparent 70%)` }}
           >
             <div className="w-1/3 h-1/3 rounded-full" style={{ backgroundColor: `${loadingColor}30` }} />

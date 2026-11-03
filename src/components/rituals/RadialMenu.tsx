@@ -1,435 +1,220 @@
-import React, {
-  useState,
-  forwardRef,
-  useImperativeHandle,
-  useRef,
-  useEffect,
-} from "react";
-import gsap from "gsap";
-import { useGSAP } from "@gsap/react";
+import React, { forwardRef, useImperativeHandle } from "react";
 import { cn } from "../../lib/utils";
+import { Slot } from "../../lib/Slot";
+import { composeHandlers, composeRefs } from "../../lib/compose";
+import { createPartsContext } from "../../lib/context";
+import { useRadialMenu, type RadialMenuItem, type RadialMenuRef, type UseRadialMenuOptions } from "./useRadialMenu";
 
-const ITEM_MARGIN = 40;
-const FLOAT_EPSILON = 0.001;
-const AUTO_ARC_STEP = 2;
+export { useRadialMenu };
+export type { RadialMenuItem, RadialMenuRef, UseRadialMenuOptions };
 
-const normalizeAngle = (angle: number) => {
-  const normalized = angle % 360;
-  return normalized < 0 ? normalized + 360 : normalized;
-};
-
-const resolveArcFromAngles = (startAngle: number, endAngle?: number) => {
-  if (endAngle === undefined) {
-    return undefined;
-  }
-
-  const angleDifference = endAngle - startAngle;
-
-  if (angleDifference > 0) {
-    return angleDifference;
-  }
-
-  if (angleDifference < 0) {
-    return angleDifference + 360;
-  }
-
-  return 360;
-};
-
-const getDistanceLimit = (
-  direction: number,
-  negativeSpace: number,
-  positiveSpace: number,
-) => {
-  if (direction > FLOAT_EPSILON) {
-    return positiveSpace / direction;
-  }
-
-  if (direction < -FLOAT_EPSILON) {
-    return negativeSpace / Math.abs(direction);
-  }
-
-  return Infinity;
-};
-
-const fitsInsideContainer = (
-  containerWidth: number,
-  containerHeight: number,
-  centerX: number,
-  centerY: number,
-  angleInDegrees: number,
-  distance: number,
-) => {
-  const radians = angleInDegrees * (Math.PI / 180);
-  const projectedX = centerX + Math.cos(radians) * distance;
-  const projectedY = centerY + Math.sin(radians) * distance;
-
-  return (
-    projectedX >= ITEM_MARGIN &&
-    projectedX <= containerWidth - ITEM_MARGIN &&
-    projectedY >= ITEM_MARGIN &&
-    projectedY <= containerHeight - ITEM_MARGIN
-  );
-};
-
-export interface RadialMenuItem {
-  id: string;
-  label: React.ReactNode;
-  icon?: React.ReactNode;
-  onClick?: () => void;
-}
-
-export interface RadialMenuRef {
-  /** Abre visualmente el menú disparando la animación matemática hacia el exterior. */
-  open: () => void;
-  /** Cierra y colapsa los nodos del menú regresándolos a su punto de origen. */
-  close: () => void;
-  /** Alterna entre abierto/cerrado según el estado anterior. */
-  toggle: () => void;
-}
-
-export interface RadialMenuProps extends React.HTMLAttributes<HTMLDivElement> {
-  /**
-   * Lista de elementos del menú con sus respectivos callbacks, íconos y etiquetas de texto.
-   */
-  icon?: React.ReactNode;
-
-  items: RadialMenuItem[];
-  /**
-   * Distancia en píxeles hacia la cual se desplazarán los botones hijos desde el centro al florecer.
-   * @default 40
-   */
-  radius?: number;
-  /**
-   * El nodo visual React central (trigger). Puede ser el avatar de un usuario o un botón nativo.
-   * @default Un botón "+" provisto por defecto si no es sustituido.
-   */
+interface MenuContext {
+  menu: ReturnType<typeof useRadialMenu>;
+  icon: React.ReactNode;
   centerNode?: React.ReactNode;
-  /**
-   * Retraso fraccional (en milisegundos) entre la aparición correlativa de cada ítem (Stagger animation).
-   * @default 50
-   */
-  staggerDelay?: number;
-  /**
-   * Ángulo (en grados polares) desde donde el arco o semicírculo de los botones inicializa.
-   * `0` apunta a la derecha, `-90` arriba, `90` abajo, `180` a la izquierda.
-   * @default -90
-   */
-  startAngle?: number;
-  /**
-   * Ángulo final absoluto del recorrido. Si se define, se transforma internamente en `arc`.
-   * Tiene prioridad menor que `arc`.
-   */
-  endAngle?: number;
-  /**
-   * El arco total (en grados) donde se distribuirán equitativamente los componentes dentro.
-   * Si no se define, se calcula automáticamente en función del espacio disponible del wrapper.
-   * @example 180 // Formará un arco de medio círculo.
-   */
-  arc?: number;
-  /**
-   * Clases extra para el botón central por defecto.
-   */
+  buttonClassName?: string | undefined;
+  items: RadialMenuItem[];
+}
+const [MenuProvider, useMenu] = createPartsContext<MenuContext>("RadialMenu");
+
+interface ItemContextValue {
+  item: RadialMenuItem;
+}
+/** Contexto "suave" (no lanza si falta): `Icon` y `Label` también funcionan sueltos, con sus propios hijos. */
+const ItemContext = React.createContext<ItemContextValue | null>(null);
+
+export interface RadialMenuProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "onChange">, UseRadialMenuOptions {
+  /** Icono del elemento central. @default "+" */
+  icon?: React.ReactNode;
+  /** Sustituye por completo el elemento central. */
+  centerNode?: React.ReactNode;
+  /** Clases extra para el medallón central por defecto. */
   buttonClassName?: string;
+  /** Si lo pasas, **sustituye la composición por defecto**: compón tú `Trigger` y `Menu`. */
+  children?: React.ReactNode;
 }
 
-interface RadialMenuLayout {
-  width: number;
-  height: number;
-  centerX: number;
-  centerY: number;
-  autoArc: number;
-  autoStartAngle: number;
+/* ───────────────────────── Trigger ───────────────────────── */
+
+export interface RadialTriggerProps extends React.HTMLAttributes<HTMLDivElement> {
+  /** Aplica el comportamiento a tu propio elemento. @default false */
+  asChild?: boolean;
 }
+
+/**
+ * `RadialMenu.Trigger`
+ *
+ * El elemento central que abre y cierra el menú. Sin hijos, dibuja el medallón de latón con el icono;
+ * con hijos (o `asChild`), el centro es tuyo y conserva el rol de botón, el teclado y `aria-expanded`.
+ */
+const Trigger = forwardRef<HTMLDivElement, RadialTriggerProps>(({ asChild = false, className, onClick, onKeyDown, children, ...props }, ref) => {
+  const { menu, icon, centerNode, buttonClassName } = useMenu("Trigger");
+  const { ref: triggerRef, onClick: bClick, onKeyDown: bKey, ...behavior } = menu.getTriggerProps();
+  const Comp = (asChild ? Slot : "div") as React.ElementType;
+  return (
+    <Comp
+      ref={composeRefs(triggerRef, ref)}
+      data-part="trigger"
+      data-state={menu.isOpen ? "open" : "closed"}
+      data-spin={asChild || children || centerNode ? "false" : "true"}
+      {...behavior}
+      aria-label="Abrir menú"
+      className={cn("relative z-20 cursor-pointer rounded-full focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4", className)}
+      onClick={composeHandlers(onClick, bClick)}
+      onKeyDown={composeHandlers(onKeyDown, bKey)}
+      {...props}
+    >
+      {children ?? centerNode ?? <div className={cn("voy-medallion w-14 h-14 text-xl", buttonClassName)}>{icon}</div>}
+    </Comp>
+  );
+});
+Trigger.displayName = "RadialMenu.Trigger";
+
+/* ───────────────────────── Icon / Label ───────────────────────── */
+
+/** `RadialMenu.Icon`: el medallón de latón de un elemento. Dentro de un `Item`, muestra el icono del elemento. */
+const Icon = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, children, ...props }, ref) => {
+  const ctx = React.useContext(ItemContext);
+  return (
+    <div ref={ref} data-part="icon" className={cn("voy-medallion w-11 h-11 text-lg", className)} {...props}>
+      {children ?? ctx?.item.icon}
+    </div>
+  );
+});
+Icon.displayName = "RadialMenu.Icon";
+
+/** `RadialMenu.Label`: la nota de pergamino que aparece bajo un elemento al señalarlo o enfocarlo. */
+const Label = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, children, ...props }, ref) => {
+  const ctx = React.useContext(ItemContext);
+  return (
+    <div
+      ref={ref}
+      data-part="label"
+      className={cn("voy-slip absolute top-[3.1rem] whitespace-nowrap opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity text-[13px] italic px-2.5 py-1", className)}
+      style={{ fontFamily: "var(--voynich-font-body)" }}
+      {...props}
+    >
+      {children ?? ctx?.item.label}
+    </div>
+  );
+});
+Label.displayName = "RadialMenu.Label";
+
+/* ───────────────────────── Item / Menu ───────────────────────── */
+
+export interface RadialItemProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "children"> {
+  /** El elemento que dibuja esta parte. */
+  item: RadialMenuItem;
+  /** Si lo pasas, dibujas el interior (por defecto, `Icon` y `Label`). */
+  children?: React.ReactNode;
+}
+
+/**
+ * `RadialMenu.Item`
+ *
+ * Un elemento del menú: ya viene colocado en el abanico, animado y accesible (`role="menuitem"`).
+ * Cerrado, no se puede pulsar ni enfocar. Estado: `data-state="open" | "closed"`.
+ */
+const Item = forwardRef<HTMLDivElement, RadialItemProps>(({ item, className, style, onClick, onKeyDown, children, ...props }, forwardedRef) => {
+  const { menu, items } = useMenu("Item");
+  const index = items.findIndex((i) => i.id === item.id);
+  const { ref: itemRef, onClick: bClick, onKeyDown: bKey, style: bStyle, ...behavior } = menu.getItemProps(item, index);
+  return (
+    <ItemContext.Provider value={{ item }}>
+      <div
+        ref={composeRefs(itemRef, forwardedRef)}
+        data-part="item"
+        data-item-id={item.id}
+        data-state={menu.isOpen ? "open" : "closed"}
+        {...behavior}
+        onClick={composeHandlers(onClick, bClick)}
+        onKeyDown={composeHandlers(onKeyDown, bKey)}
+        className={cn("absolute z-10 origin-center cursor-pointer opacity-0 rounded-full focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4", className)}
+        style={{ ...bStyle, ...style }}
+        {...props}
+      >
+        <div className="flex flex-col items-center justify-center group">
+          {children ?? (
+            <>
+              {item.icon && <Icon />}
+              {item.label && <Label />}
+            </>
+          )}
+        </div>
+      </div>
+    </ItemContext.Provider>
+  );
+});
+Item.displayName = "RadialMenu.Item";
+
+/** `RadialMenu.Menu`: agrupa los elementos con `role="menu"` sin afectar a la maquetación. */
+const Menu = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, children, ...props }, ref) => (
+  <div ref={ref} data-part="menu" role="menu" aria-label="Opciones" className={cn("contents", className)} {...props}>
+    {children}
+  </div>
+));
+Menu.displayName = "RadialMenu.Menu";
+
+/* ───────────────────────── Root ───────────────────────── */
+
+/**
+ * `RadialMenu.Root`
+ *
+ * El contenedor y la mecánica del menú. Con hijos, compón tú `Trigger` y `Menu` (con `Item`s); sin ellos
+ * dibuja la composición por defecto. `ref` expone `open()`, `close()` y `toggle()`.
+ */
+const Root = forwardRef<RadialMenuRef, RadialMenuProps>(
+  ({ items, radius, staggerDelay, startAngle, endAngle, arc, motion, icon = "+", centerNode, buttonClassName, className, children, onKeyDown, ...props }, ref) => {
+    const menu = useRadialMenu({ items, radius, staggerDelay, startAngle, endAngle, arc, motion });
+    useImperativeHandle(ref, () => menu.controls);
+    const { ref: rootRef, onKeyDown: bKey, ...rootProps } = menu.getRootProps();
+
+    return (
+      <MenuProvider value={{ menu, icon, centerNode, buttonClassName, items }}>
+        <div
+          ref={rootRef}
+          data-part="root"
+          {...rootProps}
+          onKeyDown={composeHandlers(onKeyDown, bKey)}
+          className={cn("relative flex items-center justify-center", className)}
+          {...props}
+        >
+          {children ?? (
+            <>
+              <Trigger />
+              <Menu>
+                {items.map((item) => (
+                  <Item key={item.id} item={item} />
+                ))}
+              </Menu>
+            </>
+          )}
+        </div>
+      </MenuProvider>
+    );
+  },
+);
+Root.displayName = "RadialMenu.Root";
 
 /**
  * `RadialMenu`
  *
- * Un menú contextual esférico que despliega opciones alrededor de un punto central.
- * Utiliza matemáticas euclidianas nativas (Seno y Coseno) para distribuir dinámicamente
- * un Array de ítems según el ángulo inicial y el arco delimitado, garantizando distribución perfecta
- * sin importar el número inyectado.
+ * Un menú contextual que despliega sus opciones en abanico alrededor de un punto. Ajusta el arco para que
+ * nada se salga del contenedor.
+ *
+ * @example Por defecto
+ * <RadialMenu icon="+" items={items} radius={90} />
+ *
+ * @example Tus propias partes (otro centro, un elemento a medida)
+ * <RadialMenu.Root items={items}>
+ *   <RadialMenu.Trigger asChild><button className="mi-boton">Abrir</button></RadialMenu.Trigger>
+ *   <RadialMenu.Menu>
+ *     {items.map((item) => (
+ *       <RadialMenu.Item key={item.id} item={item}>
+ *         <RadialMenu.Icon className="!bg-voynich-gold" />
+ *       </RadialMenu.Item>
+ *     ))}
+ *   </RadialMenu.Menu>
+ * </RadialMenu.Root>
  */
-export const RadialMenu = forwardRef<RadialMenuRef, RadialMenuProps>(
-  (
-    {
-      items,
-      radius = 100,
-      centerNode,
-      staggerDelay = 50,
-      startAngle = -90,
-      endAngle,
-      icon = "+",
-      className,
-      arc,
-      buttonClassName,
-      ...props
-    },
-    ref,
-  ) => {
-    const [isOpen, setIsOpen] = useState(false);
-    const [layout, setLayout] = useState<RadialMenuLayout>({
-      width: 0,
-      height: 0,
-      centerX: 0,
-      centerY: 0,
-      autoArc: 360,
-      autoStartAngle: startAngle,
-    });
-    const WrapperRef = useRef<HTMLDivElement>(null);
-    const CenterNodeRef = useRef<HTMLDivElement>(null);
-
-    const explicitArc = arc ?? resolveArcFromAngles(startAngle, endAngle);
-    const effectiveArc = explicitArc ?? layout.autoArc;
-    const effectiveStartAngle =
-      explicitArc === undefined ? layout.autoStartAngle : startAngle;
-    const angleStep =
-      items.length <= 1
-        ? 0
-        : effectiveArc === 360
-          ? effectiveArc / items.length
-          : effectiveArc / Math.max(1, items.length - 1);
-
-    useImperativeHandle(ref, () => ({
-      open: () => setIsOpen(true),
-      close: () => setIsOpen(false),
-      toggle: () => setIsOpen((prev) => !prev),
-    }));
-
-    useEffect(() => {
-      const updateSize = () => {
-        if (!WrapperRef.current || !CenterNodeRef.current) {
-          return;
-        }
-
-        const wrapperRect = WrapperRef.current.getBoundingClientRect();
-        const parentRect =
-          WrapperRef.current.parentElement?.getBoundingClientRect();
-        const centerRect = CenterNodeRef.current.getBoundingClientRect();
-
-        const shouldUseParentRect =
-          !!parentRect &&
-          (wrapperRect.width <= centerRect.width + 1 ||
-            wrapperRect.height <= centerRect.height + 1);
-
-        const containerRect = shouldUseParentRect ? parentRect : wrapperRect;
-
-        if (!containerRect) {
-          return;
-        }
-
-        const centerX =
-          centerRect.left + centerRect.width / 2 - containerRect.left;
-        const centerY =
-          centerRect.top + centerRect.height / 2 - containerRect.top;
-
-        let autoArc = 360;
-        let autoStartAngle = startAngle;
-
-        if (explicitArc === undefined && radius > 0) {
-          let backwardSweep = 0;
-          let forwardSweep = 0;
-
-          for (let sweep = 0; sweep <= 180; sweep += AUTO_ARC_STEP) {
-            const angle = normalizeAngle(startAngle - sweep);
-
-            if (
-              !fitsInsideContainer(
-                containerRect.width,
-                containerRect.height,
-                centerX,
-                centerY,
-                angle,
-                radius,
-              )
-            ) {
-              break;
-            }
-
-            backwardSweep = sweep;
-          }
-
-          for (let sweep = 0; sweep <= 180; sweep += AUTO_ARC_STEP) {
-            const angle = normalizeAngle(startAngle + sweep);
-
-            if (
-              !fitsInsideContainer(
-                containerRect.width,
-                containerRect.height,
-                centerX,
-                centerY,
-                angle,
-                radius,
-              )
-            ) {
-              break;
-            }
-
-            forwardSweep = sweep;
-          }
-
-          autoArc = backwardSweep + forwardSweep;
-          autoStartAngle = startAngle - backwardSweep;
-
-          if (autoArc >= 360 - AUTO_ARC_STEP) {
-            autoArc = 360;
-            autoStartAngle = startAngle - 180;
-          }
-        }
-
-        setLayout({
-          width: containerRect.width,
-          height: containerRect.height,
-          centerX,
-          centerY,
-          autoArc,
-          autoStartAngle,
-        });
-      };
-
-      updateSize();
-      window.addEventListener("resize", updateSize);
-      return () => window.removeEventListener("resize", updateSize);
-    }, [explicitArc, items.length, radius, startAngle]);
-
-    const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
-
-    useGSAP(() => {
-      // Bloom/collapse radial organico
-      const targets = itemRefs.current.filter(Boolean);
-      const centerTarget = CenterNodeRef.current;
-      
-      if (!targets.length) return;
-
-      if (isOpen) {
-        gsap.to(centerTarget, {
-          rotation: 90,
-          scale: 1.1,
-          ease: "back.out(3)",
-          duration: 0.6
-        });
-        
-        targets.forEach((el, index) => {
-          const currentAngle = effectiveStartAngle + index * angleStep;
-          const radians = currentAngle * (Math.PI / 180);
-
-          let dynamicRadius = radius;
-          if (layout.width > 0 && layout.height > 0) {
-            const cos = Math.cos(radians);
-            const sin = Math.sin(radians);
-            const leftSpace = Math.max(0, layout.centerX - ITEM_MARGIN);
-            const rightSpace = Math.max(0, layout.width - layout.centerX - ITEM_MARGIN);
-            const topSpace = Math.max(0, layout.centerY - ITEM_MARGIN);
-            const bottomSpace = Math.max(0, layout.height - layout.centerY - ITEM_MARGIN);
-
-            const limitX = getDistanceLimit(cos, leftSpace, rightSpace);
-            const limitY = getDistanceLimit(sin, topSpace, bottomSpace);
-            dynamicRadius = Math.min(radius, limitX, limitY);
-          }
-
-          const tx = Math.cos(radians) * dynamicRadius;
-          const ty = Math.sin(radians) * dynamicRadius;
-
-          gsap.fromTo(el, 
-            { 
-              x: 0, 
-              y: 0, 
-              opacity: 0, 
-              scale: 0.2, 
-              rotation: -45, 
-              pointerEvents: "none" 
-            },
-            {
-              x: tx,
-              y: ty,
-              opacity: 1,
-              scale: 1,
-              rotation: 0,
-              pointerEvents: "auto",
-              duration: 0.8,
-              ease: "elastic.out(1, 0.6)",
-              delay: index * (staggerDelay / 1000),
-              overwrite: "auto"
-            }
-          );
-        });
-      } else {
-        gsap.to(centerTarget, {
-          rotation: 0,
-          scale: 1,
-          ease: "power3.inOut",
-          duration: 0.4
-        });
-        
-        gsap.to(targets, {
-          x: 0,
-          y: 0,
-          opacity: 0,
-          scale: 0.2,
-          rotation: 45,
-          pointerEvents: "none",
-          duration: 0.4,
-          ease: "back.in(2)",
-          stagger: {
-            amount: 0.1,
-            from: "end" // Recoge desde el ultimo al centro
-          },
-          overwrite: "auto"
-        });
-      }
-    }, [isOpen, layout, radius, effectiveStartAngle, angleStep, staggerDelay]);
-
-    return (
-      <div
-        ref={WrapperRef}
-        className={cn("relative flex items-center justify-center", className)}
-        {...props}
-      >
-        <div
-          ref={CenterNodeRef}
-          className="relative z-20 cursor-pointer"
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          {centerNode || (
-            <div
-              className={cn(
-                "w-12 h-12 bg-neutral-800 rounded-full flex items-center justify-center text-white shadow-xl hover:bg-neutral-700 transition-colors",
-                buttonClassName,
-              )}
-            >
-              {icon}
-            </div>
-          )}
-        </div>
-
-        {items.map((item, index) => {
-          return (
-            <div
-              key={item.id}
-              ref={(el) => { itemRefs.current[index] = el; }}
-              onClick={() => {
-                item.onClick?.();
-                setIsOpen(false);
-              }}
-              className="absolute z-10 origin-center cursor-pointer opacity-0"
-            >
-              <div className="flex flex-col items-center justify-center group">
-                {item.icon && (
-                  <div className="p-2 w-10 h-10 bg-neutral-900 rounded-full border border-neutral-700 flex items-center justify-center shadow-lg group-hover:border-cyan-500 group-hover:text-cyan-400 group-hover:scale-110 transition-all text-neutral-300">
-                    {item.icon}
-                  </div>
-                )}
-                {item.label && (
-                  <div className="absolute top-12 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity text-xs font-mono text-neutral-400 bg-neutral-900 px-2 py-1 rounded">
-                    {item.label}
-                  </div>
-                )}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    );
-  },
-);
-RadialMenu.displayName = "RadialMenu";
+export const RadialMenu = Object.assign(Root, { Root, Trigger, Menu, Item, Icon, Label });

@@ -1,100 +1,80 @@
-import React, { useRef, useState } from "react";
-import gsap from "gsap";
-import { useGSAP } from "@gsap/react";
+import React, { useEffect, useId, useState } from "react";
 import { cn } from "../../lib/utils";
 
 export interface FrequencyTunerProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  /** Valor mínimo de la escala. @default 0 */
   min?: number;
+  /** Valor máximo de la escala. @default 100 */
   max?: number;
+  /** Paso entre valores. @default 1 */
   step?: number;
+  /** Valor inicial (o valor controlado). @default 50 */
   value?: number;
+  /**
+   * Valor en el que el instrumento queda "sintonizado". Por defecto, el punto medio de la escala.
+   * @default (min + max) / 2
+   */
+  tunedValue?: number;
+  /** Unidad que se muestra junto al valor. @default "Hz" */
+  unit?: string;
+  /** Se llama cada vez que cambia el valor. */
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
+/**
+ * `FrequencyTuner`
+ *
+ * Una escala graduada de latón con una ventanilla deslizante: el sintonizador de un instrumento,
+ * no un slider de interfaz. Bajo el latón hay un `<input type="range">` real, de modo que el teclado,
+ * los lectores de pantalla y las props nativas (`aria-label`, `id`, `name`…) funcionan.
+ * Al llegar al valor de sintonía, la lectura se tiñe de rúbrica.
+ */
 export const FrequencyTuner = React.forwardRef<HTMLInputElement, FrequencyTunerProps>(
-  ({ className, min = 0, max = 100, step = 1, value = 50, onChange, ...props }, ref) => {
-    const trackRef = useRef<HTMLDivElement>(null);
-    const thumbRef = useRef<HTMLDivElement>(null);
-    const textRef = useRef<HTMLSpanElement>(null);
+  (
+    { className, min = 0, max = 100, step = 1, value = 50, tunedValue, unit = "Hz", onChange, ...props },
+    ref,
+  ) => {
     const [internalValue, setInternalValue] = useState(value);
+    const readoutId = useId();
 
-    useGSAP(() => {
-      const thumb = thumbRef.current;
-      const text = textRef.current;
-      if (!thumb || !text) return;
+    // Si el valor llega de fuera (componente controlado), la escala lo sigue.
+    useEffect(() => setInternalValue(value), [value]);
 
-      const handleInput = (e: Event) => {
-        const target = e.target as HTMLInputElement;
-        const val = Number(target.value);
-        setInternalValue(val);
-
-        // Interferencia / ruido
-        gsap.to(text, {
-          opacity: 0.5 + Math.random() * 0.5,
-          x: (Math.random() - 0.5) * 2,
-          duration: 0.1,
-          ease: "none",
-        });
-
-        gsap.to(thumb, {
-          boxShadow: `0px 0px ${5 + Math.random() * 15}px rgba(100, 255, 255, 0.4)`,
-          duration: 0.1,
-          ease: "none",
-        });
-
-        // "Sintonizado" visual effect
-        const isTuned = val === (max - min) / 2; // Assuming middle is tuned
-        if (isTuned) {
-          gsap.to(text, { color: "#5eead4", fontWeight: "bold", textShadow: "0 0 10px #5eead4", duration: 0.3 });
-          gsap.to(thumb, { backgroundColor: "#5eead4", scale: 1.2, duration: 0.3, ease: "back.out(2)" });
-        } else {
-          gsap.to(text, { color: "#eadbb6", fontWeight: "normal", textShadow: "none", duration: 0.3 });
-          gsap.to(thumb, { backgroundColor: "#404040", scale: 1, duration: 0.3, ease: "power2.out" });
-        }
-      };
-
-      const inputElement = (thumb.parentNode as HTMLDivElement).querySelector("input");
-      inputElement?.addEventListener("input", handleInput);
-
-      return () => {
-        inputElement?.removeEventListener("input", handleInput);
-      };
-    }, []);
-
-    const percentage = ((internalValue - min) / (max - min)) * 100;
+    const target = tunedValue ?? (min + max) / 2;
+    const isTuned = Math.abs(internalValue - target) <= step / 2;
+    const percentage = max === min ? 0 : ((internalValue - min) / (max - min)) * 100;
 
     return (
-      <div className={cn("relative flex items-center w-full h-8", className)}>
+      <div className={cn("voy-tuner w-full", className)} data-tuned={isTuned}>
+        <output
+          id={readoutId}
+          aria-live="polite"
+          className="voy-tuner__readout"
+          style={{ left: `${percentage}%` }}
+        >
+          {isTuned ? "◆ " : ""}
+          {internalValue.toFixed(1)}
+          {unit}
+        </output>
+        <div className="voy-tuner__scale" aria-hidden="true" />
+        <div className="voy-tuner__thumb" aria-hidden="true" style={{ left: `${percentage}%` }} />
         <input
+          ref={ref}
           type="range"
           min={min}
           max={max}
           step={step}
           value={internalValue}
+          aria-valuetext={`${internalValue.toFixed(1)} ${unit}${isTuned ? ", sintonizado" : ""}`}
+          className="voy-tuner__input"
+          {...props}
           onChange={(e) => {
             setInternalValue(Number(e.target.value));
             onChange?.(e);
           }}
-          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
         />
-        <div
-          ref={trackRef}
-          className="w-full h-1 bg-[#21120a] rounded-full border border-[#5c331d]/30"
-        />
-        <div
-          ref={thumbRef}
-          className="absolute h-4 w-4 rounded-full bg-[#404040] shadow-md border border-[#eadbb6]/30 pointer-events-none transition-transform"
-          style={{ left: `calc(${percentage}% - 0.5rem)` }}
-        />
-        <span
-          ref={textRef}
-          className="absolute -top-6 text-xs font-mono text-[#eadbb6] pointer-events-none transition-colors"
-          style={{ left: `calc(${percentage}% - 1rem)` }}
-        >
-          {(internalValue).toFixed(1)}Hz
-        </span>
       </div>
     );
-  }
+  },
 );
 FrequencyTuner.displayName = "FrequencyTuner";

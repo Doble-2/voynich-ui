@@ -1,95 +1,104 @@
-import React, { useRef, useState } from "react";
+import React, { useId, useRef } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { cn } from "../../lib/utils";
+import { useReducedMotion } from "../../lib/useReducedMotion";
 
 export interface IncantationInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  /** Mostrar estado de error. @default false */
+  /** Marca el campo como inválido (rúbrica, `aria-invalid`). */
   error?: boolean;
-  /** Color del resplandor al focus. @default "#eadbb6" */
-  glowColor?: string;
-  /** Color del borde de error. @default "#991b1b" */
-  errorColor?: string;
-  /** Color de las chispas. @default "rgba(255, 215, 0, 0.4)" */
-  sparkColor?: string;
-  /** Color del texto. @default "#dfcda2" */
-  textColor?: string;
-  /** Color de fondo. @default "#18110b" */
-  bgColor?: string;
-  /** Etiqueta superior. */
+  /** Rótulo en versalitas sobre la línea. Se asocia al campo para lectores de pantalla. */
   label?: string;
+  /** Color de las motas de pan de oro al escribir. Por defecto, oro claro. */
+  sparkColor?: string;
+  /** Color del texto. Por defecto hereda del contexto. */
+  textColor?: string;
+  /** Color de la línea en estado de error. */
+  errorColor?: string;
+  /** @deprecated Ya no hay resplandor: la línea de escriba no brilla. Se ignora. */
+  glowColor?: string;
+  /** @deprecated El campo es transparente sobre cualquier superficie. Se ignora. */
+  bgColor?: string;
 }
 
+/**
+ * `IncantationInput`
+ *
+ * La línea sobre la que escribe un escriba: texto sobre una regla de tinta que se engrosa al enfocar.
+ * Cada pulsación desprende una mota de pan de oro que asciende y se apaga (sin sacudir el campo).
+ */
 export const IncantationInput = React.forwardRef<HTMLInputElement, IncantationInputProps>(
-  ({ className, error, onChange, glowColor = "#eadbb6", errorColor = "#991b1b", sparkColor = "rgba(255, 215, 0, 0.4)", textColor = "#dfcda2", bgColor = "#18110b", label, ...props }, ref) => {
-    const inputRef = useRef<HTMLInputElement>(null);
+  (
+    {
+      className,
+      error,
+      label,
+      sparkColor,
+      textColor,
+      errorColor,
+      glowColor: _glow,
+      bgColor: _bg,
+      onChange,
+      id,
+      style,
+      ...props
+    },
+    forwardedRef,
+  ) => {
+    const autoId = useId();
+    const inputId = id ?? autoId;
     const containerRef = useRef<HTMLDivElement>(null);
-    const [value, setValue] = useState("");
+    const reduced = useReducedMotion();
 
-    useGSAP(() => {
+    const emitFleck = () => {
       const container = containerRef.current;
-      if (!container) return;
+      if (!container || reduced) return;
+      const fleck = document.createElement("span");
+      fleck.className = "voy-scribe__fleck";
+      if (sparkColor) fleck.style.background = sparkColor;
+      fleck.style.left = `${8 + Math.random() * 84}%`;
+      container.appendChild(fleck);
+      gsap.to(fleck, {
+        y: -26 - Math.random() * 18,
+        x: (Math.random() - 0.5) * 14,
+        opacity: 0,
+        scale: 0.4,
+        duration: 0.9 + Math.random() * 0.6,
+        ease: "power2.out",
+        onComplete: () => fleck.remove(),
+      });
+    };
 
-      const handleInput = (e: Event) => {
-        const target = e.target as HTMLInputElement;
-        setValue(target.value);
-
-        gsap.to(container, {
-          x: (Math.random() - 0.5) * 4,
-          y: (Math.random() - 0.5) * 4,
-          duration: 0.1,
-          yoyo: true,
-          repeat: 1,
-          ease: "rough({ template: power0.none, strength: 1, points: 20, taper: none, randomize: true, clamp: false })"
-        });
-
-        // Simular humo o chispa (simplificado)
-        const spark = document.createElement("div");
-        spark.className = "absolute rounded-full pointer-events-none";
-        spark.style.backgroundColor = "rgba(255, 215, 0, 0.4)";
-        spark.style.width = "4px";
-        spark.style.height = "4px";
-        spark.style.left = `${Math.random() * 100}%`;
-        spark.style.bottom = "0";
-        container.appendChild(spark);
-
-        gsap.to(spark, {
-          y: -40 - Math.random() * 20,
-          x: (Math.random() - 0.5) * 20,
-          opacity: 0,
-          scale: 3,
-          duration: 1 + Math.random(),
-          ease: "power2.out",
-          onComplete: () => {
-            if (spark.parentNode) {
-              spark.parentNode.removeChild(spark);
-            }
-          }
-        });
-      };
-
-      inputRef.current?.addEventListener("input", handleInput);
-
-      return () => {
-        inputRef.current?.removeEventListener("input", handleInput);
-      };
-    }, []);
+    // Limpieza si el componente se desmonta con motas en vuelo.
+    useGSAP(() => () => {
+      containerRef.current?.querySelectorAll(".voy-scribe__fleck").forEach((n) => n.remove());
+    }, { scope: containerRef });
 
     return (
-      <div ref={containerRef} className="relative inline-block w-full">
+      <div ref={containerRef} className="voy-scribe">
+        {label && (
+          <label htmlFor={inputId} className="voy-scribe__label">
+            {label}
+          </label>
+        )}
         <input
-          ref={inputRef}
-          className={cn(
-            "w-full bg-[#18110b] text-[#dfcda2] border-b-2 border-[#5c331d] px-4 py-2 font-mono focus:outline-none focus:border-[#eadbb6] transition-colors",
-            "shadow-inner placeholder:opacity-40",
-            error ? "border-red-900 focus:border-red-500" : "",
-            className
-          )}
-          onChange={onChange}
+          ref={forwardedRef}
+          id={inputId}
+          aria-invalid={error || undefined}
+          className={cn("voy-scribe__input", className)}
+          style={{
+            ...(textColor ? { color: textColor } : {}),
+            ...(error && errorColor ? { backgroundImage: `linear-gradient(${errorColor}, ${errorColor})` } : {}),
+            ...style,
+          }}
+          onChange={(e) => {
+            emitFleck();
+            onChange?.(e);
+          }}
           {...props}
         />
       </div>
     );
-  }
+  },
 );
 IncantationInput.displayName = "IncantationInput";

@@ -18,7 +18,7 @@ const meta = {
   },
   decorators: [
     (Story) => (
-      <div className="bg-[#1b120c] p-24 rounded-lg shadow-inner max-w-2xl mx-auto mt-10">
+      <div className="voy-panel p-24 rounded-lg shadow-inner max-w-2xl mx-auto mt-10">
         <Story />
       </div>
     ),
@@ -39,7 +39,7 @@ export const CodeTranslation: Story = {
     ),
     translatedText: (
       <div>
-        <p className="mb-2 font-mono drop-shadow-[0_0_5px_#eadbb6] w-[400px]">
+        <p className="mb-2 font-smallcaps drop-shadow-[0_0_5px_#eadbb6] w-[400px]">
           const str: string = "Alquimia";
         </p>
         <p className="opacity-50 text-sm italic">
@@ -53,12 +53,12 @@ export const CodeTranslation: Story = {
 export const LoreText: Story = {
   args: {
     ancientText: (
-      <div className="font-serif italic text-2xl text-justify w-[500px]">
+      <div className="font-manuscript italic text-2xl text-justify w-[500px]">
         "Ita ut sub divo lumen e mundo caecorum subreptum est."
       </div>
     ),
     translatedText: (
-      <div className="font-serif font-bold text-xl text-[#5eead4] w-[500px]">
+      <div className="font-manuscript font-bold text-xl text-voynich-glow w-[500px]">
         "Así como la luz es arrebatada del mundo de los ciegos."
       </div>
     ),

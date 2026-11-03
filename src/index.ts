@@ -1,4 +1,3 @@
-import './style.css';
 
 // Re-export of all components inside Voynich UI
 export { Button } from './components/rituals/Button';
@@ -18,6 +17,7 @@ export { LeyLineScroll } from './components/phenomena/LeyLineScroll';
 export { AbyssParallax } from './components/phenomena/AbyssParallax';
 export { OuroborosSpinner } from './components/phenomena/OuroborosSpinner';
 export { VellumTornSection } from './components/phenomena/VellumTornSection';
+export { AstrolabeRete } from './components/phenomena/AstrolabeRete';
 
 export { Cryptext } from './components/artifacts/Cryptext';
 export { ScratchCard } from './components/artifacts/ScratchCard';
@@ -29,9 +29,31 @@ export { TypewriterStutter } from './components/artifacts/TypewriterStutter';
 export { IlluminatedDropcap } from './components/artifacts/IlluminatedDropcap';
 export { MarginaliaNotes } from './components/artifacts/MarginaliaNotes';
 
+// Primitives y utilidades de composición (para construir tus propios componentes)
+export { Surface } from './components/primitives/Surface';
+export type { SurfaceProps, SurfaceMaterial } from './components/primitives/Surface';
+export { Slot } from './lib/Slot';
+export { composeRefs, composeHandlers } from './lib/compose';
+export { useRingPuzzle } from './components/rituals/useRingPuzzle';
+export { useConfinementCircle } from './components/rituals/useConfinementCircle';
+export { useRadialMenu } from './components/rituals/useRadialMenu';
+export { useWaxSeal } from './components/artifacts/useWaxSeal';
+export { useTarotSpread } from './components/artifacts/useTarotSpread';
+export { useDissolveProgress } from './components/phenomena/useDissolveProgress';
+export { createPartsContext } from './lib/context';
+export type { UseRingPuzzleOptions, UseRingPuzzleReturn, RingBehaviorProps } from './components/rituals/useRingPuzzle';
+export type { UseConfinementCircleOptions } from './components/rituals/useConfinementCircle';
+export type { UseRadialMenuOptions } from './components/rituals/useRadialMenu';
+export type { UseWaxSealOptions } from './components/artifacts/useWaxSeal';
+export type { UseTarotSpreadOptions, TarotSpreadType } from './components/artifacts/useTarotSpread';
+export type { UseDissolveProgressOptions } from './components/phenomena/useDissolveProgress';
+
+// Utilities
+export { useReducedMotion, prefersReducedMotion } from './lib/useReducedMotion';
+
 // Types and Interfaces
-export type { ButtonProps } from './components/rituals/Button';
-export type { RingPuzzleProps, Ring, Ring as RingConfig } from './components/rituals/RingPuzzle';
+export type { ButtonProps, ButtonRootProps, ButtonVariant } from './components/rituals/Button';
+export type { RingPuzzleProps, RingPuzzleRef, RingPuzzleResult, Ring, Ring as RingConfig } from './components/rituals/RingPuzzle';
 export type { RefractiveFractalProps } from './components/phenomena/RefractiveFractal';
 export type { CinderDissolveProps } from './components/phenomena/CinderDissolve';
 export type { CryptextProps, CryptextRef } from './components/artifacts/Cryptext';
@@ -48,6 +70,7 @@ export type { LeyLineScrollProps } from './components/phenomena/LeyLineScroll';
 export type { AbyssParallaxProps } from './components/phenomena/AbyssParallax';
 export type { OuroborosSpinnerProps } from './components/phenomena/OuroborosSpinner';
 export type { VellumTornSectionProps } from './components/phenomena/VellumTornSection';
+export type { AstrolabeReteProps } from './components/phenomena/AstrolabeRete';
 export type { WaxSealShatterProps } from './components/artifacts/WaxSealShatter';
 export type { PalimpsestTextProps } from './components/artifacts/PalimpsestText';
 export type { TarotSpreadGridProps, TarotCard } from './components/artifacts/TarotSpreadGrid';

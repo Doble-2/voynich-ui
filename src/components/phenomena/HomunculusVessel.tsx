@@ -17,13 +17,13 @@ export interface HomunculusVesselProps extends Omit<React.HTMLAttributes<HTMLDiv
   progress?: number;
   /** Etiqueta inferior del recipiente. @default "Transmuting..." */
   label?: string;
-  /** Color principal del líquido alquímico. @default "#00d2ff" */
+  /** Color principal del líquido alquímico. @default "#6fa58d" */
   loadingColor?: string;
-  /** Color del contorno del frasco. @default "#5c331d" */
+  /** Color del contorno del frasco. @default "#8d6a35" */
   glassColor?: string;
-  /** Color del tapón. @default "#3a2a1a" */
+  /** Color del tapón. @default "#5a3d26" */
   corkColor?: string;
-  /** Color del fondo interior del frasco. @default "#0a0704" */
+  /** Color del fondo interior del frasco. @default "#14100b" */
   bgColor?: string;
   /** Tamaño del recipiente: preset o px custom. @default "md" */
   size?: "sm" | "md" | "lg" | number;
@@ -61,10 +61,10 @@ export const HomunculusVessel = React.forwardRef<HomunculusVesselRef, Homunculus
       className,
       progress = 0,
       label = "Transmuting...",
-      loadingColor = "#00d2ff",
-      glassColor = "#5c331d",
-      corkColor = "#3a2a1a",
-      bgColor = "#0a0704",
+      loadingColor = "#6fa58d",
+      glassColor = "#8d6a35",
+      corkColor = "#5a3d26",
+      bgColor = "#14100b",
       size = "md",
       showCork = true,
       showBubbles = true,
@@ -289,9 +289,9 @@ export const HomunculusVessel = React.forwardRef<HomunculusVesselRef, Homunculus
             </linearGradient>
             {/* Subtle glass reflection gradient */}
             <linearGradient id="glass-sheen" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stopColor="white" stopOpacity="0.12" />
-              <stop offset="50%" stopColor="white" stopOpacity="0.02" />
-              <stop offset="100%" stopColor="white" stopOpacity="0.06" />
+              <stop offset="0%" stopColor="#f4e6c4" stopOpacity="0.12" />
+              <stop offset="50%" stopColor="#f4e6c4" stopOpacity="0.02" />
+              <stop offset="100%" stopColor="#f4e6c4" stopOpacity="0.06" />
             </linearGradient>
           </defs>
 
@@ -349,7 +349,7 @@ export const HomunculusVessel = React.forwardRef<HomunculusVesselRef, Homunculus
 
         {/* Label */}
         {showLabel && (
-          <div className={cn("font-mono text-xs text-[#eadbb6] tracking-widest uppercase opacity-80", labelClassName)}>
+          <div className={cn("voy-label text-[13px] opacity-90", labelClassName)}>
             {label} {showPercent && `${Math.round(progress)}%`}
           </div>
         )}

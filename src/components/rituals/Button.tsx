@@ -1,166 +1,181 @@
-import React, { useRef } from "react";
-import gsap from "gsap";
-import { useGSAP } from "@gsap/react";
+import React from "react";
 import { cn } from "../../lib/utils";
+import { Slot } from "../../lib/Slot";
+import { composeHandlers } from "../../lib/compose";
 
-export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export type ButtonVariant = "primary" | "secondary" | "outline" | "unstyled";
+
+export interface ButtonRootProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   /**
-   * Estilo visual del botón dentro del Códice (primario/pergamino, entintado, margen).
+   * Material del botón.
+   * - `primary`: cuero oscuro con filete de oro estampado.
+   * - `secondary`: rúbrica terracota, la tinta de los copistas.
+   * - `outline`: encuadernación en pergamino con filete de tinta.
+   * - `unstyled`: solo estructura y comportamiento; el aspecto es tuyo.
    * @default "primary"
    */
-  variant?: "primary" | "secondary" | "outline";
-  /**
-   * Tamaño predefinido del botón.
-   * @default "md"
-   */
+  variant?: ButtonVariant;
+  /** Tamaño predefinido. @default "md" */
   size?: "sm" | "md" | "lg";
   /**
-   * Desactivar micro-animaciones GSAP (útil para contextos estáticos).
+   * `auto` respeta `prefers-reduced-motion`; `none` fuerza un botón estático.
+   * @default "auto"
+   */
+  motion?: "auto" | "none";
+  /** @deprecated Usa `motion="none"`. */
+  noAnimation?: boolean;
+  /** Override del `border-radius`. Por defecto, esquinas casi rectas, como un taco de imprenta. */
+  borderRadius?: string;
+  /**
+   * Aplica el botón a tu propio elemento en lugar de renderizar un `<button>`:
+   * `<Button asChild><a href="/codex">Leer</a></Button>`. Debe haber un único hijo.
    * @default false
    */
-  noAnimation?: boolean;
-  /**
-   * Override del border-radius orgánico. Usa `"none"` para esquinas rectas.
-   * @default "40% 10% 80% 20%/20% 60% 40% 90%"
-   */
-  borderRadius?: string;
+  asChild?: boolean;
 }
 
 const SIZE_CLASSES = {
-  sm: "h-8 px-3 py-1 text-xs",
-  md: "h-10 px-5 py-2 text-sm",
-  lg: "h-12 px-8 py-3 text-base",
+  sm: "h-9 px-6 text-[13px]",
+  md: "h-11 px-8 text-[15px]",
+  lg: "h-14 px-11 text-[18px]",
+} as const;
+
+const VARIANT_CLASSES: Record<ButtonVariant, string> = {
+  primary: "voy-btn--primary",
+  secondary: "voy-btn--secondary",
+  outline: "voy-btn--outline",
+  unstyled: "voy-btn--unstyled",
 };
 
-export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+const DEFAULT_RADIUS: Record<ButtonVariant, string> = {
+  primary: "2px",
+  secondary: "2px",
+  outline: "2px",
+  unstyled: "0",
+};
+
+/**
+ * `Button.Root`
+ *
+ * El elemento interactivo, sin contenido por defecto. Compón tú las partes que quieras dentro:
+ * `Button.Frame` (filete), `Button.Icon` y `Button.Label`.
+ *
+ * Variables CSS que puedes sobrescribir desde `style` o desde tu hoja de estilos:
+ * `--voy-bg`, `--voy-bg-hover`, `--voy-surface`, `--voy-shade`, `--voy-edge`, `--voy-rule`,
+ * `--voy-rule-hot` y `--voy-lit`.
+ */
+const ButtonRoot = React.forwardRef<HTMLButtonElement, ButtonRootProps>(
   (
     {
       className,
       variant = "primary",
       size = "md",
+      motion = "auto",
       noAnimation = false,
-      borderRadius = "40% 10% 80% 20%/20% 60% 40% 90%",
-      onMouseEnter,
-      onMouseLeave,
-      onMouseDown,
-      onMouseUp,
+      borderRadius,
+      asChild = false,
+      style,
+      type,
+      onPointerMove,
       ...props
     },
-    forwardedRef,
+    ref,
   ) => {
-    const internalRef = useRef<HTMLButtonElement>(null);
-
-    const setRefs = React.useCallback(
-      (node: HTMLButtonElement | null) => {
-        internalRef.current = node;
-        if (typeof forwardedRef === "function") {
-          forwardedRef(node);
-        } else if (forwardedRef) {
-          forwardedRef.current = node;
-        }
-      },
-      [forwardedRef],
-    );
-
-    useGSAP(
-      () => {
-        const button = internalRef.current;
-        if (!button || noAnimation) return;
-
-        // Variables base
-        let isHovered = false;
-
-        const handleHover = () => {
-          isHovered = true;
-          // Inestabilidad orgánica: Tiembla sutilmente y se tensa como gelatina
-          gsap.to(button, {
-            rotation: (Math.random() < 0.5 ? -1 : 1) * (0.5 + Math.random() * 1.5), // Torsión asimétrica
-            scale: 1.02,
-            y: -2,
-            duration: 0.8,
-            ease: "elastic.out(1.2, 0.4)", // Física de bamboleo leve
-            overwrite: "auto",
-          });
-        };
-
-        const handleLeave = () => {
-          isHovered = false;
-          // Retorno relajado al centro
-          gsap.to(button, {
-            rotation: 0,
-            scale: 1,
-            y: 0,
-            duration: 0.6,
-            ease: "elastic.out(1, 0.5)",
-            overwrite: "auto",
-          });
-        };
-
-        const handleDown = () => {
-          // Aplastamiento visceral (squish manual de vitela)
-          gsap.to(button, {
-            scaleX: 0.94,
-            scaleY: 0.88,
-            y: 2,
-            duration: 0.15,
-            ease: "back.out(2)",
-            overwrite: "auto",
-          });
-        };
-
-        const handleUp = () => {
-          // Retorna al estado hover (si todavía está encima) o base
-          gsap.to(button, {
-            scaleX: isHovered ? 1.02 : 1,
-            scaleY: isHovered ? 1.02 : 1,
-            y: isHovered ? -2 : 0,
-            duration: 0.5,
-            ease: "elastic.out(1.5, 0.3)",
-            overwrite: "auto",
-          });
-        };
-
-        button.addEventListener("mouseenter", handleHover);
-        button.addEventListener("mouseleave", handleLeave);
-        button.addEventListener("mousedown", handleDown);
-        button.addEventListener("mouseup", handleUp);
-
-        return () => {
-          button.removeEventListener("mouseenter", handleHover);
-          button.removeEventListener("mouseleave", handleLeave);
-          button.removeEventListener("mousedown", handleDown);
-          button.removeEventListener("mouseup", handleUp);
-        };
-      },
-      { scope: internalRef, dependencies: [noAnimation] },
-    );
-
-    const resolvedRadius = borderRadius === "none" ? "0" : borderRadius;
+    const Comp = (asChild ? Slot : "button") as React.ElementType;
+    const radius = borderRadius === "none" ? "0" : (borderRadius ?? DEFAULT_RADIUS[variant]);
+    const isStatic = motion === "none" || noAnimation;
 
     return (
-      <button
-        ref={setRefs}
-        className={cn(
-          "inline-flex items-center justify-center font-serif focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-amber-900/50 disabled:pointer-events-none disabled:opacity-40",
-          SIZE_CLASSES[size],
-          "border border-[#5c331d]/30", // Vellum edges
-          "contrast-[1.1] brightness-[0.95] sepia-[0.2]", // Ink filters
-          {
-            "bg-[#eadbb6] text-[#30180d] hover:bg-[#dfcda2] shadow-[inset_0_0_10px_rgba(97,52,24,0.1),0_4px_12px_rgba(0,0,0,0.1)]":
-              variant === "primary",
-            "bg-[#21120a] text-[#eadbb6] hover:bg-[#30180d] border-[#5c331d]": variant === "secondary",
-            "border border-[#5c331d]/40 bg-transparent text-[#30180d] hover:bg-[#eadbb6]/40": variant === "outline",
-          },
-          className,
-        )}
-        style={{ borderRadius: resolvedRadius }}
-        onMouseEnter={onMouseEnter}
-        onMouseLeave={onMouseLeave}
-        onMouseDown={onMouseDown}
-        onMouseUp={onMouseUp}
+      <Comp
+        ref={ref}
+        // `type` solo existe en <button>; con asChild el hijo decide.
+        {...(asChild ? {} : { type: type ?? "button" })}
+        data-part="root"
+        data-variant={variant}
+        data-size={size}
+        data-motion={isStatic ? "none" : undefined}
+        className={cn("voy-btn", VARIANT_CLASSES[variant], variant !== "unstyled" && SIZE_CLASSES[size], className)}
+        style={{ borderRadius: radius, ...style }}
+        onPointerMove={composeHandlers(onPointerMove, (e: React.PointerEvent<HTMLElement>) => {
+          // La luz del filete sigue al cursor sin re-renderizar React.
+          const r = e.currentTarget.getBoundingClientRect();
+          e.currentTarget.style.setProperty("--lx", `${e.clientX - r.left - 4}px`);
+          e.currentTarget.style.setProperty("--ly", `${e.clientY - r.top - 4}px`);
+        })}
         {...props}
       />
     );
   },
 );
-Button.displayName = "Button";
+ButtonRoot.displayName = "Button.Root";
+
+/** `Button.Frame`: el filete estampado que recorre el borde. Decorativo. Quítalo o sustitúyelo a voluntad. */
+const ButtonFrame = React.forwardRef<HTMLSpanElement, React.HTMLAttributes<HTMLSpanElement>>(
+  ({ className, ...props }, ref) => (
+    <span ref={ref} data-part="frame" aria-hidden="true" className={cn("voy-btn__frame", className)} {...props} />
+  ),
+);
+ButtonFrame.displayName = "Button.Frame";
+
+/** `Button.Label`: el texto del botón. Úsalo para dar estilo propio al rótulo. */
+const ButtonLabel = React.forwardRef<HTMLSpanElement, React.HTMLAttributes<HTMLSpanElement>>(
+  ({ className, ...props }, ref) => (
+    <span ref={ref} data-part="label" className={cn("voy-btn__label", className)} {...props} />
+  ),
+);
+ButtonLabel.displayName = "Button.Label";
+
+/** `Button.Icon`: un icono o adorno junto al rótulo. Decorativo por defecto; pasa `aria-hidden={false}` si aporta significado. */
+const ButtonIcon = React.forwardRef<HTMLSpanElement, React.HTMLAttributes<HTMLSpanElement>>(
+  ({ className, ...props }, ref) => (
+    <span ref={ref} data-part="icon" aria-hidden="true" className={cn("voy-btn__icon", className)} {...props} />
+  ),
+);
+ButtonIcon.displayName = "Button.Icon";
+
+/** Props del botón completo: las de `Button.Root`. */
+export type ButtonProps = ButtonRootProps;
+
+/**
+ * `Button`
+ *
+ * La composición por defecto: `Button.Root` + `Button.Frame` + tu contenido. Si necesitas más control,
+ * usa las partes (`Button.Root`, `Button.Frame`, `Button.Icon`, `Button.Label`) y compón tú el interior.
+ *
+ * @example Por defecto
+ * <Button>Firmar tratado</Button>
+ *
+ * @example Partes: icono a la izquierda y sin filete
+ * <Button.Root variant="secondary">
+ *   <Button.Icon>✦</Button.Icon>
+ *   <Button.Label>Sellar</Button.Label>
+ * </Button.Root>
+ *
+ * @example Tu propio elemento
+ * <Button asChild><a href="/codex">Leer el códice</a></Button>
+ */
+const ButtonBase = React.forwardRef<HTMLButtonElement, ButtonProps>(({ children, asChild, ...props }, ref) => {
+  if (asChild && React.isValidElement(children)) {
+    // El filete se inyecta como primer hijo del elemento del consumidor.
+    const child = children as React.ReactElement<{ children?: React.ReactNode }>;
+    return (
+      <ButtonRoot ref={ref} asChild {...props}>
+        {React.cloneElement(child, undefined, <ButtonFrame />, child.props.children)}
+      </ButtonRoot>
+    );
+  }
+  return (
+    <ButtonRoot ref={ref} asChild={asChild ?? false} {...props}>
+      {props.variant === "unstyled" ? null : <ButtonFrame />}
+      {children}
+    </ButtonRoot>
+  );
+});
+ButtonBase.displayName = "Button";
+
+export const Button = Object.assign(ButtonBase, {
+  Root: ButtonRoot,
+  Frame: ButtonFrame,
+  Label: ButtonLabel,
+  Icon: ButtonIcon,
+});

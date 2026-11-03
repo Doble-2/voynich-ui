@@ -2,6 +2,7 @@ import React, { useRef, useState } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { cn } from "../../lib/utils";
+import { useReducedMotion } from "../../lib/useReducedMotion";
 
 export interface PalimpsestTextProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Texto o nodo antiguo/original. */
@@ -23,11 +24,13 @@ export interface PalimpsestTextProps extends React.HTMLAttributes<HTMLDivElement
 }
 
 export const PalimpsestText = React.forwardRef<HTMLDivElement, PalimpsestTextProps>(
-  ({ className, ancientText, translatedText, ancientColor = "#5c331d", translatedColor = "#eadbb6", transitionSpeed = 1.5, interaction = "click", onTranslate, onRevert, ...props }, ref) => {
+  ({ className, ancientText, translatedText, ancientColor = "currentColor", translatedColor, transitionSpeed = 1.5, interaction = "click", onTranslate, onRevert, ...props }, ref) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const ancientRef = useRef<HTMLDivElement>(null);
     const modernRef = useRef<HTMLDivElement>(null);
     const [isTranslated, setIsTranslated] = useState(false);
+    const reduced = useReducedMotion();
+    const t = (d: number) => (reduced ? 0 : d);
 
     useGSAP(() => {
       const ancient = ancientRef.current;
@@ -40,7 +43,7 @@ export const PalimpsestText = React.forwardRef<HTMLDivElement, PalimpsestTextPro
           opacity: 0.1,
           filter: "blur(4px) sepia(0.8)",
           scale: 0.98,
-          duration: 1.5,
+          duration: t(1.5),
           ease: "power2.inOut",
         });
         
@@ -50,9 +53,9 @@ export const PalimpsestText = React.forwardRef<HTMLDivElement, PalimpsestTextPro
           filter: "blur(0px) brightness(1.2)",
           scale: 1,
           y: 0,
-          duration: 1.5,
-          ease: "back.out(1.5)",
-          delay: 0.2, // Offset translation delay
+          duration: t(1.5),
+          ease: "power2.out",
+          delay: t(0.2), // Offset translation delay
         });
       } else {
         // Revert to ancient
@@ -60,7 +63,7 @@ export const PalimpsestText = React.forwardRef<HTMLDivElement, PalimpsestTextPro
           opacity: 0.8,
           filter: "blur(0px) sepia(0.5)",
           scale: 1,
-          duration: 1.2,
+          duration: t(1.2),
           ease: "power2.inOut",
         });
         
@@ -69,38 +72,49 @@ export const PalimpsestText = React.forwardRef<HTMLDivElement, PalimpsestTextPro
           filter: "blur(10px) brightness(0.5)",
           scale: 1.05,
           y: -10,
-          duration: 1.2,
+          duration: t(1.2),
           ease: "power2.in",
         });
       }
-    }, [isTranslated]);
+    }, [isTranslated, reduced]);
 
     const toggleTranslation = () => setIsTranslated((prev) => !prev);
 
     return (
       <div 
         ref={containerRef} 
-        className={cn("relative cursor-pointer min-h-[4rem] group", className)} 
+        role="button"
+        tabIndex={0}
+        aria-pressed={isTranslated}
+        className={cn("relative cursor-pointer min-h-[4rem] group focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4", className)}
         onClick={toggleTranslation}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            toggleTranslation();
+          }
+        }}
         {...props}
       >
         <div 
           ref={ancientRef}
-          className="absolute inset-0 transition-none font-serif text-[#5c331d] text-lg tracking-widest leading-relaxed pointer-events-none"
-          style={{ opacity: 0.8, filter: "sepia(0.5)" }}
+          aria-hidden={isTranslated}
+          className="absolute inset-0 transition-none text-lg tracking-[0.14em] leading-relaxed pointer-events-none"
+          style={{ opacity: 0.8, filter: "sepia(0.5)", color: ancientColor, fontFamily: "var(--voynich-font-body)", fontStyle: "italic" }}
         >
           {ancientText}
         </div>
         <div 
           ref={modernRef}
-          className="relative transition-none font-sans text-[#eadbb6] text-lg leading-relaxed pointer-events-none drop-shadow-[0_0_8px_rgba(234,219,182,0.4)]"
-          style={{ opacity: 0, filter: "blur(10px)", transform: "translateY(-10px) scale(1.05)" }}
+          aria-hidden={!isTranslated}
+          className="relative transition-none text-lg leading-relaxed pointer-events-none"
+          style={{ opacity: 0, filter: "blur(10px)", transform: "translateY(-10px) scale(1.05)", fontFamily: "var(--voynich-font-body)", ...(translatedColor ? { color: translatedColor } : {}) }}
         >
           {translatedText}
         </div>
         
         {/* Subtle helper text on hover */}
-        <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-40 transition-opacity font-mono text-[10px] text-[#eadbb6] tracking-tighter">
+        <div className="voy-label absolute -bottom-7 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-60 group-focus-visible:opacity-60 transition-opacity text-[11px] whitespace-nowrap">
           {isTranslated ? "[Deshacer traducción]" : "[Traducir palimpsesto]"}
         </div>
       </div>

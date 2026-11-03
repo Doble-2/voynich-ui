@@ -29,7 +29,7 @@ export const Default: Story = {
     text: "n el principio fue la Tinta, y la Tinta estaba sobre la Vitela, y la Tinta era el Glifo. Todo fue creado por medio de ella, y sin ella nada de lo encriptado fue encriptado. En ella estaba la Iluminación, y la Iluminación era la luz de los copistas.",
   },
   render: (args) => (
-    <div className="max-w-lg mx-auto p-8 border border-[#5c331d]/10"
+    <div className="max-w-lg mx-auto p-8 border border-voynich-inkMedium/10"
       style={{ 
         background: 'linear-gradient(180deg, #1a140e 0%, #15100a 100%)',
         borderRadius: '3px 8px 3px 6px',
@@ -48,9 +48,9 @@ export const GoldenFolio: Story = {
   render: (args) => (
     <div className="max-w-lg mx-auto p-8">
       <div className="mb-6 flex items-center gap-3">
-        <div className="h-px flex-1 bg-gradient-to-r from-transparent via-amber-800/30 to-transparent" />
-        <span className="text-[9px] text-amber-700/40 font-serif uppercase tracking-[0.3em]">folio aureum</span>
-        <div className="h-px flex-1 bg-gradient-to-r from-transparent via-amber-800/30 to-transparent" />
+        <div className="h-px flex-1 bg-gradient-to-r from-transparent via-voynich-brass/30 to-transparent" />
+        <span className="text-[9px] text-voynich-vermilion font-manuscript uppercase tracking-[0.3em]">folio aureum</span>
+        <div className="h-px flex-1 bg-gradient-to-r from-transparent via-voynich-brass/30 to-transparent" />
       </div>
       <IlluminatedDropcap {...args} />
     </div>

@@ -35,7 +35,7 @@ export const DangerousAction: Story = {
   args: {
     label: 'Drop Database',
     sacrificedLabel: 'Obliterated',
-    bloodColor: 'rgba(200, 0, 0, 0.8)',
+    bloodColor: 'rgba(163, 74, 51, 0.7)',
     duration: 2,
   },
 };
@@ -45,7 +45,7 @@ export const Resetable: Story = {
     label: 'Deploy to Prod',
     sacrificedLabel: 'Deployed ✦',
     resetable: true,
-    bloodColor: 'rgba(30, 100, 60, 0.6)',
+    bloodColor: 'rgba(90, 138, 118, 0.6)',
   },
 };
 
@@ -58,18 +58,18 @@ export const ImperativeControl = () => {
         ref={buttonRef}
         label="Sacrifice Programmatically"
         sacrificedLabel="Done ☠"
-        bloodColor="rgba(100, 0, 150, 0.6)"
+        bloodColor="rgba(47, 74, 122, 0.6)"
       />
       <div className="flex gap-3">
         <button
           onClick={() => buttonRef.current?.sacrifice()}
-          className="px-4 py-1.5 text-xs border border-[#5c331d] text-[#eadbb6] font-serif rounded bg-[#21120a]"
+          className="px-4 py-1.5 text-xs border border-voynich-inkMedium text-voynich-vellum font-manuscript rounded voy-panel"
         >
           ☠ Sacrificar
         </button>
         <button
           onClick={() => buttonRef.current?.reset()}
-          className="px-4 py-1.5 text-xs border border-[#5c331d] text-[#eadbb6] font-serif rounded bg-[#21120a]"
+          className="px-4 py-1.5 text-xs border border-voynich-inkMedium text-voynich-vellum font-manuscript rounded voy-panel"
         >
           ↺ Restaurar
         </button>

@@ -10,8 +10,8 @@ const meta = {
     docs: {
       description: {
         component: `
-**Lore: El Sello de Cera (Wax Seal)**
-Un botón en el ecosistema Voynich no es un simple rectángulo digital, es un trozo de vitela recocida con interacciones orgánicas. Su irregularidad (bordes "Vellum") demuestra que ha sido rasgado a mano, y sus colores se basan en tintas vegetales y minerales. Funciona como un sello de cera, aprobando transacciones arcanas o revelando códices.
+**Lore: El Taco de Imprenta**
+Un botón en el ecosistema Voynich es un taco de imprenta entintado. El **pan de oro** (primary) es la acción principal, la **rúbrica** (secondary) es la tinta bermellón con que los copistas marcaban lo solemne y la **regla doble** (outline) solo señala el gesto. Al pulsar, el taco baja contra el papel. Respeta prefers-reduced-motion.
         `.trim(),
       },
     },
@@ -21,16 +21,17 @@ Un botón en el ecosistema Voynich no es un simple rectángulo digital, es un tr
       control: "select",
       options: ["primary", "secondary", "outline"],
       description:
-        "El arquetipo visual del botón. Primary simula vitela gruesa, Secondary es tinta densa.",
+        "El material del botón: latón (primary), lacre (secondary) o regla de escriba (outline).",
     },
     size: {
       control: "select",
       options: ["sm", "md", "lg"],
       description: "Tamaño predefinido del botón.",
     },
-    noAnimation: {
-      control: "boolean",
-      description: "Desactivar micro-animaciones GSAP (útil para contextos estáticos).",
+    motion: {
+      control: "select",
+      options: ["auto", "none"],
+      description: "`auto` respeta prefers-reduced-motion; `none` fuerza un botón estático.",
     },
     borderRadius: {
       control: "text",
@@ -42,8 +43,7 @@ Un botón en el ecosistema Voynich no es un simple rectángulo digital, es un tr
   },
   decorators: [
     (Story) => (
-      <div className="relative p-12 overflow-hidden flex items-center justify-center min-h-[200px] bg-[#f4e8d3]">
-        <div className="pointer-events-none absolute inset-0 opacity-20 bg-[radial-gradient(#e0cda7_1px,transparent_1px)] [background-size:16px_16px] blur-[1px]"></div>
+      <div className="voy-paper relative p-12 overflow-hidden flex items-center justify-center min-h-[200px]">
         <Story />
       </div>
     ),
@@ -62,7 +62,7 @@ export const Primary: Story = {
     docs: {
       description: {
         story:
-          "Botón principal de alta jerarquía. Simula un trozo de pergamino iluminado.",
+          "Acción principal. Pan de oro plano con filete de tinta y hachura.",
       },
     },
   },
@@ -77,7 +77,7 @@ export const Secondary: Story = {
     docs: {
       description: {
         story:
-          "Acciones secundarias que simulan una masa de tinta densa y oscura, usada para ocultar texto marginal.",
+          "Acción solemne o irreversible. Rúbrica: tinta bermellón de copista.",
       },
     },
   },
@@ -91,7 +91,7 @@ export const Outline: Story = {
   parameters: {
     docs: {
       description: {
-        story: "Un mero trazo imperfecto de tinta de pluma.",
+        story: "Acción discreta. Doble regla de escriba sobre el pergamino.",
       },
     },
   },

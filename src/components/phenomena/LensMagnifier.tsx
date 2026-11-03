@@ -43,7 +43,7 @@ export const LensMagnifier = forwardRef<LensMagnifierRef, LensMagnifierProps>(
       lensSize = 150,
       lensBorder = 4,
       lensShape = "circle",
-      lensColor = "border-slate-300/50",
+      lensColor = "border-voynich-brass",
       filter = "none",
       showHandle = false,
       smoothFollowing = true,
@@ -193,7 +193,7 @@ export const LensMagnifier = forwardRef<LensMagnifierRef, LensMagnifierProps>(
       <div
         ref={containerRef}
         className={cn(
-          "relative overflow-hidden cursor-none select-none group border border-slate-200 bg-slate-50",
+          "voy-paper relative overflow-hidden cursor-none select-none group border border-voynich-inkDark/40",
           className,
         )}
         onMouseMove={handleMouseMove}
@@ -221,27 +221,32 @@ export const LensMagnifier = forwardRef<LensMagnifierRef, LensMagnifierProps>(
         >
           {showHandle && lensShape === "circle" && (
             <div
-              className="absolute left-1/2 top-[95%] w-[12%] h-[80%] bg-gradient-to-r from-amber-800 via-amber-600 to-amber-900 rounded-b-md rounded-t-sm origin-top -translate-x-1/2 rotate-[35deg] shadow-xl z-0"
+              className="absolute left-1/2 top-[95%] w-[12%] h-[80%] rounded-b-md rounded-t-sm origin-top -translate-x-1/2 rotate-[35deg] z-0"
               style={{
-                boxShadow:
-                  "inset -2px 0 6px rgba(0,0,0,0.5), inset 2px 0 4px rgba(255,255,255,0.3)",
+                // Mango de madera torneada con abrazaderas de latón.
+                backgroundColor: "rgb(74 48 28)",
+                backgroundImage: "linear-gradient(90deg, rgb(0 0 0 / 0.4) 0%, transparent 35%, transparent 65%, rgb(0 0 0 / 0.45) 100%), var(--voynich-surface-leather)",
+                backgroundSize: "auto, 240px 240px",
+                boxShadow: "inset 1px 0 0 rgb(255 236 196 / 0.18), 3px 6px 8px rgb(0 0 0 / 0.45)",
               }}
             >
-              <div className="absolute top-[10%] w-full h-[5%] bg-amber-950/50" />
-              <div className="absolute top-[80%] w-full h-[5%] bg-amber-950/50" />
+              <div className="absolute top-[8%] w-full h-[7%]" style={{ backgroundColor: "rgb(var(--voynich-brass))", boxShadow: "inset 0 1px 0 rgb(var(--voynich-gold-light) / 0.6), 0 1px 1px rgb(0 0 0 / 0.5)" }} />
+              <div className="absolute top-[78%] w-full h-[7%]" style={{ backgroundColor: "rgb(var(--voynich-brass))", boxShadow: "inset 0 1px 0 rgb(var(--voynich-gold-light) / 0.6), 0 1px 1px rgb(0 0 0 / 0.5)" }} />
             </div>
           )}
 
           <div
             className={cn(
-              "absolute inset-0 overflow-hidden bg-white z-10",
+              "absolute inset-0 overflow-hidden bg-voynich-vellum z-10 border-solid",
               lensColor,
             )}
             style={{
               borderRadius: getShapeRadius(lensShape),
               borderWidth: lensBorder,
+              // Bisel de latón con luz arriba-izquierda y sombra proyectada sobre la mesa.
               boxShadow:
-                "0 25px 50px -12px rgba(0, 0, 0, 0.5), inset 0 0 10px rgba(0,0,0,0.3)",
+                "inset 1.5px 1.5px 1px rgb(var(--voynich-gold-light) / 0.5), inset -1.5px -1.5px 1px rgb(0 0 0 / 0.5), 0 0 0 1px rgb(var(--voynich-brass-deep)), 6px 14px 18px rgb(0 0 0 / 0.5)",
+              backgroundImage: "var(--voynich-surface-bronze)",
             }}
           >
             <div className="absolute inset-0 origin-top-left pointer-events-none blur-[0.3px]">
@@ -258,12 +263,14 @@ export const LensMagnifier = forwardRef<LensMagnifierRef, LensMagnifierProps>(
             </div>
 
             <div
-              className="absolute inset-0 pointer-events-none bg-gradient-to-br from-white/30 via-transparent to-black/10 mix-blend-overlay"
-              style={{ borderRadius: getShapeRadius(lensShape) }}
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                borderRadius: getShapeRadius(lensShape),
+                // El cristal es más grueso en el borde: se oscurece hacia fuera. No hay brillo pintado.
+                background: "radial-gradient(circle at 50% 50%, transparent 62%, rgb(20 12 4 / 0.28) 100%)",
+                boxShadow: "inset 0 0 14px rgb(0 0 0 / 0.35)",
+              }}
             />
-            {lensShape === "circle" && (
-              <div className="absolute left-[15%] top-[10%] w-[30%] h-[15%] rounded-[100%] bg-white/20 -rotate-12 pointer-events-none blur-sm" />
-            )}
           </div>
         </div>
       </div>

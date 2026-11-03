@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { cn } from "../../lib/utils";
+import { useReducedMotion } from "../../lib/useReducedMotion";
 
 export interface InvisibleInkBlockProps extends React.HTMLAttributes<HTMLSpanElement> {
   /** Texto oculto a revelar. */
@@ -32,7 +33,7 @@ export const InvisibleInkBlock = React.forwardRef<HTMLSpanElement, InvisibleInkB
     {
       className,
       text,
-      revealColor = "#8b0000",
+      revealColor = "#a34a33", // hex: GSAP anima el color y no resuelve `var()`
       interaction = "hover",
       revealed: controlledRevealed,
       revealDuration = 2,
@@ -49,6 +50,7 @@ export const InvisibleInkBlock = React.forwardRef<HTMLSpanElement, InvisibleInkB
     const isControlled = controlledRevealed !== undefined;
     const [internalRevealed, setInternalRevealed] = useState(false);
     const isRevealed = isControlled ? controlledRevealed : internalRevealed;
+    const reduced = useReducedMotion();
 
     // Sync controlled state
     useEffect(() => {
@@ -67,8 +69,7 @@ export const InvisibleInkBlock = React.forwardRef<HTMLSpanElement, InvisibleInkB
             opacity: 1,
             filter: "blur(0px)",
             color: revealColor,
-            textShadow: `0 0 8px ${revealColor}60`,
-            duration: revealDuration,
+            duration: reduced ? 0 : revealDuration,
             ease: "power3.out",
           });
         } else {
@@ -76,13 +77,12 @@ export const InvisibleInkBlock = React.forwardRef<HTMLSpanElement, InvisibleInkB
             opacity: 0.05,
             filter: `blur(${blurAmount}px)`,
             color: "transparent",
-            textShadow: "0 0 0px transparent",
-            duration: hideDuration,
+            duration: reduced ? 0 : hideDuration,
             ease: "power2.in",
           });
         }
       },
-      [isRevealed, revealColor, revealDuration, hideDuration, blurAmount],
+      [isRevealed, revealColor, revealDuration, hideDuration, blurAmount, reduced],
     );
 
     const triggerReveal = () => {
@@ -98,9 +98,24 @@ export const InvisibleInkBlock = React.forwardRef<HTMLSpanElement, InvisibleInkB
     return (
       <span
         ref={containerRef}
-        className={cn("relative cursor-help inline-flex items-center", className)}
+        tabIndex={0}
+        role={interaction === "click" ? "button" : undefined}
+        aria-pressed={interaction === "click" ? isRevealed : undefined}
+        className={cn("relative cursor-help inline-flex items-center focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4", className)}
         onMouseEnter={interaction === "hover" ? triggerReveal : undefined}
         onMouseLeave={interaction === "hover" ? triggerHide : undefined}
+        onFocus={interaction === "hover" ? triggerReveal : undefined}
+        onBlur={interaction === "hover" ? triggerHide : undefined}
+        onKeyDown={
+          interaction === "click"
+            ? (e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  isRevealed ? triggerHide() : triggerReveal();
+                }
+              }
+            : undefined
+        }
         onClick={
           interaction === "click"
             ? () => {
@@ -115,7 +130,7 @@ export const InvisibleInkBlock = React.forwardRef<HTMLSpanElement, InvisibleInkB
         {...props}
       >
         <span
-          className="absolute inset-0 pointer-events-none border-b border-dashed border-[#5c331d]/30"
+          className="absolute inset-0 pointer-events-none border-b border-dotted border-current opacity-40"
           style={{ opacity: isRevealed ? 0 : 1, transition: "opacity 1s" }}
         />
         <span

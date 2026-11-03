@@ -6,6 +6,7 @@ import React, {
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { cn } from "../../lib/utils";
+import { useReducedMotion } from "../../lib/useReducedMotion";
 
 export interface CryptextRef {
   /** Reinicia la animación de decodificación desde cero programáticamente. */
@@ -52,6 +53,12 @@ export interface CryptextProps extends React.HTMLAttributes<HTMLSpanElement> {
    */
   autoStart?: boolean;
   /**
+   * Fuerza (`"full"`) o desactiva (`"none"`) la animación. Por defecto sigue la preferencia
+   * `prefers-reduced-motion` del usuario: si pidió menos movimiento, el texto se muestra ya revelado.
+   * @default "auto"
+   */
+  motion?: "auto" | "full" | "none";
+  /**
    * Callback cuando la revelación está completa.
    */
   onComplete?: () => void;
@@ -76,6 +83,7 @@ export const Cryptext = forwardRef<CryptextRef, CryptextProps>(
       resolvePerFrame = 1,
       as: Tag = "span",
       autoStart = true,
+      motion = "auto",
       onComplete: onCompleteCb,
       className,
       ...props
@@ -83,6 +91,8 @@ export const Cryptext = forwardRef<CryptextRef, CryptextProps>(
     ref,
   ) => {
     const textRef = useRef<HTMLElement>(null);
+    const systemReduced = useReducedMotion();
+    const reduced = motion === "none" || (motion === "auto" && systemReduced);
     const triggerScramble = useRef<() => void>(() => {});
 
     useGSAP(() => {
@@ -91,6 +101,14 @@ export const Cryptext = forwardRef<CryptextRef, CryptextProps>(
 
       const state = { resolved: 0, lastTick: 0 };
       let tickListener: ((time: number) => void) | null = null;
+
+      // Movimiento reducido: sin glifos aleatorios ni transiciones, solo el texto final.
+      if (reduced) {
+        node.textContent = text;
+        triggerScramble.current = () => {};
+        if (autoStart) onCompleteCb?.();
+        return;
+      }
 
       triggerScramble.current = () => {
         // Matamos animaciones previas para evitar fantasmas si el dev llama spam a scramble()
@@ -103,8 +121,7 @@ export const Cryptext = forwardRef<CryptextRef, CryptextProps>(
 
         // Mutación inestable: simulamos la tinta quemándose antes de revelarse
         gsap.to(node, {
-          color: "#5c331d",
-          opacity: 0.8,
+          opacity: 0.7,
           duration: 0.3,
           ease: "power2.inOut",
         });
@@ -122,7 +139,6 @@ export const Cryptext = forwardRef<CryptextRef, CryptextProps>(
             
             // Regreso al descanso botánico orgánico (tinta asentada)
             gsap.to(node, {
-              color: "#30180d",
               opacity: 1,
               duration: 0.8,
               ease: "sine.out",
@@ -162,7 +178,7 @@ export const Cryptext = forwardRef<CryptextRef, CryptextProps>(
         gsap.killTweensOf(node);
         if (tickListener) gsap.ticker.remove(tickListener);
       };
-    }, { dependencies: [text, dictionary, speed, delay, resolvePerFrame, autoStart, onCompleteCb] });
+    }, { dependencies: [text, dictionary, speed, delay, resolvePerFrame, autoStart, onCompleteCb, reduced] });
 
     useImperativeHandle(ref, () => ({
       scramble: () => triggerScramble.current(),
@@ -170,17 +186,16 @@ export const Cryptext = forwardRef<CryptextRef, CryptextProps>(
 
     return (
       <Tag
-        ref={textRef}
-        className={cn(
-          "font-mono tracking-widest",
-          className,
-        )}
-        style={{
-          filter: "contrast(1.2) brightness(0.9) sepia(0.3)",
-        }}
+        className={cn("voy-label", className)}
+        style={{ fontSize: "1em", letterSpacing: "0.12em", ...props.style }}
         {...props}
       >
-        {text}
+        {/* Capa visual animada: los glifos aleatorios no deben leerse en voz alta. */}
+        <span ref={textRef} aria-hidden="true" style={{ display: "inline-block", minWidth: `${text.length * 0.62}em` }}>
+          {text}
+        </span>
+        {/* Texto real, siempre disponible para tecnologías de apoyo. */}
+        <span className="sr-only">{text}</span>
       </Tag>
     );
   },

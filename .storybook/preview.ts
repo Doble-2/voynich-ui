@@ -31,7 +31,7 @@ const preview: Preview = {
   decorators: [
     (Story, context) => {
       // Skip decorator for Welcome page (it manages its own layout)
-      const isWelcome = context?.title === 'Welcome';
+      const isWelcome = context?.title === 'Welcome' || context?.parameters?.bare === true;
       if (isWelcome) {
         return React.createElement(Story);
       }
@@ -42,7 +42,7 @@ const preview: Preview = {
           minHeight: '100%',
           width: '100%',
           padding: '2.5rem',
-          background: 'radial-gradient(ellipse at 30% 20%, #120d08 0%, #0d0905 50%, #050302 100%)',
+          background: 'radial-gradient(ellipse 70% 60% at 22% 14%, #33200f 0%, #1a120a 32%, #0d0b09 62%, #070a0b 100%)',
           color: '#eadbb6',
           fontFamily: "'IM Fell English', Georgia, serif",
           position: 'relative',

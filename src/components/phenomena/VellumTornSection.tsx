@@ -1,88 +1,136 @@
-import React, { useId, useRef } from "react";
-import gsap from "gsap";
-import { useGSAP } from "@gsap/react";
+import React, { useMemo } from "react";
 import { cn } from "../../lib/utils";
 
 export interface VellumTornSectionProps extends React.HTMLAttributes<HTMLDivElement> {
+  /** Contenido de la sección. */
   children?: React.ReactNode;
-  /** Color del pergamino. @default "#eaddc5" */
+  /**
+   * Color base del pergamino. Si se omite se usa el papel del sistema (con fibra y relieve).
+   */
   color?: string;
-  /** Mostrar borde rasgado superior. @default true */
+  /**
+   * Rasga el borde superior.
+   * @default true
+   */
   topTorn?: boolean;
-  /** Mostrar borde rasgado inferior. @default true */
+  /**
+   * Rasga el borde inferior.
+   * @default true
+   */
   bottomTorn?: boolean;
-  /** Intensidad de la distorsión del rasgado. @default 15 */
+  /**
+   * Profundidad máxima del rasgado, en píxeles.
+   * @default 15
+   */
   tearIntensity?: number;
-  /** Color del texto interior. @default "#30180d" */
+  /**
+   * Color del texto. Por defecto, tinta ferrogálica.
+   */
   textColor?: string;
-  /** Opacidad del ruido de textura (0–1). @default 0.15 */
+  /** Semilla del rasgado: la misma semilla da siempre el mismo borde (apto para SSR). @default 7 */
+  seed?: number;
+  /** @deprecated El relieve del papel ya lo aporta la superficie iluminada. Se ignora. */
   noiseOpacity?: number;
-  /** Velocidad de la animación orgánica del borde (seg). @default 8 */
+  /** @deprecated El borde ya no se anima (un pergamino rasgado no respira). Se ignora. */
   animationSpeed?: number;
 }
 
+/** Generador pseudoaleatorio determinista (Park–Miller). */
+const makeRng = (seed: number) => {
+  let s = (Math.abs(Math.floor(seed)) % 2147483646) + 1;
+  return () => (s = (s * 16807) % 2147483647) / 2147483647;
+};
+
+/**
+ * Contorno rasgado como `clip-path`. Cada borde rasgado se desvía entre 0 y `depth` píxeles con
+ * dientes irregulares; los bordes sin rasgar son rectos.
+ */
+const tornPolygon = (rng: () => number, depth: number, top: boolean, bottom: boolean, inset: number) => {
+  const steps = 56;
+  const jag = (i: number) => {
+    // Dientes de dos escalas: una ondulación lenta y una irregularidad fina.
+    const slow = Math.sin(i * 0.37 + rng() * 0.6) * 0.5 + 0.5;
+    return (slow * 0.65 + rng() * 0.35) * depth + inset;
+  };
+  const pts: string[] = [];
+  for (let i = 0; i <= steps; i++) pts.push(`${((i / steps) * 100).toFixed(2)}% ${top ? jag(i).toFixed(1) : inset}px`);
+  for (let i = steps; i >= 0; i--) {
+    pts.push(`${((i / steps) * 100).toFixed(2)}% calc(100% - ${bottom ? jag(i).toFixed(1) : inset}px)`);
+  }
+  return `polygon(${pts.join(",")})`;
+};
+
+/**
+ * `VellumTornSection`
+ *
+ * Una sección de pergamino con los bordes rasgados a mano. El rasgado deja ver una franja de fibra
+ * clara bajo el papel, como en un trozo arrancado de un códice, y proyecta sombra sobre la mesa.
+ */
 export const VellumTornSection = React.forwardRef<HTMLDivElement, VellumTornSectionProps>(
-  ({ className, children, color = "#eaddc5", topTorn = true, bottomTorn = true, tearIntensity = 15, textColor = "#30180d", noiseOpacity = 0.15, animationSpeed = 8, ...props }, ref) => {
-    const containerRef = useRef<HTMLDivElement>(null);
-    const uniqueId = useId();
-    const filterId = `tornEdgeFilter_${uniqueId.replace(/:/g, "")}`;
-
-    // Optional animation: very slow, subtle organic shifting of the torn edge
-    useGSAP(() => {
-      const turbulence = document.getElementById(`${filterId}_turbulence`);
-      if (!turbulence) return;
-
-      gsap.to(turbulence, {
-        attr: { baseFrequency: "0.1 0.4" }, // subtle freq changing
-        duration: 8,
-        yoyo: true,
-        repeat: -1,
-        ease: "sine.inOut"
-      });
-    }, []);
-
-    // Helper SVG for torn edges
-    const TornEdge = ({ isTop }: { isTop: boolean }) => (
-      <svg
-        className={`absolute left-0 w-full h-[30px] z-10 pointer-events-none drop-shadow-[0_${isTop ? '4' : '-4'}px_8px_rgba(48,24,13,0.3)]`}
-        style={{
-          top: isTop ? "-15px" : "auto",
-          bottom: !isTop ? "-15px" : "auto",
-          transform: isTop ? "rotate(0deg)" : "rotate(180deg) scaleX(-1)", // Flip for bottom naturally
-        }}
-        preserveAspectRatio="none"
-        viewBox="0 0 1000 30"
-      >
-        <defs>
-          <filter id={filterId} x="-5%" y="-20%" width="110%" height="140%">
-            <feTurbulence id={`${filterId}_turbulence`} type="fractalNoise" baseFrequency="0.08 0.2" numOctaves="4" result="noise" />
-            <feDisplacementMap in="SourceGraphic" in2="noise" scale="15" xChannelSelector="R" yChannelSelector="B" />
-          </filter>
-        </defs>
-        {/* Draw a hard path through the displacement filter map */}
-        <polygon points="0,30 1000,30 1000,10 0,10" fill={color} filter={`url(#${filterId})`} />
-      </svg>
+  (
+    {
+      className,
+      children,
+      color,
+      topTorn = true,
+      bottomTorn = true,
+      tearIntensity = 15,
+      textColor,
+      seed = 7,
+      noiseOpacity: _noiseOpacity,
+      animationSpeed: _animationSpeed,
+      style,
+      ...props
+    },
+    ref,
+  ) => {
+    const { paper, fibre } = useMemo(
+      () => ({
+        paper: tornPolygon(makeRng(seed), tearIntensity, topTorn, bottomTorn, tearIntensity * 0.35),
+        // Franja de fibra: otro rasgado, algo más adentrado y de otro azar.
+        fibre: tornPolygon(makeRng(seed + 101), tearIntensity, topTorn, bottomTorn, tearIntensity * 0.12),
+      }),
+      [seed, tearIntensity, topTorn, bottomTorn],
     );
 
     return (
-      <div 
-        ref={containerRef} 
-        className={cn("relative w-full my-12", className)} 
-        style={{ backgroundColor: color }}
+      <div
+        ref={ref}
+        className={cn("relative w-full my-12", className)}
+        style={{
+          // La sombra va fuera del recorte: así sigue el contorno rasgado.
+          filter: "drop-shadow(2px 4px 3px rgb(0 0 0 / 0.35)) drop-shadow(10px 20px 18px rgb(0 0 0 / 0.35))",
+          ...style,
+        }}
         {...props}
       >
-        {topTorn && <TornEdge isTop={true} />}
-        
-        <div className="relative z-20 py-8 px-12 md:px-24 font-serif text-[#30180d] text-lg leading-relaxed mix-blend-multiply">
-          {children}
+        {/* Fibra clara del desgarro, asomando bajo el papel. */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-0"
+          style={{ clipPath: fibre, backgroundColor: "rgb(244 237 220)" }}
+        />
+        <div
+          className="voy-paper relative"
+          style={{
+            clipPath: paper,
+            ...(color ? { backgroundColor: color } : {}),
+            boxShadow: "inset 0 0 60px rgb(140 96 44 / 0.28)",
+          }}
+        >
+          <div
+            className="relative z-20 text-lg leading-relaxed"
+            style={{
+              padding: `${tearIntensity + 28}px 3rem ${tearIntensity + 28}px`,
+              fontFamily: "var(--voynich-font-body)",
+              color: textColor ?? "rgb(var(--voynich-ink))",
+            }}
+          >
+            {children}
+          </div>
         </div>
-        
-        {/* Subtle noise over the paper body itself */}
-        <div className="absolute inset-0 pointer-events-none opacity-[0.15] mix-blend-multiply" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noiseFilter\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'1\' numOctaves=\'3\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noiseFilter)\'/%3E%3C/svg%3E")' }} />
-
-        {bottomTorn && <TornEdge isTop={false} />}
       </div>
     );
-  }
+  },
 );
 VellumTornSection.displayName = "VellumTornSection";
