@@ -26,6 +26,25 @@ describe("FrequencyTuner", () => {
     expect(input.getAttribute("aria-valuetext")).toMatch(/Hz/);
   });
 
+  it("avisa onTuned al entrar en sintonía, pero no al montar ya sintonizado", async () => {
+    const onTuned = vi.fn();
+    let setExternal: (v: number) => void = () => {};
+    const Wrapper = () => {
+      const [v, setV] = useState(50);
+      setExternal = setV;
+      return <FrequencyTuner value={v} tunedValue={50} onTuned={onTuned} />;
+    };
+    mount(<Wrapper />);
+    await wait(20);
+    expect(onTuned).not.toHaveBeenCalled();
+    setExternal(20);
+    await wait(20);
+    setExternal(50);
+    await waitFor(() => onTuned.mock.calls.length > 0);
+    expect(onTuned).toHaveBeenCalledTimes(1);
+    expect(onTuned).toHaveBeenCalledWith(50);
+  });
+
   it("sigue al valor cuando se usa como componente controlado", async () => {
     let setExternal: (v: number) => void = () => {};
     const Wrapper = () => {

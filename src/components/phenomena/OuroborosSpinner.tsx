@@ -2,6 +2,7 @@ import React, { useRef, useId, useMemo, useImperativeHandle, useCallback } from 
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { cn } from "../../lib/utils";
+import { useReducedMotion } from "../../lib/useReducedMotion";
 
 export interface OuroborosSpinnerRef {
   /** Inicia la rotación. */
@@ -33,6 +34,13 @@ export interface OuroborosSpinnerProps extends React.HTMLAttributes<HTMLDivEleme
   eyeColor?: string;
   /** Grosor del cuerpo de la serpiente. @default 3.5 */
   strokeWidth?: number;
+  /** Texto que anuncian los lectores de pantalla. @default "Cargando…" */
+  label?: string;
+  /**
+   * `auto` respeta `prefers-reduced-motion`; `none` deja la serpiente quieta (el estado sigue anunciándose).
+   * @default "auto"
+   */
+  motion?: "auto" | "full" | "none";
   /** Callback cada vez que completa una rotación. */
   onCycleComplete?: () => void;
 }
@@ -52,10 +60,14 @@ export const OuroborosSpinner = React.forwardRef<OuroborosSpinnerRef, OuroborosS
       eyeColor = "#14100b",
       strokeWidth = 3.5,
       onCycleComplete,
+      label = "Cargando…",
+      motion = "auto",
       ...props
     },
     ref,
   ) => {
+    const systemReduced = useReducedMotion();
+    const reduced = motion === "none" || (motion === "auto" && systemReduced);
     const containerRef = useRef<HTMLDivElement>(null);
     const snakeRef = useRef<SVGPathElement>(null);
     const scalesRef = useRef<SVGGElement>(null);
@@ -72,7 +84,8 @@ export const OuroborosSpinner = React.forwardRef<OuroborosSpinnerRef, OuroborosS
           return {
             cx: 50 + 40 * Math.cos(rad),
             cy: 50 + 40 * Math.sin(rad),
-            r: 1.2 + Math.random() * 0.8,
+            // Determinista: Math.random() en render rompe la hidratación SSR.
+            r: 1.2 + ((i * 7) % 10) * 0.08,
           };
         }),
       [],
@@ -82,7 +95,7 @@ export const OuroborosSpinner = React.forwardRef<OuroborosSpinnerRef, OuroborosS
       const snake = snakeRef.current;
       const container = containerRef.current;
       const scalesEl = scalesRef.current;
-      if (!snake || !container) return;
+      if (!snake || !container || reduced) return;
 
       gsap.to(container, {
         rotation: "+=360",
@@ -126,7 +139,7 @@ export const OuroborosSpinner = React.forwardRef<OuroborosSpinnerRef, OuroborosS
           });
         });
       }
-    }, [speed, showScales, onCycleComplete]);
+    }, [speed, showScales, onCycleComplete, reduced]);
 
     const stopAnimation = useCallback(() => {
       const snake = snakeRef.current;
@@ -172,11 +185,18 @@ export const OuroborosSpinner = React.forwardRef<OuroborosSpinnerRef, OuroborosS
     return (
       <div
         ref={containerRef}
+        role="status"
+        aria-label={label}
+        aria-busy={isProcessing}
+        data-part="root"
+        data-motion={reduced ? "none" : undefined}
         className={cn("relative flex items-center justify-center", className)}
         style={{ width: size, height: size }}
         {...props}
       >
         <svg
+          data-part="snake"
+          aria-hidden="true"
           viewBox="0 0 100 100"
           className="w-full h-full"
           style={{ filter: glowIntensity > 0 ? `drop-shadow(0 0 ${glowPx}px ${loadingColor}${glowAlpha})` : "drop-shadow(1px 2px 1.5px rgb(0 0 0 / 0.6))" }}
@@ -223,7 +243,7 @@ export const OuroborosSpinner = React.forwardRef<OuroborosSpinnerRef, OuroborosS
         </svg>
 
         {/* Center mystical artifact */}
-        <div className="absolute flex items-center justify-center" style={{ width: size * 0.2, height: size * 0.2 }}>
+        <div aria-hidden="true" className="absolute flex items-center justify-center" style={{ width: size * 0.2, height: size * 0.2 }}>
           <div
             className="w-full h-full rounded-full border border-current/20 flex items-center justify-center"
             style={{ background: `radial-gradient(circle, ${loadingColor}10 0%, transparent 70%)` }}

@@ -9,4 +9,6 @@ export default defineConfig({
   clean: true,
   external: ["react", "react-dom", "gsap", "@gsap/react"],
   injectStyle: false, // We'll manage styles with tailwind separately
+  // Todos los componentes usan hooks: sin esto, Next.js (App Router) falla al importarlos desde un Server Component.
+  banner: { js: '"use client";' },
 });

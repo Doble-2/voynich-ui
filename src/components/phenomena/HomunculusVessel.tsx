@@ -1,7 +1,8 @@
-import React, { useRef, useCallback, useImperativeHandle } from "react";
+import React, { useRef, useCallback, useId, useImperativeHandle } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { cn } from "../../lib/utils";
+import { useReducedMotion } from "../../lib/useReducedMotion";
 
 export interface HomunculusVesselRef {
   /** Llena el recipiente hasta el nivel indicado, con animación opcional. */
@@ -45,6 +46,11 @@ export interface HomunculusVesselProps extends Omit<React.HTMLAttributes<HTMLDiv
   bubbleRate?: number;
   /** Intensidad del resplandor (0–1). @default 0.27 */
   glowIntensity?: number;
+  /**
+   * `auto` respeta `prefers-reduced-motion`; `none` quita la onda y las burbujas y fija el nivel sin animar.
+   * @default "auto"
+   */
+  motion?: "auto" | "full" | "none";
   /** Callback en cada cambio de progreso animado. */
   onProgress?: (value: number) => void;
   /** Callback cuando el líquido llega a 100%. */
@@ -78,10 +84,17 @@ export const HomunculusVessel = React.forwardRef<HomunculusVesselRef, Homunculus
       onProgress,
       onComplete,
       onEmpty,
+      motion = "auto",
       ...props
     },
     ref,
   ) => {
+    const systemReduced = useReducedMotion();
+    const reduced = motion === "none" || (motion === "auto" && systemReduced);
+    const uid = useId().replace(/:/g, "");
+    const clipId = `voy-flask-clip-${uid}`;
+    const liquidGradId = `voy-flask-liquid-${uid}`;
+    const sheenId = `voy-flask-sheen-${uid}`;
     const containerRef = useRef<HTMLDivElement>(null);
     const liquidRef = useRef<SVGPathElement>(null);
     const bubblesRef = useRef<SVGGElement>(null);
@@ -143,10 +156,11 @@ export const HomunculusVessel = React.forwardRef<HomunculusVesselRef, Homunculus
         const clamped = Math.max(0, Math.min(100, value));
         const level = 88 - (clamped / 100) * 68;
         progressRef.current = clamped;
+        containerRef.current?.setAttribute("aria-valuenow", String(Math.round(clamped)));
         if (liquidRef.current) {
           gsap.to(liquidRef.current, {
             attr: { d: buildLiquidPath(level, 0) },
-            duration,
+            duration: reduced ? 0 : duration,
             ease: "power2.out",
           });
         }
@@ -156,17 +170,18 @@ export const HomunculusVessel = React.forwardRef<HomunculusVesselRef, Homunculus
       },
       reset: () => {
         progressRef.current = 0;
+        containerRef.current?.setAttribute("aria-valuenow", "0");
         if (liquidRef.current) {
           gsap.to(liquidRef.current, {
             attr: { d: buildLiquidPath(88, 0) },
-            duration: 0.6,
+            duration: reduced ? 0 : 0.6,
             ease: "power2.out",
           });
         }
         onEmpty?.();
       },
       pulse: () => {
-        if (containerRef.current) {
+        if (containerRef.current && !reduced) {
           gsap.to(containerRef.current, {
             scale: 1.08,
             duration: 0.2,
@@ -200,9 +215,15 @@ export const HomunculusVessel = React.forwardRef<HomunculusVesselRef, Homunculus
         // Set liquid level with smooth transition
         gsap.to(liquid, {
           attr: { d: buildLiquidPath(level, 0) },
-          duration: 0.8,
+          duration: reduced ? 0 : 0.8,
           ease: "power2.out",
         });
+
+        // Movimiento reducido: superficie quieta y sin burbujas.
+        if (reduced) {
+          wave.setAttribute("d", buildLiquidPath(level, 0));
+          return;
+        }
 
         // Continuous wave animation on the surface
         const waveAnim = { phase: 0 };
@@ -255,7 +276,7 @@ export const HomunculusVessel = React.forwardRef<HomunculusVesselRef, Homunculus
           intervals.forEach(clearInterval);
         };
       },
-      [progress, loadingColor, showBubbles, waveAmplitude, waveSpeed, bubbleRate, buildLiquidPath, getWallX, onProgress, onComplete, onEmpty],
+      [progress, reduced, loadingColor, showBubbles, waveAmplitude, waveSpeed, bubbleRate, buildLiquidPath, getWallX, onProgress, onComplete, onEmpty],
     );
 
     const glowAlpha = Math.round(glowIntensity * 255)
@@ -265,10 +286,19 @@ export const HomunculusVessel = React.forwardRef<HomunculusVesselRef, Homunculus
     return (
       <div
         ref={containerRef}
+        role="progressbar"
+        aria-label={label}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={Math.round(Math.max(0, Math.min(100, progress)))}
+        data-part="root"
+        data-motion={reduced ? "none" : undefined}
         className={cn("relative flex flex-col items-center justify-center space-y-4", className)}
         {...props}
       >
         <svg
+          data-part="vessel"
+          aria-hidden="true"
           viewBox="0 0 100 110"
           className={sizeClasses ? `${sizeClasses.w} ${sizeClasses.h}` : undefined}
           style={{
@@ -278,17 +308,17 @@ export const HomunculusVessel = React.forwardRef<HomunculusVesselRef, Homunculus
         >
           <defs>
             {/* Clip path matching the flask interior */}
-            <clipPath id="flask-interior">
+            <clipPath id={clipId}>
               <path d="M40,12 L60,12 L60,30 L88,89 Q50,96 12,89 L40,30 Z" />
             </clipPath>
             {/* Gradient for liquid depth */}
-            <linearGradient id="liquid-gradient" x1="0" y1="0" x2="0" y2="1">
+            <linearGradient id={liquidGradId} x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor={loadingColor} stopOpacity="0.5" />
               <stop offset="40%" stopColor={loadingColor} stopOpacity="0.7" />
               <stop offset="100%" stopColor={loadingColor} stopOpacity="0.9" />
             </linearGradient>
             {/* Subtle glass reflection gradient */}
-            <linearGradient id="glass-sheen" x1="0" y1="0" x2="1" y2="0">
+            <linearGradient id={sheenId} x1="0" y1="0" x2="1" y2="0">
               <stop offset="0%" stopColor="#f4e6c4" stopOpacity="0.12" />
               <stop offset="50%" stopColor="#f4e6c4" stopOpacity="0.02" />
               <stop offset="100%" stopColor="#f4e6c4" stopOpacity="0.06" />
@@ -299,9 +329,9 @@ export const HomunculusVessel = React.forwardRef<HomunculusVesselRef, Homunculus
           <path d="M40,12 L60,12 L60,30 L88,89 Q50,96 12,89 L40,30 Z" fill={bgColor} opacity="0.6" />
 
           {/* Liquid — clipped to flask interior */}
-          <g clipPath="url(#flask-interior)">
+          <g clipPath={`url(#${clipId})`}>
             {/* Solid liquid body */}
-            <path ref={liquidRef} d={buildLiquidPath(88)} fill="url(#liquid-gradient)" />
+            <path ref={liquidRef} d={buildLiquidPath(88)} fill={`url(#${liquidGradId})`} />
             {/* Animated wave surface (slightly brighter) */}
             <path ref={waveRef} d={buildLiquidPath(88, 2)} fill={loadingColor} opacity="0.35" />
             {/* Bubbles container */}
@@ -327,7 +357,7 @@ export const HomunculusVessel = React.forwardRef<HomunculusVesselRef, Homunculus
           <path d="M62,30 L80,82" fill="none" stroke="white" strokeWidth="0.8" opacity="0.06" strokeLinecap="round" />
 
           {/* Glass sheen overlay */}
-          <path d="M40,12 L60,12 L60,30 L88,89 Q50,96 12,89 L40,30 Z" fill="url(#glass-sheen)" />
+          <path d="M40,12 L60,12 L60,30 L88,89 Q50,96 12,89 L40,30 Z" fill={`url(#${sheenId})`} />
 
           {/* Cork / stopper on top */}
           {showCork && (
@@ -349,7 +379,7 @@ export const HomunculusVessel = React.forwardRef<HomunculusVesselRef, Homunculus
 
         {/* Label */}
         {showLabel && (
-          <div className={cn("voy-label text-[13px] opacity-90", labelClassName)}>
+          <div data-part="label" aria-hidden="true" className={cn("voy-label text-[13px] opacity-90", labelClassName)}>
             {label} {showPercent && `${Math.round(progress)}%`}
           </div>
         )}

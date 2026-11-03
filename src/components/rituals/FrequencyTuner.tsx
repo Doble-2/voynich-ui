@@ -1,4 +1,4 @@
-import React, { useEffect, useId, useState } from "react";
+import React, { useEffect, useId, useRef, useState } from "react";
 import { cn } from "../../lib/utils";
 
 export interface FrequencyTunerProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -19,6 +19,8 @@ export interface FrequencyTunerProps extends React.InputHTMLAttributes<HTMLInput
   unit?: string;
   /** Se llama cada vez que cambia el valor. */
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  /** Se llama al entrar en la sintonía (no al montar, aunque el valor inicial ya esté sintonizado). */
+  onTuned?: (value: number) => void;
 }
 
 /**
@@ -31,7 +33,7 @@ export interface FrequencyTunerProps extends React.InputHTMLAttributes<HTMLInput
  */
 export const FrequencyTuner = React.forwardRef<HTMLInputElement, FrequencyTunerProps>(
   (
-    { className, min = 0, max = 100, step = 1, value = 50, tunedValue, unit = "Hz", onChange, ...props },
+    { className, min = 0, max = 100, step = 1, value = 50, tunedValue, unit = "Hz", onChange, onTuned, ...props },
     ref,
   ) => {
     const [internalValue, setInternalValue] = useState(value);
@@ -44,11 +46,19 @@ export const FrequencyTuner = React.forwardRef<HTMLInputElement, FrequencyTunerP
     const isTuned = Math.abs(internalValue - target) <= step / 2;
     const percentage = max === min ? 0 : ((internalValue - min) / (max - min)) * 100;
 
+    // Solo la transición a "sintonizado" cuenta: el estado inicial no es un logro del usuario.
+    const wasTuned = useRef(isTuned);
+    useEffect(() => {
+      if (isTuned && !wasTuned.current) onTuned?.(internalValue);
+      wasTuned.current = isTuned;
+    }, [isTuned, internalValue, onTuned]);
+
     return (
-      <div className={cn("voy-tuner w-full", className)} data-tuned={isTuned}>
+      <div className={cn("voy-tuner w-full", className)} data-part="root" data-tuned={isTuned}>
         <output
           id={readoutId}
           aria-live="polite"
+          data-part="readout"
           className="voy-tuner__readout"
           style={{ left: `${percentage}%` }}
         >
@@ -56,10 +66,11 @@ export const FrequencyTuner = React.forwardRef<HTMLInputElement, FrequencyTunerP
           {internalValue.toFixed(1)}
           {unit}
         </output>
-        <div className="voy-tuner__scale" aria-hidden="true" />
-        <div className="voy-tuner__thumb" aria-hidden="true" style={{ left: `${percentage}%` }} />
+        <div className="voy-tuner__scale" data-part="scale" aria-hidden="true" />
+        <div className="voy-tuner__thumb" data-part="thumb" aria-hidden="true" style={{ left: `${percentage}%` }} />
         <input
           ref={ref}
+          data-part="input"
           type="range"
           min={min}
           max={max}

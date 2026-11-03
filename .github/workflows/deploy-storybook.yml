@@ -27,6 +27,13 @@ jobs:
 
       - run: npm ci
 
+      - run: npx tsc --noEmit
+
+      # Los tests corren en Chromium real (Vitest browser mode).
+      - run: npx playwright install --with-deps chromium
+
+      - run: npm test
+
       - run: npm run build-storybook
 
       - uses: actions/upload-pages-artifact@v3

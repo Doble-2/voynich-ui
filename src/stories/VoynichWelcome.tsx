@@ -1,6 +1,14 @@
 import React, { useRef, useMemo, useEffect, useState, useCallback } from "react";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Canvas, extend, useFrame, useThree, type ThreeElement } from "@react-three/fiber";
 import * as THREE from "three";
+
+// `<line>` choca con el <line> de SVG en los tipos de JSX: alias de R3F para THREE.Line.
+extend({ Line_: THREE.Line });
+declare module "@react-three/fiber" {
+  interface ThreeElements {
+    line_: ThreeElement<typeof THREE.Line>;
+  }
+}
 
 /* ═══════════════════════════════════════════════════
    CUSTOM SHADERS — Hand-crafted for the Voynich feel
@@ -200,20 +208,20 @@ function AlchemicalSigil() {
     <group position={[0, 0, -2]}>
       {/* OUTER RING */}
       <group ref={outerRef}>
-        <line geometry={outerRing}>
+        <line_ geometry={outerRing}>
           <lineBasicMaterial color="#7a5c2e" transparent opacity={0.22} />
-        </line>
-        <line geometry={outerRing2}>
+        </line_>
+        <line_ geometry={outerRing2}>
           <lineBasicMaterial color="#6b4f24" transparent opacity={0.12} />
-        </line>
+        </line_>
         {outerTicks.map(({ geo, major }, i) => (
-          <line key={`ot-${i}`} geometry={geo}>
+          <line_ key={`ot-${i}`} geometry={geo}>
             <lineBasicMaterial
               color={major ? "#a88642" : "#6b4f24"}
               transparent
               opacity={major ? 0.28 : 0.08}
             />
-          </line>
+          </line_>
         ))}
         {/* Cardinal dots */}
         {cardinalDots.map((pos, i) => (
@@ -226,40 +234,40 @@ function AlchemicalSigil() {
 
       {/* INNER RING */}
       <group ref={innerRef}>
-        <line geometry={innerRing}>
+        <line_ geometry={innerRing}>
           <lineBasicMaterial color="#8b6a3e" transparent opacity={0.18} />
-        </line>
-        <line geometry={innerRing2}>
+        </line_>
+        <line_ geometry={innerRing2}>
           <lineBasicMaterial color="#6b5530" transparent opacity={0.1} />
-        </line>
+        </line_>
         {innerTicks.map(({ geo, major }, i) => (
-          <line key={`it-${i}`} geometry={geo}>
+          <line_ key={`it-${i}`} geometry={geo}>
             <lineBasicMaterial
               color={major ? "#a88642" : "#6b5530"}
               transparent
               opacity={major ? 0.22 : 0.06}
             />
-          </line>
+          </line_>
         ))}
       </group>
 
       {/* CORE */}
       <group ref={coreRef}>
         {coreLines.map((geo, i) => (
-          <line key={`cl-${i}`} geometry={geo}>
+          <line_ key={`cl-${i}`} geometry={geo}>
             <lineBasicMaterial
               color="#8b6a3e"
               transparent
               opacity={i % 3 === 0 ? 0.2 : 0.07}
             />
-          </line>
+          </line_>
         ))}
-        <line geometry={coreCircle}>
+        <line_ geometry={coreCircle}>
           <lineBasicMaterial color="#a88642" transparent opacity={0.25} />
-        </line>
-        <line geometry={coreCircle2}>
+        </line_>
+        <line_ geometry={coreCircle2}>
           <lineBasicMaterial color="#6b5530" transparent opacity={0.1} />
-        </line>
+        </line_>
         {/* Center dot */}
         <mesh>
           <circleGeometry args={[0.02, 16]} />
