@@ -1,70 +1,67 @@
-import React, { useRef } from 'react';
-import { Button } from '../components/rituals/Button';
-import type { Meta, StoryObj } from '@storybook/react';
-import { StrikeButton } from '../components/rituals/StrikeButton';
-import type { StrikeButtonRef } from '../components/rituals/StrikeButton';
+import { useRef } from "react";
+import type { Meta, StoryObj } from "@storybook/react";
+import { Button } from "../components/rituals/Button";
+import { StrikeButton, type StrikeButtonRef } from "../components/rituals/StrikeButton";
 
 const meta = {
-  title: 'Actuar/StrikeButton',
+  title: "Actuar/StrikeButton",
   component: StrikeButton,
   parameters: {
-    layout: 'centered',
+    layout: "centered",
+    docs: {
+      description: {
+        component:
+          "Para acciones que no se deshacen. Al pulsarlo, un trazo de pluma tacha el rótulo, como el escriba anula un " +
+          "renglón. Si das `struckLabel`, se escribe la corrección en su lugar; si no, el rótulo queda tachado.",
+      },
+    },
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
-    label: { control: 'text', description: 'Texto del botón' },
-    sacrificedLabel: { control: 'text', description: 'Texto post-sacrificio' },
-    bloodColor: { control: 'color', description: 'Color del efecto de sangre' },
-    duration: { control: { type: 'range', min: 0.3, max: 5, step: 0.1 }, description: 'Duración del efecto (s)' },
-    scrambleSpeed: { control: { type: 'range', min: 10, max: 100, step: 5 }, description: 'Velocidad del scramble (ms)' },
-    scrambleDictionary: { control: 'text', description: 'Glifos custom para scramble' },
-    resetable: { control: 'boolean', description: 'Permitir restaurar tras sacrificio' },
+    label: { control: "text", description: "Rótulo" },
+    struckLabel: { control: "text", description: "Rótulo tras tachar (opcional)" },
+    inkColor: { control: "color", description: "Color de la tinta del tachón" },
+    duration: { control: { type: "range", min: 0.1, max: 2, step: 0.05 }, description: "Duración del trazo (s)" },
+    resetable: { control: "boolean", description: "Permitir deshacer con otro clic" },
+    sacrificedLabel: { table: { disable: true } },
+    bloodColor: { table: { disable: true } },
+    onSacrifice: { table: { disable: true } },
+    scrambleDictionary: { table: { disable: true } },
+    scrambleSpeed: { table: { disable: true } },
   },
 } satisfies Meta<typeof StrikeButton>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+/** Sin corrección: el renglón queda anulado. */
 export const Default: Story = {
-  args: {
-    label: 'Firmar el folio',
-    sacrificedLabel: 'Firmado',
-  },
+  args: { label: "Anular el renglón" },
 };
 
-/** Una acción que no se deshace: la rúbrica sangra en el pergamino y el botón queda inutilizado. */
-export const Irreversible: Story = {
-  args: {
-    label: 'Raspar el folio',
-    sacrificedLabel: 'Raspado',
-    bloodColor: 'rgba(163, 74, 51, 0.7)',
-    duration: 2,
-  },
+/** Con corrección: la pluma tacha y escribe el nuevo rótulo. */
+export const ConCorreccion: Story = {
+  args: { label: "Firmar el folio", struckLabel: "Firmado" },
+};
+
+/** Tachón en rúbrica, la tinta roja de los copistas. */
+export const Rubrica: Story = {
+  args: { label: "Raspar el folio", struckLabel: "Raspado", inkColor: "rgb(var(--voynich-vermilion))" },
 };
 
 export const Resetable: Story = {
-  args: {
-    label: 'Sellar la carta',
-    sacrificedLabel: 'Sellada',
-    resetable: true,
-    bloodColor: 'rgba(90, 138, 118, 0.6)',
-  },
+  args: { label: "Sellar la carta", struckLabel: "Sellada", resetable: true },
 };
 
-export const ImperativeControl = () => {
-  const buttonRef = useRef<StrikeButtonRef>(null);
-
+/** `strike()` y `reset()` desde fuera del componente. */
+export const ControlImperativo = () => {
+  const ref = useRef<StrikeButtonRef>(null);
   return (
     <div className="flex flex-col items-center gap-6">
-      <StrikeButton
-        ref={buttonRef}
-        label="Tachar el renglón"
-        sacrificedLabel="Tachado"
-        bloodColor="rgba(47, 74, 122, 0.6)"
-      />
+      <StrikeButton ref={ref} label="Tachar el renglón" />
       <div className="flex gap-3">
-        <Button size="sm" variant="outline" onClick={() => buttonRef.current?.sacrifice()}>Tachar</Button>
-        <Button size="sm" variant="outline" onClick={() => buttonRef.current?.reset()}>Restaurar</Button>
+        <Button size="sm" variant="outline" onClick={() => ref.current?.strike()}>Tachar</Button>
+        <Button size="sm" variant="outline" onClick={() => ref.current?.reset()}>Restaurar</Button>
       </div>
     </div>
   );

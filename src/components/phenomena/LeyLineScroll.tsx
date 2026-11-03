@@ -3,6 +3,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { cn } from "../../lib/utils";
+import { composeRefs } from "../../lib/compose";
 import { useReducedMotion } from "../../lib/useReducedMotion";
 
 // Register ScrollTrigger inside the component or globally
@@ -85,7 +86,7 @@ export const LeyLineScroll = React.forwardRef<HTMLDivElement, LeyLineScrollProps
 
     return (
       <div 
-        ref={containerRef} 
+        ref={composeRefs(ref, containerRef)} 
         className={cn("relative overflow-hidden pointer-events-none", className)} 
         style={{ height }}
         {...props}

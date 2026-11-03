@@ -588,6 +588,8 @@
 	.voy-scribe__input:focus { outline: none; background-size: 100% 2px; }
 	.voy-scribe__input:focus-visible { box-shadow: 0 6px 0 -5px rgb(var(--voynich-gold)); }
 	.voy-scribe__input[aria-invalid="true"] { color: rgb(var(--voynich-vermilion-light)); background-image: linear-gradient(rgb(var(--voynich-vermilion)), rgb(var(--voynich-vermilion))); }
+	.voy-scribe__hint { margin-top: 6px; font-size: 13px; font-style: italic; opacity: 0.75; }
+	.voy-scribe[data-invalid] .voy-scribe__hint { color: rgb(var(--voynich-vermilion-light)); opacity: 1; }
 	.voy-scribe__fleck {
 		position: absolute;
 		bottom: 2px;

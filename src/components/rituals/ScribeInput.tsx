@@ -9,6 +9,10 @@ export interface ScribeInputProps extends React.InputHTMLAttributes<HTMLInputEle
   error?: boolean;
   /** Rótulo en versalitas sobre la línea. Se asocia al campo para lectores de pantalla. */
   label?: string;
+  /** Ayuda bajo la línea (formato esperado, una pista…). Se asocia al campo con `aria-describedby`. */
+  description?: React.ReactNode;
+  /** Qué está mal. Se muestra en lugar de `description` cuando `error` es verdadero, y se anuncia. */
+  errorMessage?: React.ReactNode;
   /** Color de las motas de pan de oro al escribir. Por defecto, oro claro. */
   sparkColor?: string;
   /** Color del texto. Por defecto hereda del contexto. */
@@ -33,6 +37,9 @@ export const ScribeInput = React.forwardRef<HTMLInputElement, ScribeInputProps>(
       className,
       error,
       label,
+      description,
+      errorMessage,
+      "aria-describedby": describedBy,
       sparkColor,
       textColor,
       errorColor,
@@ -47,6 +54,8 @@ export const ScribeInput = React.forwardRef<HTMLInputElement, ScribeInputProps>(
   ) => {
     const autoId = useId();
     const inputId = id ?? autoId;
+    const hintId = `${inputId}-hint`;
+    const hint = error && errorMessage ? errorMessage : description;
     const containerRef = useRef<HTMLDivElement>(null);
     const reduced = useReducedMotion();
 
@@ -75,9 +84,9 @@ export const ScribeInput = React.forwardRef<HTMLInputElement, ScribeInputProps>(
     }, { scope: containerRef });
 
     return (
-      <div ref={containerRef} className="voy-scribe">
+      <div ref={containerRef} className="voy-scribe" data-part="root" data-invalid={error || undefined}>
         {label && (
-          <label htmlFor={inputId} className="voy-scribe__label">
+          <label htmlFor={inputId} data-part="label" className="voy-scribe__label">
             {label}
           </label>
         )}
@@ -85,6 +94,8 @@ export const ScribeInput = React.forwardRef<HTMLInputElement, ScribeInputProps>(
           ref={forwardedRef}
           id={inputId}
           aria-invalid={error || undefined}
+          aria-describedby={cn(hint != null && hintId, describedBy) || undefined}
+          data-part="input"
           className={cn("voy-scribe__input", className)}
           style={{
             ...(textColor ? { color: textColor } : {}),
@@ -97,6 +108,11 @@ export const ScribeInput = React.forwardRef<HTMLInputElement, ScribeInputProps>(
           }}
           {...props}
         />
+        {hint != null && (
+          <p id={hintId} data-part={error && errorMessage ? "error" : "description"} aria-live="polite" className="voy-scribe__hint">
+            {hint}
+          </p>
+        )}
       </div>
     );
   },

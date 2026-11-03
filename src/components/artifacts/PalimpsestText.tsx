@@ -2,6 +2,7 @@ import React, { useRef, useState } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { cn } from "../../lib/utils";
+import { composeRefs } from "../../lib/compose";
 import { useReducedMotion } from "../../lib/useReducedMotion";
 
 export interface PalimpsestTextProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -82,7 +83,7 @@ export const PalimpsestText = React.forwardRef<HTMLDivElement, PalimpsestTextPro
 
     return (
       <div 
-        ref={containerRef} 
+        ref={composeRefs(ref, containerRef)} 
         role="button"
         tabIndex={0}
         aria-pressed={isTranslated}

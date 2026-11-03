@@ -69,6 +69,18 @@ describe("ScribeInput", () => {
     expect(input.getAttribute("aria-invalid")).toBe("true");
   });
 
+  it("asocia la ayuda y, con error, la sustituye por el mensaje de error", () => {
+    const ok = mount(<ScribeInput label="Palabra" description="En EVA" aria-describedby="extra" />);
+    const input = ok.querySelector("input")!;
+    const ids = input.getAttribute("aria-describedby")!.split(" ");
+    expect(ids).toContain("extra");
+    expect(ok.querySelector(`#${CSS.escape(ids[0]!)}`)?.textContent).toBe("En EVA");
+
+    const bad = mount(<ScribeInput label="Palabra" description="En EVA" error errorMessage="No aparece en el folio" />);
+    const hintId = bad.querySelector("input")!.getAttribute("aria-describedby")!;
+    expect(bad.querySelector(`#${CSS.escape(hintId)}`)?.textContent).toBe("No aparece en el folio");
+  });
+
   it("llama a onChange al escribir", () => {
     const onChange = vi.fn();
     const host = mount(<ScribeInput onChange={onChange} />);
@@ -151,7 +163,7 @@ describe("RadialMenu", () => {
 });
 
 describe("StrikeButton", () => {
-  it("anuncia su estado y avisa onSacrifice una sola vez", async () => {
+  it("acepta los nombres antiguos (sacrificedLabel, onSacrifice) y avisa una sola vez", async () => {
     const onSacrifice = vi.fn();
     const host = mount(
       <StrikeButton label="Confirmar" sacrificedLabel="Hecho" onSacrifice={onSacrifice} />,
@@ -163,6 +175,16 @@ describe("StrikeButton", () => {
     await wait(30);
     expect(onSacrifice).toHaveBeenCalledTimes(1);
     expect(btn.getAttribute("aria-label")).toBe("Hecho");
+  });
+
+  it("sin struckLabel, el rótulo queda tachado y el botón inutilizado", async () => {
+    const host = mount(<StrikeButton label="Anular el renglón" />);
+    const btn = host.querySelector("button")!;
+    btn.click();
+    await wait(30);
+    expect(btn.getAttribute("data-struck")).toBe("true");
+    expect(btn.getAttribute("aria-label")).toBe("Anular el renglón");
+    expect(btn.getAttribute("aria-disabled")).toBe("true");
   });
 
   it("dentro de un formulario no lo envía (antes era submit por defecto)", () => {
@@ -177,15 +199,15 @@ describe("StrikeButton", () => {
     expect(onSubmit).not.toHaveBeenCalled();
   });
 
-  it("onClick con preventDefault cancela el sacrificio", async () => {
-    const onSacrifice = vi.fn();
+  it("onClick con preventDefault cancela el tachón", async () => {
+    const onStrike = vi.fn();
     const host = mount(
-      <StrikeButton label="Borrar" onClick={(e) => e.preventDefault()} onSacrifice={onSacrifice} />,
+      <StrikeButton label="Borrar" onClick={(e) => e.preventDefault()} onStrike={onStrike} />,
     );
     const btn = host.querySelector("button")!;
     btn.click();
     await wait(20);
-    expect(onSacrifice).not.toHaveBeenCalled();
-    expect(btn.getAttribute("data-sacrificed")).toBe("false");
+    expect(onStrike).not.toHaveBeenCalled();
+    expect(btn.getAttribute("data-struck")).toBe("false");
   });
 });

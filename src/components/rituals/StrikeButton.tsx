@@ -1,221 +1,174 @@
-import React, { useRef, useState, useImperativeHandle, useEffect } from "react";
+import React, { useRef, useState, useImperativeHandle } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { cn } from "../../lib/utils";
 import { useReducedMotion } from "../../lib/useReducedMotion";
 
 export interface StrikeButtonRef {
-  /** Vuelve al estado original (no sacrificado). */
+  /** Tacha el rótulo como si se hubiera pulsado. */
+  strike: () => void;
+  /** Vuelve al estado sin tachar. */
   reset: () => void;
-  /** Ejecuta el sacrificio programáticamente. */
+  /** @deprecated Usa `strike()`. */
   sacrifice: () => void;
 }
 
 export interface StrikeButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  /** Texto del botón en estado normal. @default "Commit" */
+  /** Rótulo del botón. @default "Confirmar" */
   label?: string;
-  /** Texto revelado después del sacrificio. @default "Sacrificed" */
-  sacrificedLabel?: string;
-  /** Color del efecto de sangre/sacrificio. @default "rgba(139,0,0,0.6)" */
-  bloodColor?: string;
-  /** Glifos para el efecto de scramble durante la transición. @default chars 33-126 */
-  scrambleDictionary?: string;
-  /** Duración del efecto de sangre (seg). @default 1.5 */
+  /**
+   * Rótulo tras tachar. Si lo omites, el rótulo original queda tachado (como un renglón anulado);
+   * si lo das, la pluma tacha y en su lugar se escribe este.
+   */
+  struckLabel?: string;
+  /** Color de la tinta del tachón (`--voy-strike`). @default tinta ferrogálica */
+  inkColor?: string;
+  /** Duración del trazo de pluma (s). @default 0.45 */
   duration?: number;
-  /** Velocidad del scramble de texto (ms por iteración). @default 30 */
-  scrambleSpeed?: number;
-  /** Permitir que el botón vuelva a estado original. @default false */
+  /** Permite deshacer el tachón con otro clic. @default false */
   resetable?: boolean;
-  /** Se llama antes del sacrificio; `e.preventDefault()` lo cancela. */
+  /** Se llama antes de tachar; `e.preventDefault()` lo cancela (p. ej., para pedir confirmación). */
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
-  /** Callback cuando el botón se sacrifica. */
-  onSacrifice?: () => void;
-  /** Callback cuando el botón se restaura (si resetable=true). */
+  /** Se llama una vez al tachar. */
+  onStrike?: () => void;
+  /** Se llama al deshacer (si `resetable`). */
   onReset?: () => void;
+  /** @deprecated Usa `struckLabel`. */
+  sacrificedLabel?: string;
+  /** @deprecated Usa `inkColor`. */
+  bloodColor?: string;
+  /** @deprecated Usa `onStrike`. */
+  onSacrifice?: () => void;
+  /** @deprecated Ya no hay letras revueltas; se ignora. */
+  scrambleDictionary?: string;
+  /** @deprecated Ya no hay letras revueltas; se ignora. */
+  scrambleSpeed?: number;
 }
 
+/**
+ * `StrikeButton`
+ *
+ * Una acción que no se deshace: al pulsarlo, un trazo de pluma tacha el rótulo, como el escriba anula un
+ * renglón. Es un `<button type="button">` real; tras tachar queda `aria-disabled` salvo que sea `resetable`.
+ *
+ * Anatomía: `data-part="root" | "label" | "stroke"`; estado en `data-struck`.
+ */
 export const StrikeButton = React.forwardRef<StrikeButtonRef, StrikeButtonProps>(
   (
     {
       className,
-      label = "Commit",
-      sacrificedLabel = "Sacrificed",
-      bloodColor = "rgba(163, 74, 51, 0.55)", // sintaxis clásica: GSAP no interpola `rgb(r g b / a)`
-      scrambleDictionary,
-      duration = 1.5,
-      scrambleSpeed = 30,
+      label = "Confirmar",
+      struckLabel,
+      inkColor,
+      duration = 0.45,
       resetable = false,
-      onSacrifice,
+      onStrike,
       onReset,
       onClick,
       type,
+      style,
+      sacrificedLabel,
+      bloodColor: _blood,
+      onSacrifice,
+      scrambleDictionary: _dict,
+      scrambleSpeed: _speed,
       ...props
     },
     ref,
   ) => {
-    const buttonRef = useRef<HTMLButtonElement>(null);
-    const textRef = useRef<HTMLSpanElement>(null);
-    const bloodRef = useRef<HTMLDivElement>(null);
-    const [isSacrificed, setIsSacrificed] = useState(false);
+    const after = struckLabel ?? sacrificedLabel;
+    const notify = onStrike ?? onSacrifice;
+    const strokeRef = useRef<SVGPathElement>(null);
+    const labelRef = useRef<HTMLSpanElement>(null);
+    const [struck, setStruck] = useState(false);
+    const [shown, setShown] = useState(label);
     const reduced = useReducedMotion();
-    // Guardia síncrona: el estado de React no se actualiza hasta el siguiente render, y un doble clic
-    // rápido leería `isSacrificed` aún en falso y dispararía el sacrificio dos veces.
-    const sacrificedRef = useRef(false);
-    const scrambleTimer = useRef<ReturnType<typeof setInterval> | null>(null);
+    // Guardia síncrona: un doble clic rápido leería `struck` aún en falso y tacharía dos veces.
+    const struckRef = useRef(false);
+    const { contextSafe } = useGSAP();
 
-    // No dejar intervalos vivos si el botón se desmonta a mitad del efecto.
-    useEffect(() => () => { if (scrambleTimer.current) clearInterval(scrambleTimer.current); }, []);
+    const strike = contextSafe(() => {
+      if (struckRef.current) return;
+      struckRef.current = true;
+      setStruck(true);
+      notify?.();
+      const stroke = strokeRef.current;
+      if (!stroke) return;
+      const t = reduced ? 0 : duration;
+      const tl = gsap.timeline();
+      tl.fromTo(stroke, { strokeDashoffset: 1, opacity: 1 }, { strokeDashoffset: 0, duration: t, ease: "power2.inOut" });
+      if (after) {
+        // La corrección: el renglón tachado se retira y se escribe el nuevo.
+        tl.to([stroke, labelRef.current], { opacity: 0, duration: reduced ? 0 : 0.18 }, `+=${reduced ? 0 : 0.15}`)
+          .add(() => setShown(after))
+          .to(labelRef.current, { opacity: 1, duration: reduced ? 0 : 0.25 });
+      }
+    });
 
-    const doReset = () => {
-      if (scrambleTimer.current) clearInterval(scrambleTimer.current);
-      sacrificedRef.current = false;
-      setIsSacrificed(false);
-      if (buttonRef.current) {
-        gsap.to(buttonRef.current, { scale: 1, duration: 0.3, ease: "power2.out" });
-      }
-      if (bloodRef.current) {
-        gsap.to(bloodRef.current, { opacity: 0, scale: 1, duration: 0.6, ease: "power2.out" });
-      }
-      if (textRef.current) {
-        textRef.current.innerText = label;
-      }
+    const reset = contextSafe(() => {
+      struckRef.current = false;
+      setStruck(false);
+      setShown(label);
+      gsap.set(strokeRef.current, { strokeDashoffset: 1, opacity: 1 });
+      gsap.set(labelRef.current, { opacity: 1 });
       onReset?.();
-    };
+    });
 
-    const doSacrifice = () => {
-      if (sacrificedRef.current) return;
-      sacrificedRef.current = true;
-      setIsSacrificed(true);
-
-      if (!reduced) {
-        gsap.to(buttonRef.current, { y: 2, duration: 0.1, yoyo: true, repeat: 1, ease: "power2.inOut" });
-      }
-
-      // La tinta de rúbrica sangra en el pergamino.
-      gsap.to(bloodRef.current, {
-        opacity: 1,
-        scale: 1.5,
-        duration: reduced ? 0 : duration,
-        ease: "power3.out",
-        backgroundColor: bloodColor,
-      });
-
-      // Text scramble mutation
-      const textNode = textRef.current;
-      if (textNode && reduced) {
-        textNode.innerText = sacrificedLabel;
-      } else if (textNode) {
-        // Letras de escriba, no símbolos ASCII: es una corrección, no un fallo de sistema.
-        const dict = scrambleDictionary || "abcdefghilmnopqrstuvxyz";
-        let iterations = 0;
-        if (scrambleTimer.current) clearInterval(scrambleTimer.current);
-        const interval = setInterval(() => {
-          textNode.innerText = sacrificedLabel
-            .split("")
-            .map((char, i) => {
-              if (i < iterations) return char;
-              return dict[Math.floor(Math.random() * dict.length)];
-            })
-            .join("");
-
-          iterations += 1 / 3;
-          if (iterations >= sacrificedLabel.length) {
-            clearInterval(interval);
-            textNode.innerText = sacrificedLabel;
-          }
-        }, scrambleSpeed);
-        scrambleTimer.current = interval;
-      }
-
-      onSacrifice?.();
-    };
-
-    useImperativeHandle(ref, () => ({
-      reset: doReset,
-      sacrifice: doSacrifice,
-    }));
-
-    useGSAP(
-      () => {
-        const button = buttonRef.current;
-        if (!button) return;
-
-        const handleHover = () => {
-          if (isSacrificed) return;
-          gsap.to(bloodRef.current, {
-            opacity: 0.85,
-            scale: 1.1,
-            duration: reduced ? 0 : 0.8,
-            ease: "power2.out",
-          });
-          // Se levanta del papel: más sombra, nunca un resplandor.
-          gsap.to(button, {
-            y: -1,
-            boxShadow: "inset 0 0 18px rgba(140,96,44,0.28), inset 1px 1px 0 rgba(255,250,235,0.5), 0 0 0 1px rgba(48,41,33,0.3), 3px 6px 6px rgba(0,0,0,0.3), 12px 20px 24px -8px rgba(0,0,0,0.5)",
-            duration: reduced ? 0 : 0.4,
-          });
-        };
-
-        const handleLeave = () => {
-          if (isSacrificed) return;
-          gsap.to(bloodRef.current, {
-            opacity: 0,
-            scale: 1,
-            duration: reduced ? 0 : 0.6,
-            ease: "power2.out",
-          });
-          gsap.to(button, { y: 0, clearProps: "boxShadow", duration: reduced ? 0 : 0.4 });
-        };
-
-        button.addEventListener("mouseenter", handleHover);
-        button.addEventListener("mouseleave", handleLeave);
-
-        return () => {
-          button.removeEventListener("mouseenter", handleHover);
-          button.removeEventListener("mouseleave", handleLeave);
-        };
-      },
-      [isSacrificed, bloodColor, reduced],
-    );
+    useImperativeHandle(ref, () => ({ strike, reset, sacrifice: strike }));
 
     const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-      if (sacrificedRef.current) {
-        if (resetable) doReset();
+      if (struckRef.current) {
+        if (resetable) reset();
         return;
       }
-      // El consumidor va primero: con `e.preventDefault()` cancela el sacrificio (p. ej., para pedir confirmación).
       onClick?.(e);
       if (e.defaultPrevented) return;
-      doSacrifice();
+      strike();
     };
+
+    const name = struck && after ? after : label;
 
     return (
       <button
-        ref={buttonRef}
-        // Sin `type`, dentro de un <form> sería submit y sacrificarlo enviaría el formulario.
+        // Sin `type`, dentro de un <form> sería submit y tachar enviaría el formulario.
         type={type ?? "button"}
         data-part="root"
-        data-sacrificed={isSacrificed}
+        data-struck={struck}
         onClick={handleClick}
-        aria-label={isSacrificed ? sacrificedLabel : label}
-        aria-disabled={isSacrificed && !resetable ? true : undefined}
+        aria-label={name}
+        aria-disabled={struck && !resetable ? true : undefined}
         className={cn(
-          "voy-slip relative overflow-hidden px-7 py-3 rounded-[2px]",
+          "voy-slip voy-strike relative px-7 py-3 rounded-[2px]",
           "outline-none focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4",
-          isSacrificed && resetable ? "cursor-pointer" : isSacrificed ? "cursor-default" : "",
+          struck && !resetable ? "cursor-default" : "cursor-pointer",
           className,
         )}
+        style={{ ...(inkColor && { "--voy-strike": inkColor }), ...style } as React.CSSProperties}
         {...props}
       >
-        <div
-          ref={bloodRef}
-          data-part="stain"
-          aria-hidden="true"
-          className="absolute inset-0 z-0 opacity-0 blur-md pointer-events-none"
-          style={{ mixBlendMode: "multiply", backgroundColor: bloodColor }}
-        />
-        <span ref={textRef} data-part="label" aria-hidden="true" className="voy-label relative z-10 text-[1em]">
-          {label}
+        <span ref={labelRef} data-part="label" aria-hidden="true" className="voy-label relative inline-block text-[1em]">
+          {shown}
+          {/* El tachón: un trazo de pluma algo ondulado, más grueso al centro, que cruza el rótulo. */}
+          <svg
+            aria-hidden="true"
+            className="pointer-events-none absolute -inset-x-2 top-1/2 h-[0.6em] w-[calc(100%+1rem)] -translate-y-1/2 overflow-visible"
+            viewBox="0 0 100 10"
+            preserveAspectRatio="none"
+          >
+            <path
+              ref={strokeRef}
+              data-part="stroke"
+              d="M1 6.2 C 18 4.6, 34 6.8, 52 5.1 S 84 4.2, 99 5.6"
+              fill="none"
+              stroke="var(--voy-strike, rgb(var(--voynich-ink)))"
+              strokeWidth="1.6"
+              strokeLinecap="round"
+              vectorEffect="non-scaling-stroke"
+              pathLength={1}
+              strokeDasharray="1"
+              strokeDashoffset="1"
+            />
+          </svg>
         </span>
       </button>
     );

@@ -3,6 +3,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { cn } from "../../lib/utils";
+import { composeRefs } from "../../lib/compose";
 import { useReducedMotion } from "../../lib/useReducedMotion";
 
 if (typeof window !== "undefined") {
@@ -71,7 +72,7 @@ export const AbyssParallax = React.forwardRef<HTMLDivElement, AbyssParallaxProps
 
     return (
       <div 
-        ref={containerRef} 
+        ref={composeRefs(ref, containerRef)} 
         className={cn("voy-leather relative overflow-hidden min-h-[80vh] flex items-center justify-center [perspective:1200px]", className)} 
         {...props}
       >

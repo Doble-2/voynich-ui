@@ -2,12 +2,13 @@ import React, { useRef, useState, useEffect } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { cn } from "../../lib/utils";
+import { composeRefs } from "../../lib/compose";
 import { useReducedMotion } from "../../lib/useReducedMotion";
 
 export interface InvisibleInkBlockProps extends React.HTMLAttributes<HTMLSpanElement> {
   /** Texto oculto a revelar. */
   text: string;
-  /** Color de la tinta revelada. @default "#8b0000" */
+  /** Color de la tinta revelada. @default el bermellón del tema (`--voynich-vermilion`) */
   revealColor?: string;
   /** Modo de interacción para revelar. @default "hover" */
   interaction?: "hover" | "click";
@@ -28,12 +29,16 @@ export interface InvisibleInkBlockProps extends React.HTMLAttributes<HTMLSpanEle
   onHide?: () => void;
 }
 
+/** GSAP no interpola `var()`: lee el token del tema (canales «r g b») y lo da como `rgb(r, g, b)`. */
+const tokenColor = (el: Element, name: string) =>
+  `rgb(${getComputedStyle(el).getPropertyValue(name).trim().split(/\s+/).join(", ")})`;
+
 export const InvisibleInkBlock = React.forwardRef<HTMLSpanElement, InvisibleInkBlockProps>(
   (
     {
       className,
       text,
-      revealColor = "#a34a33", // hex: GSAP anima el color y no resuelve `var()`
+      revealColor,
       interaction = "hover",
       revealed: controlledRevealed,
       revealDuration = 2,
@@ -68,7 +73,7 @@ export const InvisibleInkBlock = React.forwardRef<HTMLSpanElement, InvisibleInkB
           gsap.to(el, {
             opacity: 1,
             filter: "blur(0px)",
-            color: revealColor,
+            color: revealColor ?? tokenColor(el, "--voynich-vermilion"),
             duration: reduced ? 0 : revealDuration,
             ease: "power3.out",
           });
@@ -97,7 +102,9 @@ export const InvisibleInkBlock = React.forwardRef<HTMLSpanElement, InvisibleInkB
 
     return (
       <span
-        ref={containerRef}
+        ref={composeRefs(ref, containerRef)}
+        data-part="root"
+        data-revealed={isRevealed}
         tabIndex={0}
         role={interaction === "click" ? "button" : undefined}
         aria-pressed={interaction === "click" ? isRevealed : undefined}
@@ -106,6 +113,12 @@ export const InvisibleInkBlock = React.forwardRef<HTMLSpanElement, InvisibleInkB
         onMouseLeave={interaction === "hover" ? triggerHide : undefined}
         onFocus={interaction === "hover" ? triggerReveal : undefined}
         onBlur={interaction === "hover" ? triggerHide : undefined}
+        // En táctil no hay hover: un toque alterna.
+        onPointerDown={
+          interaction === "hover"
+            ? (e) => { if (e.pointerType === "touch") (isRevealed ? triggerHide : triggerReveal)(); }
+            : undefined
+        }
         onKeyDown={
           interaction === "click"
             ? (e) => {
@@ -130,11 +143,13 @@ export const InvisibleInkBlock = React.forwardRef<HTMLSpanElement, InvisibleInkB
         {...props}
       >
         <span
+          data-part="underline"
           className="absolute inset-0 pointer-events-none border-b border-dotted border-current opacity-40"
           style={{ opacity: isRevealed ? 0 : 1, transition: "opacity 1s" }}
         />
         <span
           ref={textRef}
+          data-part="text"
           className="relative inline-block transition-none"
           style={{
             opacity: 0.05,

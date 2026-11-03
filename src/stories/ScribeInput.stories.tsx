@@ -32,13 +32,18 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    placeholder: 'Busca una palabra en EVA…',
+    label: 'Palabra',
+    placeholder: 'fachys…',
+    description: 'Escríbela en EVA, el alfabeto de transcripción del Voynich.',
   },
 };
 
 export const ErrorState: Story = {
   args: {
-    placeholder: 'Esa palabra no aparece en el folio',
+    label: 'Palabra',
+    defaultValue: 'qokeedyy',
+    description: 'Escríbela en EVA, el alfabeto de transcripción del Voynich.',
     error: true,
+    errorMessage: 'Esa palabra no aparece en el folio.',
   },
 };

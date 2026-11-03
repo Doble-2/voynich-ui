@@ -2,6 +2,7 @@ import React, { useRef, useId } from 'react';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { cn } from '../../lib/utils';
+import { composeRefs } from '../../lib/compose';
 import { useReducedMotion } from '../../lib/useReducedMotion';
 
 export interface MarginaliaNotesProps extends React.HTMLAttributes<HTMLSpanElement> {
@@ -65,7 +66,7 @@ export const MarginaliaNotes = React.forwardRef<HTMLSpanElement, MarginaliaNotes
     }, { scope: containerRef, dependencies: [trigger, reduced] });
 
     return (
-      <span ref={containerRef} className={cn("relative group inline-block", className)} {...props}>
+      <span ref={composeRefs(ref, containerRef)} className={cn("relative group inline-block", className)} {...props}>
         <span
           tabIndex={0}
           aria-describedby={noteId}
