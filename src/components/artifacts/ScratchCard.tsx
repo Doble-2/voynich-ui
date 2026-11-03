@@ -381,7 +381,7 @@ export const ScratchCard = forwardRef<ScratchCardRef, ScratchCardProps>(
           className,
         )}
         // Tamaño máximo `width`×`height`; en un contenedor más estrecho se encoge sin deformarse.
-        style={{ width: "100%", maxWidth: width, aspectRatio: `${width} / ${height}`, ...style }}
+        style={{ width, maxWidth: "100%", aspectRatio: `${width} / ${height}`, ...style }}
         {...props}
       >
         {/* Hidden Content Beneath */}

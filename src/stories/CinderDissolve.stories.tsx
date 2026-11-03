@@ -86,7 +86,7 @@ export const ManuscritoConsumido: Story = {
     },
   },
   render: (args) => (
-    <div className="relative w-full max-w-[560px] overflow-hidden rounded-[2rem] border border-voynich-inkMedium bg-[radial-gradient(circle_at_top,_#6f4122,_#21120a_58%,_#120906_100%)] p-8 shadow-[0_30px_90px_rgba(0,0,0,0.45)]">
+    <div className="relative w-[560px] max-w-full overflow-hidden rounded-[2rem] border border-voynich-inkMedium bg-[radial-gradient(circle_at_top,_#6f4122,_#21120a_58%,_#120906_100%)] p-8 shadow-[0_30px_90px_rgba(0,0,0,0.45)]">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_14%,_rgba(255,222,157,0.2),_transparent_24%),radial-gradient(circle_at_72%_88%,_rgba(255,98,36,0.16),_transparent_20%),linear-gradient(180deg,rgba(255,173,92,0.06),transparent_34%,rgba(19,8,5,0.44)_100%)]" />
       <CinderDissolve {...args} className="rounded-[1.5rem]">
         <article className="relative overflow-hidden rounded-[1.5rem] border border-voynich-brass/40 voy-paper px-10 py-12 text-voynich-inkDark shadow-[inset_0_0_40px_rgba(97,52,24,0.2),0_18px_45px_rgba(0,0,0,0.18)]">
@@ -138,9 +138,9 @@ export const EvaporacionHolografica: Story = {
     },
   },
   render: (args) => (
-    <div className="relative flex w-full max-w-[580px] items-center justify-center overflow-hidden rounded-[2rem] border border-voynich-inkMedium/40 bg-[linear-gradient(145deg,_#030712,_#0f172a_55%,_#1e293b)] p-10 shadow-[0_30px_90px_rgba(2,6,23,0.65)]">
+    <div className="relative flex w-[580px] max-w-full items-center justify-center overflow-hidden rounded-[2rem] border border-voynich-inkMedium/40 bg-[linear-gradient(145deg,_#030712,_#0f172a_55%,_#1e293b)] p-10 shadow-[0_30px_90px_rgba(2,6,23,0.65)]">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,_rgba(125,211,252,0.18),_transparent_22%),radial-gradient(circle_at_82%_70%,_rgba(226,232,240,0.12),_transparent_20%)]" />
-      <CinderDissolve {...args} className="w-full max-w-[440px] rounded-[28px]">
+      <CinderDissolve {...args} className="w-[440px] max-w-full rounded-[28px]">
         <section className="relative overflow-hidden rounded-[28px] border border-voynich-inkMedium/40/20 voy-panel p-8 backdrop-blur-md">
           <div className="absolute inset-0 bg-[linear-gradient(135deg,_rgba(125,211,252,0.18),_transparent_30%,_rgba(255,255,255,0.08)_100%)]" />
           <div className="relative space-y-8">
@@ -203,7 +203,7 @@ export const RetratoIncinerado: Story = {
         <img
           src="https://images.unsplash.com/photo-1515405295579-ba7b45403062?q=80&w=1800&auto=format&fit=crop"
           alt="Retrato abstracto"
-          className="h-[520px] w-full max-w-[380px] object-cover"
+          className="h-[520px] w-[380px] max-w-full object-cover"
         />
       </CinderDissolve>
     </div>
@@ -245,7 +245,7 @@ export const SenalTerminal: Story = {
     const glowOpacity = shutdown > 0.4 ? 1 - (shutdown - 0.4) / 0.6 : 0;
 
     return (
-      <div className="w-full max-w-[620px] rounded-[1.75rem] border border-voynich-inkMedium/40 voy-panel p-8 shadow-[0_25px_80px_rgba(0,0,0,0.65)]">
+      <div className="w-[620px] max-w-full rounded-[1.75rem] border border-voynich-inkMedium/40 voy-panel p-8 shadow-[0_25px_80px_rgba(0,0,0,0.65)]">
         <div className="relative overflow-hidden rounded-[1.2rem] border border-voynich-inkMedium/40 bg-black">
           <div
             className="relative min-h-[240px] px-8 py-7 font-smallcaps text-voynich-glow shadow-[inset_0_0_40px_rgba(16,185,129,0.08)] transition-[clip-path,opacity] duration-100"
@@ -301,7 +301,7 @@ export const DisolucionManual: Story = {
   render: (args) => (
     <div className="relative rounded-[2rem] border border-voynich-inkMedium/40 bg-[linear-gradient(135deg,_#f8fafc,_#e2e8f0)] p-10 shadow-[0_24px_60px_rgba(15,23,42,0.12)]">
       <CinderDissolve {...args} className="rounded-[1.5rem]">
-        <div className="w-full max-w-[480px] rounded-[1.5rem] border border-voynich-inkMedium/40 voy-paper px-8 py-7">
+        <div className="w-[480px] max-w-full rounded-[1.5rem] border border-voynich-inkMedium/40 voy-paper px-8 py-7">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs uppercase tracking-[0.35em] text-voynich-vellum/60">
@@ -343,7 +343,7 @@ export const PausaEnPunto: Story = {
     burnSeed: 25,
   },
   render: (args) => (
-    <div className="relative w-full max-w-[620px] overflow-hidden rounded-[2rem] border border-voynich-brass/40 bg-[radial-gradient(circle_at_top,_#5a341f,_#180d07_62%)] p-10 shadow-[0_28px_80px_rgba(0,0,0,0.5)]">
+    <div className="relative w-[620px] max-w-full overflow-hidden rounded-[2rem] border border-voynich-brass/40 bg-[radial-gradient(circle_at_top,_#5a341f,_#180d07_62%)] p-10 shadow-[0_28px_80px_rgba(0,0,0,0.5)]">
       <CinderDissolve {...args} className="rounded-[1.5rem]">
         <div className="rounded-[1.5rem] border border-voynich-brass/40 voy-paper p-10 text-[#2f190f] shadow-[inset_0_0_35px_rgba(88,48,24,0.2)]">
           <p className="text-xs uppercase tracking-[0.4em] text-[#8f5835]">
@@ -377,7 +377,7 @@ export const LlamasParticuladas: Story = {
     burnSeed: 7,
   },
   render: (args) => (
-    <div className="relative w-full max-w-[580px] overflow-hidden rounded-[2rem] border border-[#5f3019] bg-[radial-gradient(circle_at_top,_#5d341d,_#160b06_64%)] p-10 shadow-[0_28px_80px_rgba(0,0,0,0.5)]">
+    <div className="relative w-[580px] max-w-full overflow-hidden rounded-[2rem] border border-[#5f3019] bg-[radial-gradient(circle_at_top,_#5d341d,_#160b06_64%)] p-10 shadow-[0_28px_80px_rgba(0,0,0,0.5)]">
       <CinderDissolve {...args} className="rounded-[1.5rem]">
         <div className="rounded-[1.5rem] border border-voynich-brass/40 voy-paper p-10 text-[#2f190f] shadow-[inset_0_0_35px_rgba(88,48,24,0.2)]">
           <p className="text-xs uppercase tracking-[0.4em] text-[#8f5835]">
@@ -410,7 +410,7 @@ export const BonanzaTransition: Story = {
     burnSeed: 33,
   },
   render: (args) => (
-    <div className="relative w-full max-w-[760px] h-[440px] overflow-hidden rounded-[2rem] border border-[#5b311a] bg-[radial-gradient(circle_at_50%_35%,_#783f1d,_#1a0d07_62%)] p-6 shadow-[0_30px_90px_rgba(0,0,0,0.5)]">
+    <div className="relative w-[760px] max-w-full h-[440px] overflow-hidden rounded-[2rem] border border-[#5b311a] bg-[radial-gradient(circle_at_50%_35%,_#783f1d,_#1a0d07_62%)] p-6 shadow-[0_30px_90px_rgba(0,0,0,0.5)]">
       <CinderDissolve {...args} className="w-full h-full rounded-[1.5rem]">
         <div className="relative flex h-full w-full items-center justify-center overflow-hidden rounded-[1.5rem] voy-paper">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(0,0,0,0),rgba(0,0,0,0.18)_74%)]" />
@@ -438,7 +438,7 @@ export const SplashRevealCenter: Story = {
     burnSeed: 41,
   },
   render: (args) => (
-    <div className="relative w-full max-w-[640px] h-[360px] overflow-hidden rounded-[1.5rem] border border-[#4a2815] voy-panel p-4 shadow-[0_24px_70px_rgba(0,0,0,0.45)]">
+    <div className="relative w-[640px] max-w-full h-[360px] overflow-hidden rounded-[1.5rem] border border-[#4a2815] voy-panel p-4 shadow-[0_24px_70px_rgba(0,0,0,0.45)]">
       <CinderDissolve {...args} className="w-full h-full rounded-[1.25rem]">
         <div className="flex h-full w-full items-center justify-center rounded-[1.25rem] bg-[linear-gradient(145deg,#f8e7c9,#d6b98b)]">
           <p className="text-5xl font-manuscript font-bold text-[#2c170e]">

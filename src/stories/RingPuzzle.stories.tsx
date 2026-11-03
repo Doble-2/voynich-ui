@@ -172,7 +172,7 @@ export const AdvancedDynamicRings: Story = {
     };
 
     return (
-      <div className="flex flex-col items-center gap-10 bg-[#0a0d14] border-[12px] border-[#311b0e] p-12 rounded-[100%] shadow-[0_0_80px_rgba(0,0,0,1)] relative w-full max-w-[800px] h-[800px] justify-center mx-auto scale-[0.85]">
+      <div className="flex flex-col items-center gap-10 bg-[#0a0d14] border-[12px] border-[#311b0e] p-12 rounded-[100%] shadow-[0_0_80px_rgba(0,0,0,1)] relative w-[800px] max-w-full h-[800px] justify-center mx-auto scale-[0.85]">
         {/* Fake Wood/Parchment Texture */}
         <div className="absolute inset-0 bg-[radial-gradient(circle,_#211611_0%,_#090503_100%)] opacity-90 pointer-events-none" />
 
@@ -285,7 +285,7 @@ export const AdvancedDynamicRings: Story = {
 
         {message && (
           <div
-            className={`absolute bottom-[-60px] text-2xl font-manuscript text-center w-full max-w-[600px] z-10 transition-all duration-700 ${solved ? "text-[#ffefa0] drop-shadow-[0_0_15px_rgba(255,200,100,1)]" : "text-[#a27e53]"}`}
+            className={`absolute bottom-[-60px] text-2xl font-manuscript text-center w-[600px] max-w-full z-10 transition-all duration-700 ${solved ? "text-[#ffefa0] drop-shadow-[0_0_15px_rgba(255,200,100,1)]" : "text-[#a27e53]"}`}
           >
             {message}
           </div>

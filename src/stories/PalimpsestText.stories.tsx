@@ -32,14 +32,14 @@ export const CodeTranslation: Story = {
   args: {
     ancientText: (
       <div>
-        <p className="mb-2 w-full max-w-[400px]">char *str = malloc(sizeof(char) * 10);</p>
+        <p className="mb-2 w-[400px] max-w-full">char *str = malloc(sizeof(char) * 10);</p>
         <p className="mb-2">strcpy(str, "Alquimia");</p>
         <p>free(str);</p>
       </div>
     ),
     translatedText: (
       <div>
-        <p className="mb-2 font-smallcaps drop-shadow-[0_0_5px_#eadbb6] w-full max-w-[400px]">
+        <p className="mb-2 font-smallcaps drop-shadow-[0_0_5px_#eadbb6] w-[400px] max-w-full">
           const str: string = "Alquimia";
         </p>
         <p className="opacity-50 text-sm italic">
@@ -53,12 +53,12 @@ export const CodeTranslation: Story = {
 export const LoreText: Story = {
   args: {
     ancientText: (
-      <div className="font-manuscript italic text-2xl text-justify w-full max-w-[500px]">
+      <div className="font-manuscript italic text-2xl text-justify w-[500px] max-w-full">
         "Ita ut sub divo lumen e mundo caecorum subreptum est."
       </div>
     ),
     translatedText: (
-      <div className="font-manuscript font-bold text-xl text-voynich-glow w-full max-w-[500px]">
+      <div className="font-manuscript font-bold text-xl text-voynich-glow w-[500px] max-w-full">
         "Así como la luz es arrebatada del mundo de los ciegos."
       </div>
     ),

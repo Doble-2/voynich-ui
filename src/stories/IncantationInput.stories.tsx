@@ -20,7 +20,7 @@ const meta = {
   },
   decorators: [
     (Story) => (
-      <div className="w-full max-w-[400px] p-8 voy-panel rounded-xl shadow-2xl">
+      <div className="w-[400px] max-w-full p-8 voy-panel rounded-xl shadow-2xl">
         <Story />
       </div>
     ),

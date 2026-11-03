@@ -19,7 +19,7 @@ const meta = {
   },
   decorators: [
     (Story) => (
-      <div className="w-full max-w-[500px] h-[500px] flex items-center justify-center voy-panel p-12 rounded-xl">
+      <div className="w-[500px] max-w-full h-[500px] flex items-center justify-center voy-panel p-12 rounded-xl">
         <Story />
       </div>
     ),

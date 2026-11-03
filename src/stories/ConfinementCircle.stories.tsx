@@ -18,7 +18,7 @@ const meta = {
   },
   decorators: [
     (Story) => (
-      <div className="voy-panel p-20 rounded-xl w-full max-w-[600px] h-[500px] flex items-center justify-center">
+      <div className="voy-panel p-20 rounded-xl w-[600px] max-w-full h-[500px] flex items-center justify-center">
         <Story />
       </div>
     ),

@@ -53,7 +53,7 @@ export const DefaultHackerTerminal: Story = {
     },
   },
   render: (args) => (
-    <div className="p-8 voy-panel border border-voynich-inkMedium/30 rounded-[40%_10%_80%_20%/20%_60%_40%_90%] lg:w-full max-w-[400px] shadow-[inset_0_0_10px_rgba(97,52,24,0.1),0_4px_12px_rgba(0,0,0,0.2)]">
+    <div className="p-8 voy-panel border border-voynich-inkMedium/30 rounded-[40%_10%_80%_20%/20%_60%_40%_90%] lg:w-[400px] max-w-full shadow-[inset_0_0_10px_rgba(97,52,24,0.1),0_4px_12px_rgba(0,0,0,0.2)]">
       <div className="text-voynich-vellum text-opacity-90 font-manuscript text-lg tracking-widest uppercase flex flex-col gap-2 filter contrast-[1.1] brightness-[0.95] sepia-[0.3]">
         <span>&gt; Aplicando solventes...</span>
         <span>&gt; Revelando tintas simpáticas...</span>

@@ -34,11 +34,11 @@ export const ManchaFondo: Story = {
     speed: 15,
   },
   render: (args) => (
-    <div className="relative w-full max-w-[500px] h-[500px] flex items-center justify-center voy-panel rounded-3xl overflow-hidden border border-voynich-inkMedium/40">
+    <div className="relative w-[500px] max-w-full h-[500px] flex items-center justify-center voy-panel rounded-3xl overflow-hidden border border-voynich-inkMedium/40">
       <RefractiveFractal
         {...args}
         // Creamos una bola base con degradados múltiples. El componente la distorsionará hasta el caos.
-        className="absolute inset-0 m-auto w-full max-w-[350px] h-[350px] bg-gradient-to-tr from-voynich-vermilion via-voynich-brass to-voynich-lapis rounded-full blur-[20px]"
+        className="absolute inset-0 m-auto w-[350px] max-w-full h-[350px] bg-gradient-to-tr from-voynich-vermilion via-voynich-brass to-voynich-lapis rounded-full blur-[20px]"
       />
       <div className="relative z-10 text-center pointer-events-none">
         <h2 className="text-4xl font-bold text-voynich-vellum drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
@@ -102,7 +102,7 @@ export const DistorsionImagen: Story = {
   render: (args) => (
     <RefractiveFractal
       {...args}
-      className="w-full max-w-[400px] h-[500px] rounded-2xl overflow-hidden shadow-2xl"
+      className="w-[400px] max-w-full h-[500px] rounded-2xl overflow-hidden shadow-2xl"
     >
       <img
         src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2464"
@@ -125,7 +125,7 @@ export const TexturaAlien: Story = {
   render: (args) => (
     <RefractiveFractal
       {...args}
-      className="w-full max-w-[500px] h-[300px] bg-gradient-to-r from-voynich-gold to-voynich-verdigris rounded-xl"
+      className="w-[500px] max-w-full h-[300px] bg-gradient-to-r from-voynich-gold to-voynich-verdigris rounded-xl"
     />
   ),
 };
@@ -177,7 +177,7 @@ export const GlitchEffect: Story = {
       >
         <img
           src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=2000"
-          className="w-full max-w-[400px] h-[250px] object-cover filter grayscale contrast-150"
+          className="w-[400px] max-w-full h-[250px] object-cover filter grayscale contrast-150"
         />
       </RefractiveFractal>
     </div>
@@ -192,7 +192,7 @@ export const CristalEsmerilado: Story = {
     frequency: 0.8, // Frecuencia MUY alta para hacer el ruido diminuto
   },
   render: (args) => (
-    <div className="relative w-full max-w-[500px] h-[400px] flex items-center justify-center rounded-2xl overflow-hidden shadow-2xl">
+    <div className="relative w-[500px] max-w-full h-[400px] flex items-center justify-center rounded-2xl overflow-hidden shadow-2xl">
       {/* Fondo nítido */}
       <img
         src="https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=2000"
