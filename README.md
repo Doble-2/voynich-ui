@@ -25,6 +25,8 @@ Ordenados por lo que hacen en la historia.
 ### Leer: el códice
 | Componente | Qué es |
 |---|---|
+| `Codex` | Lector por folios: la hoja gira sobre el lomo y el canto muestra lo leído y lo que falta |
+| `Gloss` | Notificaciones como glosas al margen (`GlossProvider` + `useGloss`) |
 | `IlluminatedDropcap` | Letra capital iluminada con pan de oro y lapislázuli |
 | `MarginaliaNotes` | Tooltip convertido en glosa al margen, de otra mano |
 | `ScribeText` | Texto que se escribe como lo copiaría un escriba, con errores corregidos |
@@ -54,7 +56,8 @@ Ordenados por lo que hacen en la historia.
 | Componente | Qué es |
 |---|---|
 | `Button` | Tapa de libro en cuero con filete de oro estampado |
-| `StrikeButton` | Acción irreversible: la rúbrica sangra en el pergamino |
+| `Latch` | Interruptor de sí/no: un pestillo de latón |
+| `StrikeButton` | Acción irreversible: un trazo de pluma tacha el rótulo |
 | `RadialMenu` | Menú circular que se despliega alrededor de un medallón |
 | `ConfinementCircle` | Diálogo modal accesible, con un diagrama circular |
 
@@ -73,6 +76,10 @@ Ordenados por lo que hacen en la historia.
 
 ### Para construir los tuyos
 `Surface` (los materiales: `paper`, `leather`, `rubric`, `bronze`, `gold`), `Slot`, `composeRefs`, `composeHandlers`, `createPartsContext` y los hooks sin dibujo (`useRingPuzzle`, `useRadialMenu`, `useConfinementCircle`, `useWaxSeal`, `useTarotSpread`, `useDissolveProgress`, `useReducedMotion`).
+
+### Nombres anteriores
+Cinco componentes cambiaron de nombre para encajar con el concepto. Los nombres viejos siguen funcionando (marcados como obsoletos) hasta la próxima versión menor:
+`FrequencyTuner` → `GraduatedScale` · `IncantationInput` → `ScribeInput` · `SacrificialButton` → `StrikeButton` · `HomunculusVessel` → `Alembic` · `TypewriterStutter` → `ScribeText`.
 
 ## Instalación
 

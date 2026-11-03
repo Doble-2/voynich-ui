@@ -163,7 +163,6 @@ export const StrikeButton = React.forwardRef<StrikeButtonRef, StrikeButtonProps>
               stroke="var(--voy-strike, rgb(var(--voynich-ink)))"
               strokeWidth="1.6"
               strokeLinecap="round"
-              vectorEffect="non-scaling-stroke"
               pathLength={1}
               strokeDasharray="1"
               strokeDashoffset="1"

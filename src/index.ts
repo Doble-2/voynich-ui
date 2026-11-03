@@ -7,6 +7,8 @@ export { StrikeButton } from './components/rituals/StrikeButton';
 export { ScribeInput } from './components/rituals/ScribeInput';
 export { GraduatedScale } from './components/rituals/GraduatedScale';
 export { ConfinementCircle } from './components/rituals/ConfinementCircle';
+export { Latch } from './components/rituals/Latch';
+export type { LatchProps } from './components/rituals/Latch';
 
 export { RefractiveFractal } from './components/phenomena/RefractiveFractal';
 export { CinderDissolve } from './components/phenomena/CinderDissolve';
@@ -29,6 +31,10 @@ export { InvisibleInkBlock } from './components/artifacts/InvisibleInkBlock';
 export { ScribeText } from './components/artifacts/ScribeText';
 export { IlluminatedDropcap } from './components/artifacts/IlluminatedDropcap';
 export { MarginaliaNotes } from './components/artifacts/MarginaliaNotes';
+export { Codex, folioOf } from './components/artifacts/Codex';
+export type { CodexProps } from './components/artifacts/Codex';
+export { Gloss, GlossProvider, useGloss } from './components/artifacts/Gloss';
+export type { GlossProps, GlossProviderProps, GlossOptions } from './components/artifacts/Gloss';
 
 // Primitives y utilidades de composición (para construir tus propios componentes)
 export { Surface } from './components/primitives/Surface';

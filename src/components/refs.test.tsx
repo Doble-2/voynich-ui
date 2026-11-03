@@ -38,10 +38,13 @@ const MINIMAL: Record<string, Record<string, unknown>> = {
   IlluminatedDropcap: { letter: "E", text: "x" },
   MarginaliaNotes: { note: "n", children: "x" },
   Surface: {},
+  Latch: {},
+  Codex: { children: ["a", "b"] },
+  Gloss: { children: "x" },
 };
 
 // Partes y alias, no componentes con ref propia.
-const SKIP = new Set(["Slot", "AstrolabeRete", "FrequencyTuner", "IncantationInput", "SacrificialButton", "HomunculusVessel", "TypewriterStutter"]);
+const SKIP = new Set(["Slot", "GlossProvider", "AstrolabeRete", "FrequencyTuner", "IncantationInput", "SacrificialButton", "HomunculusVessel", "TypewriterStutter"]);
 
 const components = Object.entries(Lib).filter(
   ([name, v]) => /^[A-Z]/.test(name) && !SKIP.has(name) && (typeof v === "function" || (typeof v === "object" && v && "$$typeof" in v)),

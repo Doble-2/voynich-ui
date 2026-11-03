@@ -841,3 +841,227 @@
 		.voy-astrolabe__glare { transition: none; }
 	}
 }
+
+/* ───────────────────────────── Latch (pestillo) ─────────────────────────────
+ * Placa de latón con una ranura; el cerrojo corre por ella con algo de holgura y, echado, pasa de latón
+ * a pan de oro (cambio de material, no de brillo). Variables: --voy-latch-plate, --voy-latch-bolt.
+ */
+@layer components {
+	.voy-latch {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.75em;
+		padding: 2px;
+		border: 0;
+		background: none;
+		color: inherit;
+		cursor: pointer;
+		font-family: var(--voynich-font-sc);
+		letter-spacing: 0.14em;
+		font-size: 14px;
+	}
+	.voy-latch:disabled { cursor: not-allowed; opacity: 0.5; }
+	.voy-latch:focus-visible { outline: 1px solid rgb(var(--voynich-gold)); outline-offset: 4px; }
+	.voy-latch__plate {
+		position: relative;
+		flex: none;
+		width: 54px;
+		height: 24px;
+		border-radius: 3px;
+		background-color: var(--voy-latch-plate, rgb(var(--voynich-brass)));
+		background-image: var(--voynich-surface-bronze);
+		background-size: 420px 420px;
+		box-shadow:
+			inset 1.5px 1.5px 1px rgb(var(--voynich-gold-light) / 0.45),
+			inset -1.5px -1.5px 1px rgb(0 0 0 / 0.5),
+			0 0 0 1px rgb(var(--voynich-brass-deep)),
+			1px 2px 2px rgb(0 0 0 / 0.4),
+			3px 6px 8px -3px rgb(0 0 0 / 0.5);
+	}
+	/* La ranura: hundida, recibe la sombra del borde superior izquierdo. */
+	.voy-latch__plate::before {
+		content: "";
+		position: absolute;
+		inset: 10px 7px;
+		border-radius: 1px;
+		background: rgb(var(--voynich-brass-deep));
+		box-shadow: inset 1px 1px 1.5px rgb(0 0 0 / 0.8), 0 1px 0 rgb(var(--voynich-gold-light) / 0.35);
+	}
+	/* Dos remaches, uno a cada extremo. */
+	.voy-latch__plate::after {
+		content: "";
+		position: absolute;
+		inset: 0;
+		background:
+			radial-gradient(circle at 4px 50%, rgb(var(--voynich-gold-light) / 0.7) 0 0.8px, rgb(var(--voynich-brass-deep)) 1.2px 1.8px, transparent 2.2px),
+			radial-gradient(circle at calc(100% - 4px) 50%, rgb(var(--voynich-gold-light) / 0.7) 0 0.8px, rgb(var(--voynich-brass-deep)) 1.2px 1.8px, transparent 2.2px);
+	}
+	.voy-latch__bolt {
+		position: absolute;
+		z-index: 1;
+		top: 4px;
+		left: 6px;
+		width: 18px;
+		height: 16px;
+		border-radius: 2px;
+		background-color: rgb(var(--voynich-brass));
+		background-image: linear-gradient(135deg, rgb(255 238 190 / 0.22), transparent 55%, rgb(0 0 0 / 0.22)), var(--voynich-surface-bronze);
+		background-size: auto, 420px 420px;
+		box-shadow:
+			inset 1px 1px 0 rgb(var(--voynich-gold-light) / 0.6),
+			inset -1px -1px 0 rgb(0 0 0 / 0.45),
+			0 0 0 1px rgb(var(--voynich-brass-deep)),
+			1px 2px 2px rgb(0 0 0 / 0.5);
+		/* Holgura mecánica: el cerrojo se pasa un poco y vuelve. */
+		transition: transform 0.24s cubic-bezier(0.3, 1.45, 0.55, 1), background-color 0.2s ease-out;
+	}
+	/* Estrías de agarre. */
+	.voy-latch__bolt::after {
+		content: "";
+		position: absolute;
+		inset: 4px 5px;
+		background: repeating-linear-gradient(90deg, rgb(0 0 0 / 0.35) 0 1px, rgb(var(--voynich-gold-light) / 0.35) 1px 2px, transparent 2px 3px);
+	}
+	.voy-latch[data-state="on"] .voy-latch__bolt {
+		transform: translateX(24px);
+		background-color: var(--voy-latch-bolt, rgb(184 147 74));
+		background-image: linear-gradient(135deg, rgb(255 244 210 / 0.3), transparent 55%, rgb(0 0 0 / 0.18)), var(--voynich-surface-gold);
+	}
+	.voy-latch:hover:not(:disabled) .voy-latch__plate { filter: brightness(1.08); }
+	.voy-latch[data-motion="none"] .voy-latch__bolt { transition: none; }
+	@media (prefers-reduced-motion: reduce) { .voy-latch__bolt { transition: none; } }
+}
+
+/* ───────────────────────────── Gloss (glosa) ─────────────────────────────
+ * Nota de otra mano en el margen: tira de pergamino con el calderón (¶) en rúbrica.
+ */
+@layer components {
+	.voy-gloss {
+		position: relative;
+		display: flex;
+		gap: 10px;
+		align-items: flex-start;
+		padding: 12px 14px 12px 12px;
+		font-family: var(--voynich-font-body);
+		font-style: italic;
+		font-size: 15px;
+		line-height: 1.45;
+		transform: rotate(-0.4deg);
+	}
+	.voy-gloss__mark {
+		flex: none;
+		font-style: normal;
+		font-size: 20px;
+		line-height: 1;
+		color: rgb(var(--voynich-vermilion));
+		margin-top: 1px;
+	}
+	.voy-gloss__body { flex: 1; min-width: 0; }
+	.voy-gloss__title {
+		font-family: var(--voynich-font-sc);
+		font-style: normal;
+		letter-spacing: 0.14em;
+		font-size: 12px;
+		margin-bottom: 3px;
+	}
+	.voy-gloss[data-tone="rubric"] .voy-gloss__title,
+	.voy-gloss[data-tone="rubric"] .voy-gloss__text { color: rgb(var(--voynich-vermilion-dark)); }
+	.voy-gloss__dismiss {
+		flex: none;
+		align-self: flex-end;
+		border: 0;
+		background: none;
+		padding: 0;
+		font: inherit;
+		font-size: 12px;
+		color: rgb(var(--voynich-ink-medium));
+		text-decoration: underline;
+		text-decoration-thickness: 0.5px;
+		text-underline-offset: 3px;
+		cursor: pointer;
+	}
+	.voy-gloss__dismiss:focus-visible { outline: 1px solid currentColor; outline-offset: 2px; }
+
+	.voy-gloss-margin {
+		position: fixed;
+		z-index: 60;
+		bottom: 16px;
+		right: 16px;
+		width: min(340px, calc(100vw - 32px));
+		pointer-events: none;
+	}
+	.voy-gloss-margin[data-side="left"] { right: auto; left: 16px; }
+	.voy-gloss-margin__list { display: flex; flex-direction: column; gap: 10px; margin: 0; padding: 0; list-style: none; }
+	.voy-gloss-margin__item {
+		pointer-events: auto;
+		animation: voy-gloss-in 0.35s ease-out both;
+		transition: opacity 0.3s ease-in, transform 0.3s ease-in;
+	}
+	.voy-gloss-margin__item[data-closing] { opacity: 0; transform: translateY(6px); }
+	@keyframes voy-gloss-in { from { opacity: 0; transform: translateX(14px); } to { opacity: 1; transform: none; } }
+	@media (prefers-reduced-motion: reduce) {
+		.voy-gloss-margin__item { animation: none; transition: none; }
+	}
+}
+
+/* ───────────────────────────── Codex ─────────────────────────────
+ * La hoja gira sobre el lomo (izquierda) con perspectiva y se oscurece al alejarse de la luz. A cada lado,
+ * el canto de las hojas: tan grueso como lo leído (--voy-leaves-read) y lo que falta (--voy-leaves-left).
+ */
+@layer components {
+	.voy-codex { display: flex; flex-direction: column; gap: 18px; width: 100%; touch-action: pan-y; }
+	.voy-codex__book {
+		position: relative;
+		perspective: 1600px;
+		margin: 0 var(--voy-leaves-left, 0px) 0 var(--voy-leaves-read, 0px);
+	}
+	.voy-codex__book::before,
+	.voy-codex__book::after {
+		content: "";
+		position: absolute;
+		top: 3px;
+		bottom: 3px;
+		background: repeating-linear-gradient(90deg, rgb(var(--voynich-vellum-shade)) 0 1px, rgb(var(--voynich-vellum-dark)) 1px 2px);
+		box-shadow: 2px 3px 4px rgb(0 0 0 / 0.35);
+	}
+	.voy-codex__book::before { right: 100%; width: var(--voy-leaves-read, 0px); border-radius: 2px 0 0 2px; }
+	.voy-codex__book::after { left: 100%; width: var(--voy-leaves-left, 0px); border-radius: 0 2px 2px 0; }
+	.voy-codex__page {
+		position: relative;
+		min-height: 100%;
+		padding: clamp(20px, 5vw, 44px);
+		border-radius: 1px;
+	}
+	.voy-codex__turning {
+		position: absolute;
+		inset: 0;
+		z-index: 2;
+		overflow: hidden;
+		transform-origin: left center;
+		backface-visibility: hidden;
+		animation: voy-codex-turn 0.7s cubic-bezier(0.45, 0.05, 0.3, 1) forwards;
+	}
+	.voy-codex__turning[data-dir="prev"] { transform-origin: right center; animation-name: voy-codex-turn-back; }
+	/* La sombra crece a medida que la hoja se levanta y deja de recibir la luz. */
+	.voy-codex__turning::after {
+		content: "";
+		position: absolute;
+		inset: 0;
+		pointer-events: none;
+		background: linear-gradient(90deg, rgb(0 0 0 / 0) 40%, rgb(40 24 10 / 0.45));
+		animation: voy-codex-shade 0.7s ease-in forwards;
+	}
+	@keyframes voy-codex-turn { from { transform: rotateY(0); } to { transform: rotateY(-96deg); } }
+	@keyframes voy-codex-turn-back { from { transform: rotateY(0); } to { transform: rotateY(96deg); } }
+	@keyframes voy-codex-shade { from { opacity: 0; } to { opacity: 1; } }
+	.voy-codex__nav { display: flex; align-items: center; justify-content: center; gap: clamp(6px, 3vw, 18px); }
+	.voy-codex__folio {
+		min-width: 4.5em;
+		text-align: center;
+		font-family: var(--voynich-font-body);
+		font-style: italic;
+		font-size: 17px;
+	}
+	.voy-codex__folio-mark { opacity: 0.6; }
+	@media (prefers-reduced-motion: reduce) { .voy-codex__turning { display: none; } }
+}
