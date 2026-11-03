@@ -172,7 +172,7 @@ export const AdvancedDynamicRings: Story = {
     };
 
     return (
-      <div className="flex flex-col items-center gap-10 bg-[#0a0d14] border-[12px] border-[#311b0e] p-12 rounded-[100%] shadow-[0_0_80px_rgba(0,0,0,1)] relative w-[800px] h-[800px] justify-center mx-auto scale-[0.85]">
+      <div className="flex flex-col items-center gap-10 bg-[#0a0d14] border-[12px] border-[#311b0e] p-12 rounded-[100%] shadow-[0_0_80px_rgba(0,0,0,1)] relative w-full max-w-[800px] h-[800px] justify-center mx-auto scale-[0.85]">
         {/* Fake Wood/Parchment Texture */}
         <div className="absolute inset-0 bg-[radial-gradient(circle,_#211611_0%,_#090503_100%)] opacity-90 pointer-events-none" />
 
@@ -383,7 +383,7 @@ export const TextInputVariant: Story = {
           </span>
         </div>
 
-        <div className="relative mt-6 transition-all duration-1000 ease-in-out">
+        <div className="relative mt-6 w-full transition-all duration-1000 ease-in-out">
           <div
             className={`transition-all duration-1000 ${isUnlocked ? "scale-110 drop-shadow-[0_0_40px_rgba(56,189,248,0.4)]" : "scale-100"}`}
           >
@@ -646,7 +646,7 @@ export const TimePicker: Story = {
     };
 
     return (
-      <div className="flex flex-col items-center gap-6 p-8 voy-paper text-voynich-inkDark rounded-3xl shadow-xl w-96">
+      <div className="flex flex-col items-center gap-6 p-8 voy-paper text-voynich-inkDark rounded-3xl shadow-xl w-full max-w-96">
         <div className="text-5xl font-light tabular-nums tracking-tighter">
           {time.h}:{time.m}{" "}
           <span className="text-xl text-voynich-vellum/60 ml-1">{time.p}</span>

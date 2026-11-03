@@ -49,7 +49,7 @@ export const InspectionMode: Story = {
       </p>
 
       <div className="p-2 voy-paper rounded shadow-xl inline-block border border-voynich-inkMedium/40">
-        <LensMagnifier {...args} className="w-[600px] h-[400px] rounded-sm" />
+        <LensMagnifier {...args} className="w-full max-w-[600px] h-[400px] rounded-sm" />
       </div>
     </div>
   ),
@@ -79,7 +79,7 @@ export const DeepMicroscope: Story = {
 
         <LensMagnifier
           {...args}
-          className="w-[400px] h-[400px] bg-black filter contrast-125 "
+          className="w-full max-w-[400px] h-[400px] bg-black filter contrast-125 "
         />
       </div>
     </div>
@@ -107,7 +107,7 @@ export const ManualResetMode: Story = {
           src="https://images.unsplash.com/photo-1524169358666-79f22534bc6e?q=80&w=1000&auto=format&fit=crop"
           zoomLevel={2.5}
           lensSize={200}
-          className="w-[500px] h-[300px] rounded-lg shadow-2xl"
+          className="w-full max-w-[500px] h-[300px] rounded-lg shadow-2xl"
         />
       </div>
     );
@@ -142,7 +142,7 @@ export const ClassicDetective: Story = {
         revelando escritos del pasado.
       </p>
       <div className="p-3 voy-paper rounded shadow-xl inline-block border border-voynich-brass/40">
-        <LensMagnifier {...args} className="w-[600px] h-[400px] rounded-sm" />
+        <LensMagnifier {...args} className="w-full max-w-[600px] h-[400px] rounded-sm" />
       </div>
     </div>
   ),
@@ -169,7 +169,7 @@ export const SciFiScanner: Story = {
       <div className="relative">
         <LensMagnifier
           {...args}
-          className="w-[600px] h-[350px] rounded opacity-80"
+          className="w-full max-w-[600px] h-[350px] rounded opacity-80"
         />
         <div className="absolute inset-0 pointer-events-none mix-blend-overlay opacity-20 bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,#000_2px,#000_4px)]"></div>
       </div>
@@ -195,7 +195,7 @@ export const TruthRevealer: Story = {
       </p>
       <LensMagnifier
         {...args}
-        className="w-[600px] h-[350px] rounded-md saturate-0"
+        className="w-full max-w-[600px] h-[350px] rounded-md saturate-0"
       />
     </div>
   ),

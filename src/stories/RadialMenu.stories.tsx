@@ -85,7 +85,7 @@ export const FullCircleMenu: Story = {
     staggerDelay: 50, // Animación rápida en cadena
   },
   render: (args) => (
-    <div className="h-[400px] w-[400px] flex items-center justify-center p-8 voy-panel rounded-2xl relative overflow-hidden">
+    <div className="h-[400px] w-full max-w-[400px] flex items-center justify-center p-8 voy-panel rounded-2xl relative overflow-hidden">
       <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_white_0%,_transparent_100%)] mix-blend-screen" />
       <RadialMenu {...args} />
     </div>
@@ -100,7 +100,7 @@ export const HalfMoonArc: Story = {
     //arc: 180, // Limitar el arco a 180 grados para que forme una media luna y no se superpongan los botones
   },
   render: (args) => (
-    <div className="voy-panel h-[300px] w-[500px] flex items-end justify-center pb-12 rounded-b-none rounded-t-[1000px]">
+    <div className="voy-panel h-[300px] w-full max-w-[500px] flex items-end justify-center pb-12 rounded-b-none rounded-t-[1000px]">
       <RadialMenu {...args} />
     </div>
   ),
@@ -115,7 +115,7 @@ export const MonoculoOculto: Story = {
     staggerDelay: 80,
   },
   render: (args) => (
-    <div className="h-[300px] w-[300px] relative border border-voynich-inkMedium/40 voy-paper overflow-hidden shadow-inner">
+    <div className="h-[300px] w-full max-w-[300px] relative border border-voynich-inkMedium/40 voy-paper overflow-hidden shadow-inner">
       {/* Posicionado en la esquina superior izquierda (Absolute context) */}
       <RadialMenu
         {...args}

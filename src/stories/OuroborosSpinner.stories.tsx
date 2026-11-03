@@ -70,7 +70,7 @@ export const ScaleVariations: Story = {
     isProcessing: true,
   },
   render: () => (
-    <div className="flex items-end gap-12">
+    <div className="flex flex-wrap items-end justify-center gap-12">
       {[32, 48, 64, 96, 128].map((size) => (
         <div key={size} className="flex flex-col items-center gap-3">
           <OuroborosSpinner size={size} isProcessing loadingColor="#c8a55a" />

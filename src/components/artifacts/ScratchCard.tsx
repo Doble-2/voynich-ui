@@ -12,7 +12,7 @@ import { useReducedMotion } from "../../lib/useReducedMotion";
 
 export interface ScratchCardProps extends React.HTMLAttributes<HTMLDivElement> {
   /**
-   * The width of the scratch card in pixels.
+   * Ancho máximo de la tarjeta en píxeles (en contenedores más estrechos se encoge manteniendo la proporción).
    * @default 300
    */
   width?: number;
@@ -150,6 +150,7 @@ export const ScratchCard = forwardRef<ScratchCardRef, ScratchCardProps>(
       onComplete,
       children,
       className,
+      style,
       ...props
     },
     ref,
@@ -288,6 +289,11 @@ export const ScratchCard = forwardRef<ScratchCardRef, ScratchCardProps>(
         x = (e as React.MouseEvent).clientX - rect.left;
         y = (e as React.MouseEvent).clientY - rect.top;
       }
+      // La tarjeta se encoge en pantallas estrechas: de px de pantalla a px del lienzo.
+      if (rect.width) {
+        x *= canvas.width / rect.width;
+        y *= canvas.height / rect.height;
+      }
 
       // Apply Hardness gradient if required (more complex, using simple solid dot for now)
       if (brushHardness < 1) {
@@ -374,7 +380,8 @@ export const ScratchCard = forwardRef<ScratchCardRef, ScratchCardProps>(
           "relative overflow-hidden cursor-crosshair select-none touch-none",
           className,
         )}
-        style={{ width, height }}
+        // Tamaño máximo `width`×`height`; en un contenedor más estrecho se encoge sin deformarse.
+        style={{ width: "100%", maxWidth: width, aspectRatio: `${width} / ${height}`, ...style }}
         {...props}
       >
         {/* Hidden Content Beneath */}
@@ -412,7 +419,7 @@ export const ScratchCard = forwardRef<ScratchCardRef, ScratchCardProps>(
           onTouchEnd={handleEnd}
           onTouchCancel={handleEnd}
           className={cn(
-            "absolute inset-0 z-10",
+            "absolute inset-0 z-10 h-full w-full",
             isCleared ? "pointer-events-none" : ""
           )}
         />

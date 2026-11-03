@@ -78,7 +78,7 @@ export const MarginaliaNotes = React.forwardRef<HTMLSpanElement, MarginaliaNotes
           ref={noteRef}
           id={noteId}
           role="note"
-          className="voy-slip block absolute left-full top-0 ml-5 w-52 px-3 py-2 text-[13.5px] leading-snug italic opacity-0 invisible z-10 pointer-events-none"
+          className="voy-slip block absolute left-0 top-full mt-2 sm:left-full sm:top-0 sm:mt-0 sm:ml-5 w-52 max-w-[calc(100vw-2rem)] px-3 py-2 text-[13.5px] leading-snug italic opacity-0 invisible z-10 pointer-events-none"
           style={{
             fontFamily: "var(--voynich-font-body)",
             ...(noteColor ? { color: noteColor } : {}),

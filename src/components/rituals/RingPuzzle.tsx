@@ -1,4 +1,4 @@
-import React, { createContext, forwardRef, useContext, useId, useImperativeHandle } from "react";
+import React, { createContext, forwardRef, useContext, useEffect, useId, useImperativeHandle, useState } from "react";
 import { cn } from "../../lib/utils";
 import { composeHandlers, composeRefs } from "../../lib/compose";
 import {
@@ -338,6 +338,10 @@ const DefaultParts: React.FC = () => {
  * El contenedor y la mecánica. Sin hijos dibuja la composición por defecto; con hijos, tú decides
  * qué partes van dentro. Expone `ref` con las acciones imperativas (`reset`, `solve`…).
  *
+ * En pantallas estrechas se encoge al ancho de su contenedor. Para eso el padre necesita un ancho propio
+ * (un bloque, `w-full`…): si se ajusta al contenido, como el hijo de un `flex items-center`, no hay ancho
+ * del que encogerse.
+ *
  * Atributos de estilo: `data-solved` en la raíz, `data-locked` e `data-interactive` en cada anillo.
  */
 const RingPuzzleRoot = forwardRef<RingPuzzleRef, RingPuzzleProps>(
@@ -368,6 +372,19 @@ const RingPuzzleRoot = forwardRef<RingPuzzleRef, RingPuzzleProps>(
 
     const ctx: PuzzleContextValue = { puzzle, size, solvedLabel, showCenterPivot, ...(renderItem ? { renderItem } : {}) };
 
+    // En un contenedor más estrecho que `size` (móvil), el astrolabio se encoge entero con `zoom`:
+    // las partes siguen midiendo en px de `size` y el ángulo de arrastre no depende de la escala.
+    const [fit, setFit] = useState(1);
+    useEffect(() => {
+      const parent = puzzle.containerRef.current?.parentElement;
+      if (!parent || typeof ResizeObserver === "undefined") return;
+      const ro = new ResizeObserver(([entry]) => {
+        if (entry) setFit(Math.min(1, entry.contentRect.width / size));
+      });
+      ro.observe(parent);
+      return () => ro.disconnect();
+    }, [size, puzzle.containerRef]);
+
     return (
       <PuzzleContext.Provider value={ctx}>
         <div
@@ -379,11 +396,13 @@ const RingPuzzleRoot = forwardRef<RingPuzzleRef, RingPuzzleProps>(
           onPointerMove={composeHandlers(onPointerMove, (e: React.PointerEvent<HTMLDivElement>) => {
             // El resalte del metal sigue al cursor sin re-renderizar React.
             const r = e.currentTarget.getBoundingClientRect();
-            e.currentTarget.style.setProperty("--lx", `${e.clientX - r.left}px`);
-            e.currentTarget.style.setProperty("--ly", `${e.clientY - r.top}px`);
+            const k = r.width ? size / r.width : 1; // de px de pantalla a px internos (con zoom)
+            e.currentTarget.style.setProperty("--lx", `${(e.clientX - r.left) * k}px`);
+            e.currentTarget.style.setProperty("--ly", `${(e.clientY - r.top) * k}px`);
           })}
+          data-fit={fit < 1 ? "scaled" : undefined}
           className={cn("voy-astrolabe relative rounded-full flex items-center justify-center overflow-hidden select-none", className)}
-          style={{ width: size, height: size, ...style }}
+          style={{ width: size, height: size, maxWidth: "100%", ...(fit < 1 && { zoom: fit }), ...style }}
           {...rest}
         >
           {children ?? <DefaultParts />}

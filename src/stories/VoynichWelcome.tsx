@@ -672,6 +672,11 @@ function Overlay() {
             gap: "1px",
             marginTop: "2.5rem",
             pointerEvents: "auto",
+            // En móvil las tres tarjetas no caben: la fila se desliza en lugar de desbordar la página.
+            maxWidth: "100vw",
+            overflowX: "auto",
+            scrollSnapType: "x mandatory",
+            padding: "0 1rem",
           }}
         >
           {CATEGORIES.map((cat, i) => (
@@ -726,12 +731,12 @@ export function VoynichWelcome() {
     <div
       style={{
         position: "relative",
-        width: "calc(100% + 4rem)",
+        // layout "fullscreen": sin padding que compensar (el antiguo margin -2rem desbordaba 32px).
+        width: "100%",
         height: "94vh",
         minHeight: "600px",
         background: "#040301",
         overflow: "hidden",
-        margin: "-2rem",
       }}
     >
       {/* Three.js canvas */}

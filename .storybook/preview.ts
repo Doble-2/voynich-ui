@@ -41,7 +41,10 @@ const preview: Preview = {
         style: {
           minHeight: '100%',
           width: '100%',
-          padding: '2.5rem',
+          // #storybook-root (layout centered) añade 1rem de padding por lado.
+          maxWidth: 'calc(100vw - 2rem)',
+          boxSizing: 'border-box',
+          padding: 'clamp(1rem, 5vw, 2.5rem)',
           background: 'radial-gradient(ellipse 70% 60% at 22% 14%, #33200f 0%, #1a120a 32%, #0d0b09 62%, #070a0b 100%)',
           color: '#eadbb6',
           fontFamily: "'IM Fell English', Georgia, serif",

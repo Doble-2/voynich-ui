@@ -21,7 +21,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 const Stage: React.FC<{ title: string; hint: string; children: React.ReactNode }> = ({ title, hint, children }) => (
-  <section className="voy-leather" style={{ minHeight: 560, padding: "44px 48px", color: "rgb(var(--voynich-vellum))" }}>
+  <section className="voy-leather" style={{ minHeight: 560, padding: "clamp(20px, 6vw, 44px) clamp(16px, 6vw, 48px)", color: "rgb(var(--voynich-vellum))" }}>
     <h3 style={{ fontFamily: "var(--voynich-font-display)", fontWeight: 600, fontSize: 24, color: "rgb(var(--voynich-gold-light))", margin: 0 }}>
       {title}
     </h3>
@@ -31,8 +31,8 @@ const Stage: React.FC<{ title: string; hint: string; children: React.ReactNode }
 );
 
 const Cell: React.FC<{ code: string; children: React.ReactNode }> = ({ code, children }) => (
-  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 14 }}>
-    <div style={{ minHeight: 56, display: "flex", alignItems: "center" }}>{children}</div>
+  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 14, minWidth: 0, maxWidth: "100%" }}>
+    <div style={{ minHeight: 56, display: "flex", alignItems: "center", justifyContent: "center", width: "100%" }}>{children}</div>
     <code className="voy-label" style={{ fontSize: 11, opacity: 0.6, letterSpacing: "0.06em", textTransform: "none", fontFamily: "ui-monospace, monospace" }}>
       {code}
     </code>
@@ -120,7 +120,7 @@ const rings: Ring[] = [
 const PlainDials: React.FC = () => {
   const puzzle = useRingPuzzle({ rings: [{ id: "x", radius: 60, thickness: 60, initialRotation: 90, targetRotation: 0, step: 15 }, { id: "y", radius: 60, thickness: 60, initialRotation: 200, targetRotation: 0, step: 15 }, { id: "z", radius: 60, thickness: 60, initialRotation: 300, targetRotation: 0, step: 15 }] });
   return (
-    <div ref={puzzle.containerRef} style={{ display: "flex", gap: 32, alignItems: "center" }} data-solved={String(puzzle.solved)}>
+    <div ref={puzzle.containerRef} style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 32, alignItems: "center" }} data-solved={String(puzzle.solved)}>
       {puzzle.sortedRings.map((r) => {
         const { style, ...props } = puzzle.getRingProps(r);
         const locked = puzzle.locked[r.id];
